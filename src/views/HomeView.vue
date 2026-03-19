@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-5">
-    <h1>你好。{{ token }}<br />这里什么也没有</h1>
+    <h1>你好。{{ auth.qq }}<br />这里什么也没有</h1>
     <button class="btn btn-danger" @click="logout">退出登录</button>
 
     <button class="teleport-btn" @click="teleport">🔞点我查看学习资料🔞</button>
@@ -8,14 +8,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useRouter } from "vue-router";
-
+import { useAuthStore } from "../stores/auth";
 const router = useRouter();
-const token = ref(localStorage.getItem("token"));
+const auth = useAuthStore();
 
 const logout = () => {
-  localStorage.removeItem("token");
+  auth.logout();
   router.replace("/login");
 };
 

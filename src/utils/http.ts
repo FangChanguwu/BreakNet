@@ -1,12 +1,12 @@
 import axios from 'axios'
 
-// 创建实例
+
 const http = axios.create({
-    baseURL: '/break', // 👈 改成你的后端地址
+    baseURL: "http://127.0.0.1:14514/break",
     timeout: 5000,
 })
 
-// 请求拦截器（可统一加 token）
+
 http.interceptors.request.use((config) => {
     const token = localStorage.getItem('token')
     if (token) {
