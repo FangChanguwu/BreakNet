@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // 创建实例
 const http = axios.create({
-    baseURL: 'http://192.168.1.105:14514/break', // 👈 改成你的后端地址
+    baseURL: '/break', // 👈 改成你的后端地址
     timeout: 5000,
 })
 
