@@ -3,19 +3,19 @@
     <div v-if="show" class="modal-overlay" @click.self="onClose">
       <div class="modal-content">
         <h2 class="modal-title">登录</h2>
-        
-        <input 
-          v-model="qqNumber" 
-          type="text" 
-          class="modal-input" 
-          :class="{'is-error': isError}"
-          placeholder="请输入qq号码" 
+
+        <input
+          v-model="qqNumber"
+          type="text"
+          class="modal-input"
+          :class="{ 'is-error': isError }"
+          placeholder="请输入qq号码"
           @input="clearError"
-          @keyup.enter="onConfirm" 
+          @keyup.enter="onConfirm"
         />
         <transition name="slide-down">
           <div v-if="isError" class="error-msg">
-            输入内容为空
+            {{ errorText }}
           </div>
         </transition>
         <div class="modal-footer">
@@ -27,7 +27,11 @@
   </transition>
 
   <transition name="fade">
-    <div v-if="showRegisterDialog" class="register-overlay" @click.self="closeRegisterTip">
+    <div
+      v-if="showRegisterDialog"
+      class="register-overlay"
+      @click.self="closeRegisterTip"
+    >
       <div class="register-dialog">
         <h3 class="register-title">我怎么知道</h3>
         <button class="got-it-btn" @click="closeRegisterTip">OK</button>
@@ -36,7 +40,7 @@
   </transition>
 </template>
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 
 // 接收父组件传来的状态
 const props = defineProps<{
@@ -45,37 +49,52 @@ const props = defineProps<{
 
 // 定义向父组件发射的事件
 const emit = defineEmits<{
-  (e: 'update:show', value: boolean): void;
-  (e: 'confirm', qq: string): void;
+  (e: "update:show", value: boolean): void;
+  (e: "confirm", qq: string): void;
 }>();
 
-const qqNumber = ref('');
+const qqNumber = ref("");
 const isError = ref(false);
+const errorText = ref("输入内容为空");
 
 // 监听弹窗打开状态，每次打开时清空输入框
-watch(() => props.show, (newVal) => {
-  if (newVal) {
-    qqNumber.value = '';
-    isError.value = false;
-  }
-});
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal) {
+      qqNumber.value = "";
+      isError.value = false;
+    }
+  },
+);
 
 const clearError = () => {
   if (isError.value) {
     isError.value = false;
   }
-}
+};
 
 const onClose = () => {
-  emit('update:show', false);
+  emit("update:show", false);
 };
 
 const onConfirm = () => {
-  if (!qqNumber.value.trim()) {
+  const qq = qqNumber.value.trim();
+
+  if (!qq) {
+    errorText.value = "输入内容为空";
     isError.value = true;
     return;
   }
-  emit('confirm', qqNumber.value);
+
+  const qqRegex = /^[1-9][0-9]{4,10}$/;
+  if (!qqRegex.test(qq)) {
+    errorText.value = "格式有误";
+    isError.value = true;
+    return;
+  }
+
+  emit("confirm", qq);
 };
 
 const showRegisterDialog = ref(false);
@@ -87,6 +106,16 @@ const showRegisterTip = () => {
 const closeRegisterTip = () => {
   showRegisterDialog.value = false;
 };
+
+// 向父组件暴露触发外部错误的方法
+const showExternalError = (msg: string) => {
+  errorText.value = msg;
+  isError.value = true;
+};
+
+defineExpose({
+  showExternalError,
+});
 </script>
 
 <style scoped>
@@ -106,13 +135,13 @@ const closeRegisterTip = () => {
 .modal-content {
   background: #ffffff;
   width: 90%;
-  max-width: 420px; 
+  max-width: 420px;
   border-radius: 16px;
-  padding: 40px 32px 32px; 
+  padding: 40px 32px 32px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; 
+  animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* 标题 */
@@ -159,7 +188,7 @@ const closeRegisterTip = () => {
 .modal-input.is-error {
   border-color: #ff4d4f;
   background-color: #fff2f0;
-  box-shadow: 0 0 0 3px rgba(255,77,79,0.15);
+  box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.15);
   animation: shake 0.4s ease-in-out;
 }
 
@@ -169,12 +198,20 @@ const closeRegisterTip = () => {
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-6px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-6px);
+  }
 }
-
 
 /* 确定按钮 */
 .confirm-btn {
@@ -210,8 +247,14 @@ const closeRegisterTip = () => {
 }
 
 @keyframes modalPop {
-  0% { transform: scale(0.9); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* =========================================
@@ -225,7 +268,7 @@ const closeRegisterTip = () => {
   margin-top: 8px;
   margin-left: 4px;
   /* 避免占据过大空间，导致底部按钮被猛地撑开 */
-  line-height: 1.2; 
+  line-height: 1.2;
 }
 
 /* Vue <transition name="slide-down"> 的滑出动画 */
@@ -323,7 +366,13 @@ const closeRegisterTip = () => {
 
 /* 复用之前的弹出放大动画 */
 @keyframes popScale {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 </style>

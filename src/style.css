@@ -1,0 +1,41 @@
+/* src/style.css */
+:root {
+  /* 基础主色调：橙色 */
+  --primary-color: #ff8c00;
+  --primary-hover: #ff9d2e;
+
+  /* 白天模式 (默认) */
+  --bg-color: #f4f6f8; /* 网页底层背景 */
+  --surface-color: #ffffff; /* 悬浮卡片/侧边栏的颜色 */
+  --text-main: #333333; /* 主文本颜色 */
+  --text-muted: #888888; /* 次要文本颜色 */
+  --border-color: #eaeaea; /* 边框颜色 */
+  --shadow-color: rgba(0, 0, 0, 0.08); /* 阴影 */
+}
+
+/* 夜间模式 */
+[data-theme="dark"] {
+  --bg-color: #121826; /* 底层背景：非常深的灰蓝色，告别死黑 */
+  --surface-color: #1e2532; /* 悬浮卡片/侧边栏：稍微亮一点，拉开空间层次感 */
+  --text-main: #e2e8f0; /* 主文字：柔和的珍珠白，不刺眼 */
+  --text-muted: #94a3b8; /* 次要文字：带点蓝灰色的黯淡字 */
+  --border-color: #2c364c; /* 边框线：融入背景的深色边框 */
+  --shadow-color: rgba(0, 0, 0, 0.3); /* 阴影也稍微调柔和一点 */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}

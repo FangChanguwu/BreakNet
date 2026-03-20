@@ -1,33 +1,42 @@
-import { createRouter, createWebHistory } from 'vue-router';
-
-import type { RouteRecordRaw } from 'vue-router'
-const routes: RouteRecordRaw[] = [
+import { createRouter, createWebHistory } from "vue-router";
+import HomeView from "../views/HomeView.vue"; // 原来的 LoginView
+import PanelView from "../views/PanelView.vue"; // 原来的 HomeView
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
     {
-        path: "/login",
-        name: "login",
-        component: () => import('../views/LoginView.vue'),
-        meta: { public: true }
+      path: "/",
+      name: "home",
+      component: HomeView,
     },
     {
-        path: '/',
-        name: 'home',
-        component: () => import('../views/HomeView.vue'),
-        meta: { requiresAuth: true }
-    }
-]
-
-const router = createRouter({
-    history: createWebHistory(),
-    routes
+      path: "/panel",
+      name: "panel",
+      component: PanelView,
+    },
+  ],
 });
 
-router.beforeEach((to) => {
-    const isPublic = !!to.meta.public
-    const token = localStorage.getItem('token')
-    if (!isPublic && !token) {
-        return { name: 'login', query: { redirect: to.fullPath } }
-    }
-    return true
-})
+router.beforeEach((to, _from, next) => {
+  const authStorage = localStorage.getItem("auth");
+  let hasToken = false;
 
-export default router
+  if (authStorage) {
+    try {
+      const authData = JSON.parse(authStorage);
+      if (authData.token) {
+        hasToken = true;
+      }
+    } catch (e) {
+      console.error("解析本地 auth 失败", e);
+    }
+  }
+
+  if (to.path === "/panel" && !hasToken) {
+    next("/");
+  } else {
+    next();
+  }
+});
+
+export default router;

@@ -1,19 +1,25 @@
-import axios from 'axios'
-
+import axios from "axios";
 
 const http = axios.create({
-    baseURL: "http://127.0.0.1:14514/break",
-    timeout: 5000,
-})
-
+  baseURL: "/break",
+  timeout: 5000,
+});
 
 http.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token')
-    if (token) {
-        config.headers = config.headers ?? {}
-        config.headers.Authorization = `Bearer ${token}`
+  // 因为 persist 默认以 JSON 格式存在 'auth' 这个 key 下
+  const authStorage = localStorage.getItem("auth");
+  if (authStorage) {
+    try {
+      const authData = JSON.parse(authStorage);
+      if (authData.token) {
+        config.headers = config.headers ?? {};
+        config.headers.Authorization = `Bearer ${authData.token}`;
+      }
+    } catch (e) {
+      console.error("解析 token 失败", e);
     }
-    return config
-})
+  }
+  return config;
+});
 
-export default http
+export default http;
