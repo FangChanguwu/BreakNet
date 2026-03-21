@@ -8,6 +8,7 @@
       loop
       playsinline
       :src="currentVideo"
+      @ended="handleVideoEnded"
     ></video>
     <div class="glass-overlay"></div>
     <button
@@ -132,8 +133,32 @@ const videoList = [
   "https://assets.fangchang.asia/net/src/bg/7.mp4",
   "https://assets.fangchang.asia/net/src/bg/8.mp4",
 ];
-const randomIndex = Math.floor(Math.random() * videoList.length);
-const currentVideo = ref(videoList[randomIndex]);
+const currentVideo = ref(
+  videoList[Math.floor(Math.random() * videoList.length)],
+);
+
+const handleVideoEnded = () => {
+  // 如果库里只有一个视频 让它重新播放
+  if (videoList.length <= 1) {
+    bgVideoRef.value?.play();
+    return;
+  }
+
+  let newVideo = "";
+  do {
+    const randomIndex = Math.floor(Math.random() * videoList.length);
+    newVideo = videoList[randomIndex];
+  } while (newVideo === currentVideo.value);
+
+  currentVideo.value = newVideo;
+  setTimeout(() => {
+    if (bgVideoRef.value) {
+      bgVideoRef.value
+        .play()
+        .catch((e) => console.log("自动连播被浏览器拦截:", e));
+    }
+  }, 100);
+};
 
 let pollTimer: number | null = null;
 
