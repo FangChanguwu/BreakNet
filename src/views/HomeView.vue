@@ -1,14 +1,33 @@
 <template>
   <div class="login-page">
     <video
+      ref="bgVideoRef"
       class="bg-video"
       autoplay
       muted
       loop
       playsinline
-      src="http://assets.fangchang.asia/maimai/bg.mp4"
+      :src="currentVideo"
     ></video>
     <div class="glass-overlay"></div>
+    <button
+      class="mute-toggle-btn"
+      @click="toggleMute"
+      :title="isMuted ? '开启声音' : '静音'"
+    >
+      <svg v-if="isMuted" viewBox="0 0 24 24" width="24" height="24">
+        <path
+          fill="currentColor"
+          d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"
+        />
+      </svg>
+      <svg v-else viewBox="0 0 24 24" width="24" height="24">
+        <path
+          fill="currentColor"
+          d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+        />
+      </svg>
+    </button>
 
     <div class="main-content">
       <div class="brand-layer">
@@ -103,13 +122,41 @@ const authStore = useAuthStore();
 // 👇 提取登录状态，确保它是响应式的
 const { isLoggedIn } = storeToRefs(authStore);
 
+const videoList = [
+  "https://assets.fangchang.asia/net/src/bg/1.mp4",
+  "https://assets.fangchang.asia/net/src/bg/2.mp4",
+  "https://assets.fangchang.asia/net/src/bg/3.mp4",
+  "https://assets.fangchang.asia/net/src/bg/4.mp4",
+  "https://assets.fangchang.asia/net/src/bg/5.mp4",
+  "https://assets.fangchang.asia/net/src/bg/6.mp4",
+  "https://assets.fangchang.asia/net/src/bg/7.mp4",
+  "https://assets.fangchang.asia/net/src/bg/8.mp4",
+];
+const randomIndex = Math.floor(Math.random() * videoList.length);
+const currentVideo = ref(videoList[randomIndex]);
+
 let pollTimer: number | null = null;
 
 onMounted(() => {
+  if (bgVideoRef.value) {
+    bgVideoRef.value.volume = 0.05;
+  }
+
   setTimeout(() => {
     startTextAnim.value = true;
   }, 1000);
 });
+
+const bgVideoRef = ref<HTMLVideoElement | null>(null);
+const isMuted = ref(true);
+
+const toggleMute = () => {
+  isMuted.value = !isMuted.value;
+
+  if (bgVideoRef.value) {
+    bgVideoRef.value.muted = isMuted.value;
+  }
+};
 
 const onSubmit = () => {
   showModal.value = true;
@@ -257,8 +304,16 @@ onUnmounted(() => {
 }
 
 .login-logo {
-  width: 60px;
-  height: 60px;
+  /* ✨ 核心修改：固定高度，宽度自适应 */
+  height: 100px; /* 保持和你原来一样的高度视觉基准 */
+  width: auto; /* 让浏览器根据 7115:5397 的比例自动计算宽度（大约会是 79px）*/
+
+  /* 加个保险，防止在某些极端 Flex 布局下被拉伸 */
+  object-fit: contain;
+
+  /* 增加一点右边距，防止长方形的 Logo 和右边的标题贴得太近 */
+  margin-right: 12px;
+
   position: relative;
   top: -5px;
   animation: logoEntry 0.8s ease-out forwards;
@@ -660,5 +715,46 @@ onUnmounted(() => {
   background: #ff4d4f !important; /* 悬浮时变成警示红 */
   color: #ffffff !important; /* 悬浮时文字变回纯白 */
   box-shadow: 0 4px 15px rgba(255, 77, 79, 0.4);
+}
+
+.mute-toggle-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10; /* 保证在背景上，但不会遮挡弹窗的 100 */
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.mute-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.mute-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .mute-toggle-btn {
+    top: 16px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+  }
 }
 </style>

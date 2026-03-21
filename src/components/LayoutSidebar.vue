@@ -144,6 +144,7 @@ onUnmounted(() => {
   font-style: italic;
   font-family: "Arial Black", Impact, sans-serif;
   background: linear-gradient(135deg, var(--primary-color), #ff4d4f);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -1px;
