@@ -5,7 +5,6 @@
       class="bg-video"
       autoplay
       muted
-      loop
       playsinline
       :src="currentVideo"
       @ended="handleVideoEnded"
@@ -153,9 +152,7 @@ const handleVideoEnded = () => {
   currentVideo.value = newVideo;
   setTimeout(() => {
     if (bgVideoRef.value) {
-      bgVideoRef.value
-        .play()
-        .catch((e) => console.log("自动连播被浏览器拦截:", e));
+      bgVideoRef.value.play().catch((e) => console.log("重播被拦截:", e));
     }
   }, 100);
 };
