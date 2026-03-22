@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 // 引入我们配置好的全局 axios 实例 (请确保路径正确，可能在 src/utils/http.ts)
-import http from "../utils/http";
+import http from "@/utils/http.ts";
 
 const isLoading = ref(true);
 const songData = ref<any>(null);
@@ -141,6 +141,8 @@ const handleImageError = (e: Event) => {
     border-color 0.3s ease;
   /* height: 100%; */
   box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
 }
 .col-card:hover {
   transform: translateY(-4px);
@@ -204,6 +206,8 @@ const handleImageError = (e: Event) => {
   gap: 20px;
   align-items: center;
   animation: fadeIn 0.4s ease-out;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @keyframes fadeIn {
@@ -313,5 +317,30 @@ const handleImageError = (e: Event) => {
   font-size: 0.9rem;
   text-align: center;
   padding: 20px 0;
+}
+
+@media (max-width: 480px) {
+  .col-card {
+    padding: 20px 16px; /* 手机端减小卡片内边距 */
+  }
+
+  .song-info,
+  .song-placeholder {
+    gap: 12px; /* 减小封面和文字的间距 */
+  }
+
+  .song-cover,
+  .cover-mockup {
+    width: 84px; /* 手机端封面缩小 */
+    height: 84px;
+  }
+
+  .song-name {
+    font-size: 1.15rem; /* 标题字号略微调小 */
+  }
+
+  .song-meta {
+    flex-wrap: wrap; /* 如果标签太多，允许标签换行 */
+  }
 }
 </style>

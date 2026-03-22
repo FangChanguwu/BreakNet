@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue"; // 原来的 LoginView
-import PanelView from "../views/PanelView.vue"; // 原来的 HomeView
+import HomeView from "@/views/HomeView.vue";
+import PanelView from "@/views/PanelView.vue";
+import CreditView from "@/views/CreditView.vue";
+import PrivacyView from "@/views/PrivacyView.vue";
+import ContactView from "@/views/ContactView.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -13,6 +17,17 @@ const router = createRouter({
       path: "/panel",
       name: "panel",
       component: PanelView,
+    },
+    { path: "/credit", name: "credit", component: CreditView },
+    {
+      path: "/privacy",
+      name: "privacy",
+      component: PrivacyView,
+    },
+    {
+      path: "/contact",
+      name: "contact",
+      component: ContactView,
     },
   ],
 });

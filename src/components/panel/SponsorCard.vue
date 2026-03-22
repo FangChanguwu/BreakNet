@@ -6,7 +6,7 @@
 
     <div class="sponsor-content">
       <div class="qr-wrapper" @click="showModal = true">
-        <img src="../assets/pic/sponsor.png" alt="赞助作者" class="qr-code" />
+        <img src="@/assets/pic/sponsor.png" alt="赞助作者" class="qr-code" />
         <div class="hover-mask">
           <span>🔍 点击放大</span>
         </div>
@@ -27,7 +27,7 @@
         <div class="modal-content" @click.stop>
           <button class="close-btn" @click="showModal = false">✕</button>
           <img
-            src="../assets/pic/sponsor.png"
+            src="@/assets/pic/sponsor.png"
             alt="赞助收款码放大版"
             class="large-qr"
           />

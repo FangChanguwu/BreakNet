@@ -13,7 +13,7 @@
 
   <aside class="sidebar" :class="{ 'is-open': isOpen }">
     <div class="sidebar-header">
-      <router-link to="/" class="brand-link">
+      <router-link to="/panel" class="brand-link">
         <h1 class="brand-title">Break Net.</h1>
       </router-link>
 
@@ -23,10 +23,14 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a class="nav-item" @click="openWipModal">用户</a>
-      <a class="nav-item" @click="openWipModal">积分</a>
+      <router-link to="/panel" class="nav-item" active-class="is-active"
+        >仪表盘</router-link
+      >
+      <router-link to="/credit" class="nav-item" active-class="is-active"
+        >积分</router-link
+      >
 
-      <div class="nav-group">
+      <!-- <div class="nav-group">
         <div class="nav-item group-title" @click="toggleMaimai">
           <span>Maimai</span>
           <span class="arrow" :class="{ 'arrow-down': isMaimaiOpen }">▶</span>
@@ -34,31 +38,14 @@
 
         <transition name="expand">
           <div class="sub-menu" v-show="isMaimaiOpen">
-            <a class="sub-item" @click="openWipModal">账号数据</a>
-            <a class="sub-item" @click="openWipModal">乐曲数据</a>
-            <a class="sub-item" @click="openWipModal">全国行脚</a>
+            <a class="sub-item">账号数据</a>
+            <a class="sub-item">乐曲数据</a>
+            <a class="sub-item">全国行脚</a>
           </div>
         </transition>
-      </div>
+      </div> -->
     </nav>
   </aside>
-
-  <transition name="modal-fade">
-    <div
-      v-if="showWipModal"
-      class="wip-modal-overlay"
-      @click="showWipModal = false"
-    >
-      <div class="wip-modal-content" @click.stop>
-        <div class="wip-icon">🚧</div>
-        <h3 class="wip-title">前面的区域，以后再来探索吧！</h3>
-        <p class="wip-desc">该功能正在紧急施工中，敬请期待...</p>
-        <button class="wip-confirm-btn" @click="showWipModal = false">
-          知道啦
-        </button>
-      </div>
-    </div>
-  </transition>
 </template>
 
 <script setup lang="ts">
@@ -66,19 +53,14 @@ import { ref, onMounted, onUnmounted } from "vue";
 
 const isOpen = ref(true);
 const isMobile = ref(false);
-const isMaimaiOpen = ref(false);
+// const isMaimaiOpen = ref(false);
 
-// ✨ 控制施工中弹窗的变量 ✨
-const showWipModal = ref(false);
-
-const openWipModal = () => {
-  showWipModal.value = true;
-};
+// (已删除 showWipModal 和 openWipModal)
 
 // 展开/折叠 Maimai 菜单
-const toggleMaimai = () => {
-  isMaimaiOpen.value = !isMaimaiOpen.value;
-};
+// const toggleMaimai = () => {
+//   isMaimaiOpen.value = !isMaimaiOpen.value;
+// };
 
 // 展开/折叠整个侧边栏 (手机端用)
 const toggleSidebar = () => {

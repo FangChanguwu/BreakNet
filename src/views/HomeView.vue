@@ -104,7 +104,6 @@ import LoginModal from "../components/Modal.vue";
 import { authApi } from "../api/auth";
 import { useAuthStore } from "../stores/auth";
 import { storeToRefs } from "pinia"; // 👇 新增引入 storeToRefs
-
 const router = useRouter();
 
 const title = "Break Net.";
@@ -161,7 +160,7 @@ let pollTimer: number | null = null;
 
 onMounted(() => {
   if (bgVideoRef.value) {
-    bgVideoRef.value.volume = 0.05;
+    bgVideoRef.value.volume = 0.1;
   }
 
   setTimeout(() => {
@@ -327,7 +326,7 @@ onUnmounted(() => {
 
 .login-logo {
   /* ✨ 核心修改：固定高度，宽度自适应 */
-  height: 100px; /* 保持和你原来一样的高度视觉基准 */
+  height: 80px; /* 保持和你原来一样的高度视觉基准 */
   width: auto; /* 让浏览器根据 7115:5397 的比例自动计算宽度（大约会是 79px）*/
 
   /* 加个保险，防止在某些极端 Flex 布局下被拉伸 */

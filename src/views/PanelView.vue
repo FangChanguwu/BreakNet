@@ -21,13 +21,13 @@
 </template>
 
 <script setup lang="ts">
-import LayoutSidebar from "../components/LayoutSidebar.vue";
-import LayoutHeader from "../components/LayoutHeader.vue";
-import LayoutFooter from "../components/LayoutFooter.vue";
+import LayoutSidebar from "../components/layout/LayoutSidebar.vue";
+import LayoutHeader from "../components/layout/LayoutHeader.vue";
+import LayoutFooter from "../components/layout/LayoutFooter.vue";
 
-import GroupBanner from "../components/GroupBanner.vue";
-import SongCard from "../components/SongCard.vue";
-import SponsorCard from "../components/SponsorCard.vue";
+import GroupBanner from "../components/panel/GroupBanner.vue";
+import SongCard from "../components/panel/SongCard.vue";
+import SponsorCard from "../components/panel/SponsorCard.vue";
 </script>
 
 <style scoped>

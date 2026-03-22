@@ -35,7 +35,7 @@
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 // 1. 引入你的 Store 和 storeToRefs
-import { useAuthStore } from "../stores/auth";
+import { useAuthStore } from "@/stores/auth";
 import { storeToRefs } from "pinia";
 
 const router = useRouter();
