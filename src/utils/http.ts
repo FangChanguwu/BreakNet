@@ -28,8 +28,7 @@ http.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      // console.warn("Token 已过期或无效，正在强制登出...");
-
+      localStorage.removeItem("admin_status");
       localStorage.removeItem("auth");
       window.location.href = "/";
     }

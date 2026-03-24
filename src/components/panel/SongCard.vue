@@ -2,13 +2,6 @@
   <div class="col-card maimai-card">
     <div class="card-header">
       <h3>🎵 每日推荐谱面</h3>
-      <span
-        class="badge"
-        @click="fetchRandomSong"
-        title="换一首"
-        style="cursor: pointer"
-        >🔄 换一首</span
-      >
     </div>
 
     <div v-if="isLoading" class="song-placeholder">
@@ -61,42 +54,72 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-// 引入我们配置好的全局 axios 实例 (请确保路径正确，可能在 src/utils/http.ts)
-import http from "@/utils/http.ts";
+import http from "@/utils/http.ts"; // 确保路径正确
 
 const isLoading = ref(true);
 const songData = ref<any>(null);
 
 const formatJacketId = (id: string | number) => {
   const idStr = String(id);
-  // 取后四位（不足四位取全部），并在前面补 0 到 6 位
   return idStr.slice(-4).padStart(6, "0");
 };
 
-// 获取随机歌曲的方法
-const fetchRandomSong = async () => {
+// ✨ 核心逻辑：获取并缓存每日乐曲
+const fetchDailySong = async () => {
   try {
     isLoading.value = true;
-    // 因为你在后端挂载了 app.include_router(breakweb, prefix="/break")
+
+    // 获取今天的日期和当前的登录凭证 (Token)
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+    // 注意：这里的 "auth" 请换成你实际存 token 的 localStorage key，如果你存的就叫 auth 则不用动
+    const currentToken = localStorage.getItem("auth");
+
+    // 1. 先尝试从本地存储读取
+    const cachedData = localStorage.getItem("daily_song_cache");
+    if (cachedData) {
+      const parsedCache = JSON.parse(cachedData);
+
+      // ✨ 严格校验：日期必须是今天，且 Token 必须是当前账号的 Token！
+      if (
+        parsedCache.date === todayStr &&
+        parsedCache.token === currentToken &&
+        parsedCache.song
+      ) {
+        songData.value = parsedCache.song;
+        isLoading.value = false;
+        return; // 校验完美通过，直接使用缓存，0 延迟！
+      }
+    }
+
+    // 2. 如果没缓存、跨天了、或者【切换了账号】，再去请求后端
     const res = await http.get("/music/random");
 
     if (res.data && res.data.ok) {
       songData.value = res.data.data;
+
+      // 3. 将新歌、今天的日期，以及当前账号的 Token 一并存入缓存
+      localStorage.setItem(
+        "daily_song_cache",
+        JSON.stringify({
+          date: todayStr,
+          token: currentToken, // 绑定账号防串号
+          song: res.data.data,
+        }),
+      );
     }
   } catch (error) {
-    console.error("获取随机乐曲失败:", error);
-    songData.value = null; // 触发错误提示
+    console.error("获取每日乐曲失败:", error);
+    songData.value = null;
   } finally {
     isLoading.value = false;
   }
 };
 
-// 页面加载时自动请求
 onMounted(() => {
-  fetchRandomSong();
+  fetchDailySong();
 });
 
-// 图片加载失败的后备方案 (Fallback)
 const handleImageError = (e: Event) => {
   const target = e.target as HTMLImageElement;
   target.src = "https://placehold.co/120x120/1e1e1e/ff8c00?text=No+Cover";
@@ -107,7 +130,7 @@ const handleImageError = (e: Event) => {
 /* ================= 原有保留样式 ================= */
 .card-header {
   display: flex;
-  justify-content: space-between;
+  /* 即使删了按钮，这里保持 flex 也不影响，方便以后左边加 icon 等 */
   align-items: center;
   margin-bottom: 24px;
 }
@@ -116,18 +139,8 @@ const handleImageError = (e: Event) => {
   font-size: 1.25rem;
   color: var(--text-main);
 }
-.badge {
-  background: var(--primary-color);
-  color: #fff;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  transition: opacity 0.2s;
-}
-.badge:hover {
-  opacity: 0.8;
-}
+
+/* ✨ 已经删除了 .badge 相关的样式 */
 
 .col-card {
   background: var(--surface-color);
@@ -139,7 +152,6 @@ const handleImageError = (e: Event) => {
     transform 0.3s ease,
     box-shadow 0.3s ease,
     border-color 0.3s ease;
-  /* height: 100%; */
   box-sizing: border-box;
   min-width: 0;
   overflow: hidden;
@@ -178,7 +190,7 @@ const handleImageError = (e: Event) => {
   height: 14px;
   background: var(--bg-color);
   border-radius: 8px;
-  animation: pulse 1.5s infinite alternate; /* 增加一点呼吸动效 */
+  animation: pulse 1.5s infinite alternate;
 }
 .title-line {
   width: 80%;
@@ -235,7 +247,7 @@ const handleImageError = (e: Event) => {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  overflow: hidden; /* 防止长标题撑破布局 */
+  overflow: hidden;
 }
 
 .song-name {
@@ -295,22 +307,21 @@ const handleImageError = (e: Event) => {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* 舞萌标准难度颜色映射 */
 .diff-0 {
   background-color: #22c55e;
-} /* 绿 Basic */
+}
 .diff-1 {
   background-color: #eab308;
-} /* 黄 Advanced */
+}
 .diff-2 {
   background-color: #ef4444;
-} /* 红 Expert */
+}
 .diff-3 {
   background-color: #a855f7;
-} /* 紫 Master */
+}
 .diff-4 {
   background-color: #d946ef;
-} /* 白/粉 Re:Master */
+}
 
 .error-msg {
   color: #ef4444;
@@ -321,26 +332,22 @@ const handleImageError = (e: Event) => {
 
 @media (max-width: 480px) {
   .col-card {
-    padding: 20px 16px; /* 手机端减小卡片内边距 */
+    padding: 20px 16px;
   }
-
   .song-info,
   .song-placeholder {
-    gap: 12px; /* 减小封面和文字的间距 */
+    gap: 12px;
   }
-
   .song-cover,
   .cover-mockup {
-    width: 84px; /* 手机端封面缩小 */
+    width: 84px;
     height: 84px;
   }
-
   .song-name {
-    font-size: 1.15rem; /* 标题字号略微调小 */
+    font-size: 1.15rem;
   }
-
   .song-meta {
-    flex-wrap: wrap; /* 如果标签太多，允许标签换行 */
+    flex-wrap: wrap;
   }
 }
 </style>

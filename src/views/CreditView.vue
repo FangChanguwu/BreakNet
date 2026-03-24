@@ -229,6 +229,16 @@
         </div>
       </div>
     </transition>
+
+    <transition name="toast-slide">
+      <div v-if="toastMsg" class="custom-toast" :class="toastType">
+        <div class="toast-icon">
+          <span v-if="toastType === 'success'">✅</span>
+          <span v-else-if="toastType === 'error'">❌</span>
+        </div>
+        <div class="toast-content" v-html="toastMsg"></div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -253,15 +263,31 @@ const isSigning = ref(false);
 const creditData = ref<CreditData | null>(null);
 const rankData = ref<any>(null);
 
-// ✨ 新增：控制弹窗的变量
 const helpType = ref<"credit" | "affection" | null>(null);
-
 const openHelp = (type: "credit" | "affection") => {
   helpType.value = type;
 };
-
 const closeHelp = () => {
   helpType.value = null;
+};
+
+// ✨ 新增：Toast 相关状态与控制函数
+const toastMsg = ref("");
+const toastType = ref<"success" | "error">("success");
+let toastTimer: any = null;
+
+const showToast = (
+  msg: string,
+  type: "success" | "error" = "success",
+  duration: number = 4000,
+) => {
+  if (toastTimer) clearTimeout(toastTimer); // 如果连点，重置定时器
+  toastMsg.value = msg;
+  toastType.value = type;
+
+  toastTimer = setTimeout(() => {
+    toastMsg.value = "";
+  }, duration);
 };
 
 // ================= 1. 数据计算与格式化 =================
@@ -324,15 +350,21 @@ const handleSignIn = async () => {
     const res = await http.post("/user/sign");
     if (res.data?.ok) {
       const d = res.data.data;
-      alert(
-        `签到成功！\n💰 积分 +${d.added_credits}\n❤️ 好感度 +${d.added_affection}\n\n${d.event_info}\n${d.affection_info}`,
-      );
+      // ✨ 优化：使用 HTML 格式的精美 Toast 提示
+      const htmlMsg = `
+        <div style="font-weight:bold; margin-bottom:4px; font-size:1.1rem;">签到成功！</div>
+        <div style="color:#f59e0b;">💰 积分 +${d.added_credits}</div>
+        <div style="color:#ef4444; margin-bottom:4px;">❤️ 好感度 +${d.added_affection}</div>
+        <div style="font-size:0.9rem; color:var(--text-secondary);">${d.event_info.replace(/\n/g, "<br>")}</div>
+        <div style="font-size:0.9rem; color:var(--text-secondary);">${d.affection_info.replace(/\n/g, "<br>")}</div>
+      `;
+      showToast(htmlMsg, "success");
       await fetchAllData();
     } else {
-      alert(res.data?.message || "签到失败");
+      showToast(res.data?.message || "签到失败", "error");
     }
   } catch (err) {
-    alert("网络请求出错，请稍后重试");
+    showToast("网络请求出错，请稍后重试", "error");
   } finally {
     isSigning.value = false;
   }
@@ -344,7 +376,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ================= 原有基础样式 ================= */
+/* 保持原有所有样式不变 */
+/* ... (请保留你代码里原本的 .app-layout, .stats-grid, .rank-boards-container, .help-modal-overlay 等所有的 CSS) ... */
+
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -352,7 +386,6 @@ onMounted(() => {
   color: var(--text-main);
   overflow-x: hidden;
 }
-
 .main-wrapper {
   flex: 1;
   display: flex;
@@ -360,7 +393,6 @@ onMounted(() => {
   margin-left: 300px;
   transition: margin-left 0.3s ease;
 }
-
 .content-area {
   flex: 1;
   padding: 0 40px 40px 40px;
@@ -369,14 +401,13 @@ onMounted(() => {
   gap: 32px;
 }
 
-/* ✨ 优化1：标题与按钮同行布局 */
 .page-header {
   margin-bottom: 8px;
 }
 .title-row {
   display: flex;
   align-items: center;
-  gap: 20px; /* 标题和按钮的间距 */
+  gap: 20px;
   margin-bottom: 8px;
 }
 .title-row h2 {
@@ -414,14 +445,12 @@ onMounted(() => {
   box-shadow: none;
 }
 
-/* ================= 卡片网格 ================= */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 24px;
   animation: fadeIn 0.4s ease-out;
 }
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -461,7 +490,6 @@ onMounted(() => {
   justify-content: center;
   font-size: 2rem;
 }
-
 .card-info {
   flex: 1;
   display: flex;
@@ -491,7 +519,6 @@ onMounted(() => {
   margin-top: 6px;
 }
 
-/* ✨ 优化2：灰色问号帮助按钮 */
 .help-btn {
   display: inline-flex;
   justify-content: center;
@@ -544,7 +571,6 @@ onMounted(() => {
   font-weight: bold;
 }
 
-/* 骨架屏 */
 .skeleton-card {
   background: var(--surface-color);
 }
@@ -591,25 +617,21 @@ onMounted(() => {
   border-radius: 12px;
 }
 
-/* ================= ✨ 优化3：排行榜局限宽度双排显示 ================= */
 .rank-boards-container {
   display: flex;
-  flex-wrap: wrap; /* 空间不够时自动折叠到下一行 */
+  flex-wrap: wrap;
   gap: 24px;
   margin-top: 10px;
 }
-
 .rank-section {
   background: var(--surface-color);
   border-radius: 16px;
   padding: 24px;
   border: 1px solid var(--border-color);
   box-shadow: 0 4px 15px var(--shadow-color);
-  /* 核心：限制每个榜单的最大宽度，这样头像和分数自然就挨紧了 */
   flex: 0 1 360px;
   min-width: 280px;
 }
-
 .rank-header {
   display: flex;
   justify-content: space-between;
@@ -633,16 +655,14 @@ onMounted(() => {
   color: var(--primary-color);
   font-size: 0.95rem;
 }
-
 .rank-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
 .rank-item {
   display: flex;
-  justify-content: space-between; /* 左右两端对齐 */
+  justify-content: space-between;
   align-items: center;
   padding: 10px 16px;
   border-radius: 12px;
@@ -659,13 +679,11 @@ onMounted(() => {
   border: 1px solid var(--primary-color);
   background: rgba(var(--primary-color-rgb), 0.05);
 }
-
 .rank-left {
   display: flex;
   align-items: center;
-  gap: 16px; /* 序号和头像挨得更紧 */
+  gap: 16px;
 }
-
 .rank-num {
   width: 28px;
   font-size: 1.1rem;
@@ -685,7 +703,6 @@ onMounted(() => {
   color: #cd7f32;
   font-size: 1.4rem;
 }
-
 .rank-avatar {
   width: 38px;
   height: 38px;
@@ -710,7 +727,6 @@ onMounted(() => {
   margin-left: 2px;
 }
 
-/* ================= 帮助说明弹窗样式 ================= */
 .help-modal-overlay {
   position: fixed;
   top: 0;
@@ -776,7 +792,6 @@ onMounted(() => {
   opacity: 0;
 }
 
-/* ================= 手机端适配 ================= */
 @media (max-width: 768px) {
   .main-wrapper {
     margin-left: 0;
@@ -792,27 +807,70 @@ onMounted(() => {
   }
   .rank-section {
     flex: 1 1 100%;
-  } /* 手机上排行榜占满整行 */
+  }
 }
 
 .easter-egg {
   margin-top: 16px !important;
-  text-align: right; /* 让它靠右一点，更像悄悄话，如果你想居左可以删掉这行 */
+  text-align: right;
 }
-
 .spoiler-text {
-  background-color: #2a2a2a; /* 深灰偏黑的背景 */
-  color: #2a2a2a; /* 文字颜色和背景一样，达到隐藏效果 */
+  background-color: #2a2a2a;
+  color: #2a2a2a;
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 0.85rem;
   cursor: help;
-  transition: color 0.3s ease; /* 悬停时文字颜色渐变的动画 */
-  user-select: none; /* 防止用户直接双击选中看字 */
+  transition: color 0.3s ease;
+  user-select: none;
 }
-
-/* 鼠标悬停时，文字变成白色显示出来 */
 .spoiler-text:hover {
   color: #ffffff;
+}
+
+/* ================= ✨ 新增：Toast 轻提示样式 ================= */
+.custom-toast {
+  position: fixed;
+  top: 40px; /* 距离顶部的距离 */
+  left: 50%;
+  transform: translateX(-50%); /* 水平居中 */
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  z-index: 9999; /* 确保它在最顶层 */
+  min-width: 280px;
+}
+
+.custom-toast.success {
+  border-left: 4px solid #10b981;
+} /* 成功是绿边 */
+.custom-toast.error {
+  border-left: 4px solid #ef4444;
+} /* 失败是红边 */
+
+.toast-icon {
+  font-size: 1.2rem;
+  margin-top: 2px; /* 和文字对齐 */
+}
+
+.toast-content {
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+/* Toast 滑动进入和离开的动画 */
+.toast-slide-enter-active,
+.toast-slide-leave-active {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 带一点回弹效果 */
+}
+.toast-slide-enter-from,
+.toast-slide-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -30px); /* 向上缩回 */
 }
 </style>

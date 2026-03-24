@@ -71,6 +71,8 @@ onMounted(() => {
 // 3. 修改退出逻辑
 const handleLogout = () => {
   authStore.logout(); // 直接调用 Store 里的登出方法，它会顺便帮你清理 localStorage
+  localStorage.removeItem("auth");
+  localStorage.removeItem("admin_status");
   router.push("/");
 };
 </script>

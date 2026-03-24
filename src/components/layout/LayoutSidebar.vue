@@ -23,69 +23,124 @@
     </div>
 
     <nav class="sidebar-nav">
-      <router-link to="/panel" class="nav-item" active-class="is-active"
-        >仪表盘</router-link
-      >
-      <router-link to="/credit" class="nav-item" active-class="is-active"
-        >积分</router-link
-      >
+      <router-link to="/panel" class="nav-item" active-class="is-active">
+        仪表盘
+      </router-link>
+      <router-link to="/credit" class="nav-item" active-class="is-active">
+        积分
+      </router-link>
 
-      <!-- <div class="nav-group">
-        <div class="nav-item group-title" @click="toggleMaimai">
-          <span>Maimai</span>
-          <span class="arrow" :class="{ 'arrow-down': isMaimaiOpen }">▶</span>
+      <div class="nav-group" v-if="isAdmin">
+        <div
+          class="nav-item group-title"
+          @click="toggleAdminMenu"
+          :class="{ 'is-active': route.path.includes('/admin') }"
+        >
+          <span>管理后台</span>
+          <span class="arrow" :class="{ 'arrow-down': isAdminMenuOpen }"
+            >▶</span
+          >
         </div>
 
         <transition name="expand">
-          <div class="sub-menu" v-show="isMaimaiOpen">
-            <a class="sub-item">账号数据</a>
-            <a class="sub-item">乐曲数据</a>
-            <a class="sub-item">全国行脚</a>
+          <div class="sub-menu" v-show="isAdminMenuOpen">
+            <router-link
+              to="/admin/dashboard"
+              class="sub-item"
+              active-class="sub-active"
+            >
+              📊 运行状态
+            </router-link>
+            <router-link
+              to="/admin/users"
+              class="sub-item"
+              active-class="sub-active"
+            >
+              👥 用户数据
+            </router-link>
           </div>
         </transition>
-      </div> -->
+      </div>
     </nav>
   </aside>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
+import { useWindowSize } from "@vueuse/core"; // ✨ 引入 VueUse
+import http from "@/utils/http";
 
-const isOpen = ref(true);
-const isMobile = ref(false);
-// const isMaimaiOpen = ref(false);
+const route = useRoute();
+const { width } = useWindowSize(); // ✨ 自动响应式获取当前窗口宽度
 
-// (已删除 showWipModal 和 openWipModal)
+const initialIsMobile = window.innerWidth <= 768;
 
-// 展开/折叠 Maimai 菜单
-// const toggleMaimai = () => {
-//   isMaimaiOpen.value = !isMaimaiOpen.value;
-// };
+const isMobile = ref(initialIsMobile);
+const isOpen = ref(!initialIsMobile);
 
-// 展开/折叠整个侧边栏 (手机端用)
+let wasMobile = initialIsMobile;
+const isAdmin = ref(false);
+const isAdminMenuOpen = ref(route.path.includes("/admin"));
+
+const checkWindowSize = () => {
+  const currentlyMobile = window.innerWidth <= 768;
+  isMobile.value = currentlyMobile;
+
+  // 只有当跨越了 768 像素的边界时，才去干预侧边栏状态
+  if (wasMobile !== currentlyMobile) {
+    isOpen.value = !currentlyMobile;
+    wasMobile = currentlyMobile;
+  }
+};
+
+const toggleAdminMenu = () => {
+  isAdminMenuOpen.value = !isAdminMenuOpen.value;
+};
 const toggleSidebar = () => {
   isOpen.value = !isOpen.value;
 };
 
-// 监听窗口大小变化，实现响应式
-const checkWindowSize = () => {
-  if (window.innerWidth <= 768) {
-    isMobile.value = true;
-    isOpen.value = false; // 手机端默认收起
-  } else {
-    isMobile.value = false;
-    isOpen.value = true; // 电脑端默认展开
+// ✨ 核心优化：监听屏幕宽度变化，智能处理适配
+watch(
+  () => width.value <= 768,
+  (mobile) => {
+    isMobile.value = mobile;
+    // 只有在“手机端”和“电脑端”互相切换的瞬间，才去自动改变侧边栏的状态！
+    // 这样在手机端上下滑动导致的高频微小 resize，绝对不会强行关掉用户的侧边栏
+    isOpen.value = !mobile;
+  },
+  { immediate: true }, // 进页面立刻执行一次，取代原先的 checkWindowSize 初始调用
+);
+
+const checkAdminPermission = async () => {
+  const cachedStatus = localStorage.getItem("admin_status");
+  if (cachedStatus === "true") {
+    isAdmin.value = true;
+    return;
+  } else if (cachedStatus === "false") {
+    isAdmin.value = false;
+    return;
+  }
+
+  try {
+    const res = await http.get("/admin/check");
+    if (res.data?.ok) {
+      isAdmin.value = true;
+      localStorage.setItem("admin_status", "true");
+    }
+  } catch (error) {
+    isAdmin.value = false;
+    localStorage.setItem("admin_status", "false");
   }
 };
 
 onMounted(() => {
-  checkWindowSize();
-  window.addEventListener("resize", checkWindowSize);
+  // ✨ 不再需要手写乱七八糟的 window.addEventListener 了！
+  checkAdminPermission();
 });
 
-onUnmounted(() => {
-  window.removeEventListener("resize", checkWindowSize);
-});
+// ✨ onUnmounted 也被彻底删除了，VueUse 会自动帮你销毁监听器，完全不漏内存！
 </script>
 
 <style scoped>
@@ -156,10 +211,12 @@ onUnmounted(() => {
   font-weight: 600;
   border-radius: 12px;
   transition: all 0.2s;
-  cursor: pointer; /* 确保鼠标放上去是小手 */
+  cursor: pointer;
 }
 
-.nav-item:hover {
+/* 菜单激活时的统一样式 */
+.nav-item:hover,
+.nav-item.is-active {
   background-color: rgba(255, 140, 0, 0.1);
   color: var(--primary-color);
 }
@@ -178,12 +235,23 @@ onUnmounted(() => {
   color: var(--text-muted);
   text-decoration: none;
   font-size: 0.95rem;
-  transition: color 0.2s;
+  transition:
+    color 0.2s,
+    background-color 0.2s;
   cursor: pointer;
+  border-radius: 8px;
+  margin: 0 8px;
 }
 
 .sub-item:hover {
   color: var(--primary-color);
+}
+
+/* ✨ 新增：子菜单被选中时的高亮样式 */
+.sub-active {
+  background-color: rgba(255, 140, 0, 0.05);
+  color: var(--primary-color);
+  font-weight: bold;
 }
 
 .arrow {
@@ -237,6 +305,7 @@ onUnmounted(() => {
   }
 }
 
+/* 展开收起动画 */
 .expand-enter-active,
 .expand-leave-active {
   transition: all 0.3s ease;
@@ -247,20 +316,23 @@ onUnmounted(() => {
 .expand-leave-to {
   max-height: 0;
   opacity: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-/* ================= ✨ 施工中弹窗样式 ✨ ================= */
+/* ================= 施工中弹窗样式 (保留你原有的) ================= */
 .wip-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(5px);
-  z-index: 9999; /* 保证层级最高，遮盖一切 */
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .wip-modal-content {
   background: var(--surface-color);
   padding: 32px 40px;
@@ -271,13 +343,11 @@ onUnmounted(() => {
   width: 360px;
   border: 1px solid var(--border-color);
 }
-
 .wip-icon {
   font-size: 4rem;
   margin-bottom: 16px;
-  animation: bounceWip 2s infinite; /* 增加一点跳动的动画，更生动 */
+  animation: bounceWip 2s infinite;
 }
-
 @keyframes bounceWip {
   0%,
   20%,
@@ -293,20 +363,17 @@ onUnmounted(() => {
     transform: translateY(-7px);
   }
 }
-
 .wip-title {
   margin: 0 0 12px 0;
   font-size: 1.25rem;
   font-weight: bold;
   color: var(--text-main);
 }
-
 .wip-desc {
   margin: 0 0 24px 0;
   font-size: 0.95rem;
   color: var(--text-muted);
 }
-
 .wip-confirm-btn {
   background: var(--primary-color);
   color: #fff;
@@ -319,13 +386,10 @@ onUnmounted(() => {
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
 }
-
 .wip-confirm-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(255, 140, 0, 0.4);
 }
-
-/* 弹窗过渡动画 */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.3s ease;
@@ -337,7 +401,6 @@ onUnmounted(() => {
 .modal-fade-enter-active .wip-modal-content {
   animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
-
 @keyframes popIn {
   from {
     transform: scale(0.8);
