@@ -6,6 +6,19 @@ import PrivacyView from "@/views/PrivacyView.vue";
 import ContactView from "@/views/ContactView.vue";
 import AdminDashboardView from "@/views/admin/AdminDashboardView.vue";
 import AdminUsersView from "@/views/admin/AdminUsersView.vue";
+import Swal from "sweetalert2";
+import { useAuthStore } from "@/stores/auth";
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  background: "var(--surface-color)",
+  color: "var(--text-main)",
+});
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -54,34 +67,26 @@ const router = createRouter({
 });
 
 router.beforeEach((to, _from, next) => {
-  const authStorage = localStorage.getItem("auth");
-  let hasToken = false;
+  const authStore = useAuthStore();
 
-  if (authStorage) {
-    try {
-      const authData = JSON.parse(authStorage);
-      if (authData.token) {
-        hasToken = true;
-      }
-    } catch (e) {
-      console.error("解析本地 auth 失败", e);
-    }
+  // 白名单
+  const publicPaths = ["/", "/privacy", "/contact", "/403", "/404"];
+  if (!publicPaths.includes(to.path) && !authStore.isLoggedIn) {
+    Toast.fire({
+      icon: "warning",
+      title: "请先登录后再访问该页面",
+    });
+    return next("/");
   }
-  if (to.path.startsWith("/admin")) {
-    // 检查本地缓存的管理员状态 (我们在侧边栏里存进去的那个)
-    const isAdmin = localStorage.getItem("admin_status") === "true";
 
+  if (to.path.startsWith("/admin")) {
+    const isAdmin = localStorage.getItem("admin_status") === "true";
     if (!isAdmin) {
-      // 身份不符，无情踢到 403 页面
       return next("/403");
     }
   }
 
-  if (to.path === "/panel" && !hasToken) {
-    next("/");
-  } else {
-    next();
-  }
+  next();
 });
 
 export default router;

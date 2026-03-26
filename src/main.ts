@@ -11,15 +11,16 @@ const app = createApp(App);
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
-// ✨ 2. 极其重要：必须先让 app use(pinia)，才能去调用 Store！
 app.use(pinia);
 if (import.meta.env.DEV) {
   const authStore = useAuthStore();
-  const DEV_TOKEN =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNzE2NTMwMDQ2IiwiZXhwIjoyMDg5NjQwNTIwfQ.4rfuFlgJyhYfn1PBhXO3612_bjgH0iAf4vOJIm-WYTk";
-  const DEV_QQ = "1716530046";
+  const DEV_TOKEN = import.meta.env.VITE_DEV_TOKEN;
+  const DEV_QQ = import.meta.env.VITE_DEV_QQ;
   authStore.setLoginInfo(DEV_TOKEN, DEV_QQ);
-  localStorage.setItem("admin_status", "true"); // 直接强行开启管理员侧边栏
+  localStorage.setItem(
+    "admin_status",
+    import.meta.env.VITE_ADMIN_STATUS || "true",
+  );
 }
 
 app.use(router);

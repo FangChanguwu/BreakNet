@@ -21,7 +21,6 @@ import LayoutFooter from "@/components/layout/LayoutFooter.vue";
 </script>
 
 <style scoped>
-/* 专属全屏居中布局，脱离侧边栏 */
 .error-page-layout {
   display: flex;
   flex-direction: column;
@@ -37,7 +36,6 @@ import LayoutFooter from "@/components/layout/LayoutFooter.vue";
   padding: 20px;
 }
 
-/* 核心方框样式 */
 .error-box {
   background: var(--surface-color);
   border: 1px solid var(--border-color);
@@ -69,7 +67,6 @@ import LayoutFooter from "@/components/layout/LayoutFooter.vue";
   line-height: 1.1;
 }
 
-/* ✨ 修复点 1：专门为 404 写的渐变文字样式（必须包含 clip 属性） */
 .code-404 {
   background: linear-gradient(135deg, #a855f7, #3b82f6);
   background-clip: text;
@@ -102,7 +99,6 @@ import LayoutFooter from "@/components/layout/LayoutFooter.vue";
   transition: all 0.2s ease;
 }
 
-/* ✨ 修复点 2：专门为 404 按钮写的蓝色阴影和 Hover 效果 */
 .btn-404 {
   background: #3b82f6;
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);

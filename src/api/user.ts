@@ -1,7 +1,6 @@
 // src/api/user.ts
 import http from "@/utils/http";
 
-// 获取当前登录用户的积分信息
 export const fetchUserCredit = async () => {
   try {
     const res = await http.get("/user/credit");

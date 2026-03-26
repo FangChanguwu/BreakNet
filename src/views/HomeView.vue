@@ -103,7 +103,7 @@ import { useRouter } from "vue-router";
 import LoginModal from "../components/Modal.vue";
 import { authApi } from "../api/auth";
 import { useAuthStore } from "../stores/auth";
-import { storeToRefs } from "pinia"; // 👇 新增引入 storeToRefs
+import { storeToRefs } from "pinia";
 const router = useRouter();
 
 const title = "Break Net.";
@@ -118,7 +118,6 @@ const pollStatusText = ref("等待您在 Bot 处验证...");
 const currentQQ = ref("");
 
 const authStore = useAuthStore();
-// 👇 提取登录状态，确保它是响应式的
 const { isLoggedIn } = storeToRefs(authStore);
 
 const videoList = [
@@ -183,7 +182,6 @@ const onSubmit = () => {
   showModal.value = true;
 };
 
-// 👇 新增：在首页直接退出的方法
 const handleLogout = () => {
   authStore.logout();
 };
@@ -201,9 +199,6 @@ const handleLogin = async (qq: string) => {
       startPolling();
     }
   } catch (error: any) {
-    // console.log("完整的错误对象:", error);
-    // console.log("后端的响应数据:", error.response);
-
     const errorMsg = error.response?.data?.detail || "请求失败，请稍后重试";
     loginModalRef.value?.showExternalError(errorMsg);
   }
@@ -221,8 +216,6 @@ const startPolling = () => {
         stopPolling();
         pollStatusText.value = "验证成功！正在跳转...";
         authStore.setLoginInfo(data.token, currentQQ.value);
-
-        // 👇 核心修改：登录成功后跳转到 /panel
         setTimeout(() => {
           router.push("/panel");
         }, 1000);
@@ -233,9 +226,7 @@ const startPolling = () => {
         stopPolling();
         pollStatusText.value = "验证记录不存在，请重新登录";
       }
-    } catch (error) {
-      // console.error("轮询出错", error);
-    }
+    } catch (error) {}
   }, 2500);
 };
 
@@ -273,8 +264,8 @@ onUnmounted(() => {
   position: fixed;
   inset: 0;
   display: flex;
-  align-items: center; /* 垂直居中 */
-  justify-content: center; /* 水平居中 */
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   background: #000;
 }
@@ -302,7 +293,6 @@ onUnmounted(() => {
   );
 }
 
-/* 主内容容器：通过 margin-top 微调视觉重心，防止手机端偏下 */
 .main-content {
   display: flex;
   flex-direction: column;
@@ -320,19 +310,16 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: scale(1.7); /* 电脑端保持 1.7 */
+  transform: scale(1.7);
   height: 100px;
 }
 
 .login-logo {
-  /* ✨ 核心修改：固定高度，宽度自适应 */
-  height: 80px; /* 保持和你原来一样的高度视觉基准 */
-  width: auto; /* 让浏览器根据 7115:5397 的比例自动计算宽度（大约会是 79px）*/
+  height: 80px;
+  width: auto;
 
-  /* 加个保险，防止在某些极端 Flex 布局下被拉伸 */
   object-fit: contain;
 
-  /* 增加一点右边距，防止长方形的 Logo 和右边的标题贴得太近 */
   margin-right: 12px;
 
   position: relative;
@@ -344,25 +331,23 @@ onUnmounted(() => {
   display: flex;
   font-size: 2.2rem;
   font-weight: 800;
-  /* 移除 width: 0 和 overflow: hidden，改用 opacity 控制整体显示 */
+
   opacity: 0;
   white-space: nowrap;
   transition: all 1s cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* 添加斜体和特殊字体 */
   font-family: "Arial Black", Impact, sans-serif;
   font-style: italic;
   font-weight: 900;
-  letter-spacing: -1px; /* 稍微紧凑 */
+  letter-spacing: -1px;
 }
 
 .brand-wrapper.is-active .login-title {
-  /* 移除 width 限制 */
   opacity: 1;
 }
-/* --- 表单层：移除绝对定位 top:52%，改用 margin 保持比例 --- */
+
 .form-layer {
-  margin-top: 50px; /* 调整标题与按钮的固定间距 */
+  margin-top: 50px;
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
@@ -375,19 +360,16 @@ onUnmounted(() => {
   pointer-events: auto;
 }
 
-/* --- 按钮部分：响应式大小 --- */
 .action-btn {
-  /* 使用 em 单位：按钮的长宽会随 font-size 同比例缩放 */
   padding: 0.8em 3em;
 
-  /* 基础字号：根据屏幕宽度动态计算，最小不低于 14px，最大不高于 20px */
   font-size: clamp(14px, 2.5vw, 20px);
 
   font-weight: 700;
   color: #000;
   background: #fff;
   border: none;
-  border-radius: 100px; /* 足够大的圆角保持胶囊形状 */
+  border-radius: 100px;
   cursor: pointer;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
@@ -405,22 +387,21 @@ onUnmounted(() => {
   transform: scale(0.98);
 }
 
-/* --- 移动端适配核心 --- */
 @media (max-width: 768px) {
   .brand-wrapper {
-    transform: scale(1.2); /* 手机端缩小比例，防止遮挡 */
+    transform: scale(1.2);
   }
   .brand-wrapper.is-active .login-title {
-    width: auto; /* 相应调小宽度 */
+    width: auto;
   }
   .login-title {
-    font-size: 1.6rem; /* 调小字号 */
+    font-size: 1.6rem;
   }
   .form-layer {
-    margin-top: 30px; /* 手机端拉近间距 */
+    margin-top: 30px;
   }
   .main-content {
-    margin-top: -10vh; /* 手机端视觉位置再往上提一点 */
+    margin-top: -10vh;
   }
   .char-fade-in {
     padding: 0 0.1em;
@@ -448,14 +429,12 @@ onUnmounted(() => {
   opacity: 0;
   display: inline-block;
   transform: translateY(5px);
-  position: relative; /* 确保 z-index 能生效 */
+  position: relative;
 
-  /* --- 核心修复：为斜体腾出空间 --- */
-  padding: 0 0.15em; /* 左右增加内边距，防止斜体笔画被切 */
-  margin: 0 -0.1em; /* 用负外边距抵消，保持字母靠拢 */
-  line-height: 1.2; /* 防止上下被切 */
+  padding: 0 0.15em;
+  margin: 0 -0.1em;
+  line-height: 1.2;
 
-  /* 橙红渐变文字效果 */
   background: linear-gradient(135deg, #faa033, #ff4d4f);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -469,7 +448,6 @@ onUnmounted(() => {
    新增：弹窗样式
 ========================================= */
 
-/* 遮罩层：全屏、半透明黑底带一点模糊 */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -481,21 +459,19 @@ onUnmounted(() => {
   justify-content: center;
 }
 
-/* 弹窗主内容：白色圆角 */
 .modal-content {
   background: #ffffff;
   width: 85%;
   max-width: 400px;
-  border-radius: 16px; /* 大圆角 */
+  border-radius: 16px;
   padding: 30px 24px 24px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  /* 弹窗缩放出现动画 */
+
   animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* 弹窗标题：上方居中 */
 .modal-title {
   margin: 0 0 24px 0;
   font-size: 1.3rem;
@@ -504,10 +480,9 @@ onUnmounted(() => {
   text-align: center;
 }
 
-/* 输入框样式 */
 .modal-input {
   width: 100%;
-  box-sizing: border-box; /* 确保 padding 不撑破宽度 */
+  box-sizing: border-box;
   padding: 12px 16px;
   font-size: 1rem;
   color: #333;
@@ -518,10 +493,9 @@ onUnmounted(() => {
   transition: all 0.3s ease;
 }
 
-/* 输入框聚焦时的主题色反馈 */
 .modal-input:focus {
   background: #fff;
-  border-color: #ff8c00; /* 橙色边框 */
+  border-color: #ff8c00;
   box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
 }
 
@@ -529,16 +503,14 @@ onUnmounted(() => {
   color: #aaa;
 }
 
-/* 底部按钮区：右对齐 */
 .modal-footer {
   display: flex;
   justify-content: flex-end;
   margin-top: 28px;
 }
 
-/* 橙色确定按钮 */
 .confirm-btn {
-  background: #ff8c00; /* 橙色 */
+  background: #ff8c00;
   color: #fff;
   font-size: 1rem;
   font-weight: 600;
@@ -550,7 +522,7 @@ onUnmounted(() => {
 }
 
 .confirm-btn:hover {
-  background: #ff9d2e; /* hover 时稍微变亮 */
+  background: #ff9d2e;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
 }
@@ -559,7 +531,6 @@ onUnmounted(() => {
   transform: translateY(0);
 }
 
-/* Vue <transition name="fade"> 的淡入淡出动画 */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -569,7 +540,6 @@ onUnmounted(() => {
   opacity: 0;
 }
 
-/* 弹窗弹出的 keyframes */
 @keyframes modalPop {
   0% {
     transform: scale(0.9);
@@ -613,7 +583,7 @@ onUnmounted(() => {
   border-radius: 8px;
   letter-spacing: 2px;
   margin-bottom: 24px;
-  user-select: all; /* 方便用户双击复制 */
+  user-select: all;
 }
 
 .polling-status {
@@ -662,14 +632,14 @@ onUnmounted(() => {
 ========================================= */
 .code-container {
   display: flex;
-  align-items: stretch; /* 让按钮和框一样高 */
+  align-items: stretch;
   gap: 12px;
   margin-bottom: 24px;
   width: 100%;
 }
 
 .code-box {
-  flex: 1; /* 让指令框自动撑满剩余空间 */
+  flex: 1;
   background: #f4f6f8;
   border: 2px dashed #ff8c00;
   color: #ff8c00;
@@ -682,7 +652,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0; /* 移除之前的 marginBottom */
+  margin-bottom: 0;
 }
 
 .copy-btn {
@@ -716,7 +686,7 @@ onUnmounted(() => {
 }
 
 .enter-btn {
-  background: #ff8c00 !important; /* 强制覆盖原有背景色 */
+  background: #ff8c00 !important;
   color: #fff;
 }
 
@@ -726,15 +696,15 @@ onUnmounted(() => {
 }
 
 .logout-btn {
-  background: #ffffff !important; /* 纯白背景 */
-  color: #333333 !important; /* 深灰色文字，保证能看清 */
-  border: none !important; /* 纯色按钮不需要边框 */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 加一点黑色阴影让它更立体 */
+  background: #ffffff !important;
+  color: #333333 !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .logout-btn:hover {
-  background: #ff4d4f !important; /* 悬浮时变成警示红 */
-  color: #ffffff !important; /* 悬浮时文字变回纯白 */
+  background: #ff4d4f !important;
+  color: #ffffff !important;
   box-shadow: 0 4px 15px rgba(255, 77, 79, 0.4);
 }
 
@@ -742,7 +712,7 @@ onUnmounted(() => {
   position: absolute;
   top: 24px;
   right: 24px;
-  z-index: 10; /* 保证在背景上，但不会遮挡弹窗的 100 */
+  z-index: 10;
   width: 44px;
   height: 44px;
   border-radius: 50%;

@@ -54,7 +54,6 @@ import SponsorCard from "../components/panel/SponsorCard.vue";
   gap: 24px;
 }
 
-/* 预留位的通用卡片样式 */
 .col-card {
   background: var(--surface-color);
   border-radius: 16px;
@@ -80,7 +79,6 @@ import SponsorCard from "../components/panel/SponsorCard.vue";
   align-items: start;
 }
 
-/* 预留位内部样式 */
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -99,7 +97,6 @@ import SponsorCard from "../components/panel/SponsorCard.vue";
   line-height: 1.6;
 }
 
-/* 响应式 */
 @media (max-width: 1100px) {
   .two-col-layout {
     grid-template-columns: 1fr;

@@ -1,4 +1,3 @@
-/* ================= 基础容器 ================= */
 .article-page {
   display: flex;
   flex-direction: column;
@@ -10,12 +9,11 @@
 .article-container {
   flex: 1;
   width: 100%;
-  max-width: 800px; /* 适合阅读的黄金宽度 */
+  max-width: 800px;
   margin: 0 auto;
   padding: 60px 20px 80px 20px;
 }
 
-/* ================= 交互控件 ================= */
 .back-btn {
   display: inline-flex;
   align-items: center;
@@ -31,16 +29,13 @@
 
 .back-btn:hover {
   color: var(--primary-color);
-  transform: translateX(
-    -5px
-  ); /* ✨ 鼠标悬停时有个向左滑动的小动画，暗示“返回” */
+  transform: translateX(-5px);
 }
 
-/* ================= 标题与头部信息 ================= */
 .article-title {
-  font-size: 2.6rem; /* 加大字号 */
-  font-weight: 900; /* ✨ 极粗体，极其醒目 */
-  letter-spacing: 1px; /* 增加一点字间距，更显大气 */
+  font-size: 2.6rem;
+  font-weight: 900;
+  letter-spacing: 1px;
   margin: 0 0 12px 0;
   color: var(--text-main);
 }
@@ -49,28 +44,27 @@
   color: var(--text-muted);
   font-size: 0.95rem;
   margin-bottom: 40px;
-  border-bottom: 2px solid var(--surface-color); /* 换成稍微宽一点、柔和的分割线 */
+  border-bottom: 2px solid var(--surface-color);
   padding-bottom: 24px;
 }
 
-/* ================= 正文排版 (核心优化区) ================= */
 .article-content {
-  line-height: 1.85; /* ✨ 增加行高，让文字彻底“喘过气”来 */
+  line-height: 1.85;
   font-size: 1.05rem;
   color: var(--text-secondary);
 }
 
 .article-content h3 {
   color: var(--text-main);
-  margin-top: 48px; /* ✨ 加大标题上方的留白，让段落层级极其清晰 */
+  margin-top: 48px;
   margin-bottom: 16px;
   font-size: 1.4rem;
-  font-weight: 800; /* ✨ 二级标题也加粗 */
+  font-weight: 800;
 }
 
 .article-content p {
-  margin-bottom: 28px; /* ✨ 段落间距大幅加大，视觉上更轻松 */
-  text-align: justify; /* ✨ 两端对齐，右侧边缘不会变得参差不齐，极其规整 */
+  margin-bottom: 28px;
+  text-align: justify;
 }
 
 .article-content b {
@@ -78,11 +72,10 @@
   font-weight: 700;
 }
 
-/* ================= 专属卡片样式 (联系我们页) ================= */
 .contact-card {
   background: var(--surface-color);
   border: 1px solid var(--border-color);
-  border-radius: 16px; /* 更圆润的倒角 */
+  border-radius: 16px;
   padding: 28px 32px;
   margin-bottom: 24px;
   transition:
@@ -102,7 +95,7 @@
 }
 
 .contact-card p {
-  margin-bottom: 8px; /* 卡片内的文字间距稍微紧凑一点 */
+  margin-bottom: 8px;
 }
 
 .contact-card .desc {

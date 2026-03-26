@@ -17,7 +17,6 @@ import LayoutFooter from "@/components/layout/LayoutFooter.vue";
 </script>
 
 <style scoped>
-/* 专属全屏居中布局，脱离侧边栏 */
 .error-page-layout {
   display: flex;
   flex-direction: column;
@@ -33,7 +32,6 @@ import LayoutFooter from "@/components/layout/LayoutFooter.vue";
   padding: 20px;
 }
 
-/* 核心方框样式 */
 .error-box {
   background: var(--surface-color);
   border: 1px solid var(--border-color);
@@ -62,7 +60,7 @@ import LayoutFooter from "@/components/layout/LayoutFooter.vue";
   font-weight: 900;
   margin: 0;
   font-family: "Arial Black", Impact, sans-serif;
-  /* 借用你侧边栏很帅的渐变色 */
+
   background: linear-gradient(135deg, var(--primary-color), #ff4d4f);
   background-clip: text;
   -webkit-background-clip: text;

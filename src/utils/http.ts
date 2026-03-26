@@ -1,4 +1,21 @@
 import axios from "axios";
+import router from "@/router";
+import { useAuthStore } from "@/stores/auth";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  background: "var(--surface-color)",
+  color: "var(--text-main)",
+  didOpen: (toast) => {
+    toast.addEventListener("mouseenter", Swal.stopTimer);
+    toast.addEventListener("mouseleave", Swal.resumeTimer);
+  },
+});
 
 const http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -6,7 +23,6 @@ const http = axios.create({
 });
 
 http.interceptors.request.use((config) => {
-  // 因为 persist 默认以 JSON 格式存在 'auth' 这个 key 下
   const authStorage = localStorage.getItem("auth");
   if (authStorage) {
     try {
@@ -28,9 +44,15 @@ http.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
+      const authStore = useAuthStore();
+      authStore.logout();
       localStorage.removeItem("admin_status");
       localStorage.removeItem("auth");
-      window.location.href = "/";
+      Toast.fire({
+        icon: "warning",
+        title: "登录状态已失效，请重新登录",
+      });
+      router.push("/");
     }
     return Promise.reject(error);
   },

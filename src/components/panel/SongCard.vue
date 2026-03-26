@@ -127,10 +127,9 @@ const handleImageError = (e: Event) => {
 </script>
 
 <style scoped>
-/* ================= 原有保留样式 ================= */
 .card-header {
   display: flex;
-  /* 即使删了按钮，这里保持 flex 也不影响，方便以后左边加 icon 等 */
+
   align-items: center;
   margin-bottom: 24px;
 }
@@ -139,8 +138,6 @@ const handleImageError = (e: Event) => {
   font-size: 1.25rem;
   color: var(--text-main);
 }
-
-/* ✨ 已经删除了 .badge 相关的样式 */
 
 .col-card {
   background: var(--surface-color);
@@ -162,7 +159,6 @@ const handleImageError = (e: Event) => {
   border-color: var(--primary-color);
 }
 
-/* ================= 骨架屏样式 ================= */
 .song-placeholder {
   display: flex;
   gap: 20px;
@@ -212,7 +208,6 @@ const handleImageError = (e: Event) => {
   }
 }
 
-/* ================= 真实数据展示区样式 ================= */
 .song-info {
   display: flex;
   gap: 20px;

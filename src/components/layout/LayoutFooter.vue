@@ -27,7 +27,7 @@ const currentYear = new Date().getFullYear();
 <style scoped>
 .site-footer {
   background: var(--surface-color);
-  /* ✨ 加大了上下 padding，让 Footer 整体变高、更舒展 */
+
   padding: 3rem 0;
   border-top: 1px solid var(--border-color);
   margin-top: auto;
@@ -38,27 +38,25 @@ const currentYear = new Date().getFullYear();
   margin: 0 auto;
   padding: 0 40px;
   display: flex;
-  /* ✨ 改为垂直列布局，并全部居中对齐 */
+
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px; /* 控制三个板块之间的间距 */
+  gap: 12px;
   color: var(--text-muted);
   font-size: 0.95rem;
 }
 
 .footer-logo {
-  /* ✨ Logo 尺寸翻倍，更加醒目 */
   height: 100px;
   width: auto;
   margin-bottom: 8px;
-  /* 如果你想让 Logo 显得更低调沉稳，可以解开下面这行注释： */
-  /* filter: grayscale(100%) opacity(0.8); */
+
   transition: transform 0.3s ease;
 }
 
 .footer-logo:hover {
-  transform: scale(1.05); /* 鼠标放上去微微放大，增加交互感 */
+  transform: scale(1.05);
 }
 
 .copyright {
@@ -93,7 +91,6 @@ const currentYear = new Date().getFullYear();
   font-weight: bold;
 }
 
-/* 手机端适配：稍微缩小 padding 和 logo */
 @media (max-width: 768px) {
   .site-footer {
     padding: 2.5rem 0;

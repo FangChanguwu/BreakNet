@@ -46,7 +46,6 @@ const showModal = ref(false);
 </script>
 
 <style scoped>
-/* ================= 通用卡片样式 ================= */
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -69,25 +68,24 @@ const showModal = ref(false);
     transform 0.3s ease,
     box-shadow 0.3s ease,
     border-color 0.3s ease;
-  /* height: 100%; */
+
   box-sizing: border-box;
 }
 
 .col-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 25px var(--shadow-color);
-  border-color: #ff8c00; /* 赞助卡片 hover 时带点橙色强调 */
+  border-color: #ff8c00;
 }
 
-/* ================= 赞助内容区样式 ================= */
 .sponsor-content {
   display: flex;
-  gap: 30px; /* 增加一点间距，防止大图和文字挤在一起 */
+  gap: 30px;
   align-items: center;
 }
 
 .qr-wrapper {
-  position: relative; /* 为了定位悬浮遮罩 */
+  position: relative;
   flex-shrink: 0;
   width: 180px;
   height: 180px;
@@ -100,10 +98,9 @@ const showModal = ref(false);
     transform 0.3s ease,
     border-color 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  cursor: pointer; /* 鼠标变成小手，提示可点击 */
+  cursor: pointer;
 }
 
-/* 悬浮时的遮罩层，增加交互反馈 */
 .hover-mask {
   position: absolute;
   inset: 0;
@@ -113,25 +110,25 @@ const showModal = ref(false);
   justify-content: center;
   opacity: 0;
   transition: opacity 0.3s ease;
-  border-radius: 8px; /* 贴合内部图片的圆角 */
-  margin: 6px; /* 避开 padding 区域 */
+  border-radius: 8px;
+  margin: 6px;
 }
 
 .hover-mask span {
   color: #fff;
   font-weight: bold;
   font-size: 0.95rem;
-  pointer-events: none; /* 让文字不阻挡点击 */
+  pointer-events: none;
 }
 
 .qr-wrapper:hover {
   transform: scale(1.05);
   box-shadow: 0 8px 20px rgba(255, 140, 0, 0.15);
-  border-style: solid; /* 悬浮时虚线变实线 */
+  border-style: solid;
 }
 
 .qr-wrapper:hover .hover-mask {
-  opacity: 1; /* 鼠标放上去显示遮罩 */
+  opacity: 1;
 }
 
 .qr-code {
@@ -175,8 +172,8 @@ const showModal = ref(false);
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(5px); /* 背景虚化，更聚焦 */
-  z-index: 9999; /* 保证在最顶层，盖住导航栏 */
+  backdrop-filter: blur(5px);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,19 +188,19 @@ const showModal = ref(false);
   flex-direction: column;
   align-items: center;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
-  /* 弹窗弹出的微动效 */
+
   transform: scale(1);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .large-qr {
-  width: 350px; /* 放大的尺寸 */
+  width: 350px;
   height: 350px;
   object-fit: contain;
   border-radius: 8px;
   margin-bottom: 16px;
   user-select: none;
-  /* 防止手机端长按出黑框，保留原生保存图片功能 */
+
   -webkit-touch-callout: default;
 }
 
@@ -214,7 +211,6 @@ const showModal = ref(false);
   font-weight: bold;
 }
 
-/* 弹窗右上角关闭按钮 */
 .close-btn {
   position: absolute;
   top: 12px;
@@ -239,7 +235,6 @@ const showModal = ref(false);
   transform: rotate(90deg);
 }
 
-/* ================= Vue 过渡动画 ================= */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.3s ease;
@@ -265,14 +260,13 @@ const showModal = ref(false);
   }
 }
 
-/* ================= 响应式适配 ================= */
 @media (max-width: 768px) {
   .qr-wrapper {
     width: 150px;
     height: 150px;
   }
   .large-qr {
-    width: 250px; /* 手机端弹窗里的图片稍微缩小一点防止溢出 */
+    width: 250px;
     height: 250px;
   }
 }

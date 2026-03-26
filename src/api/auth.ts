@@ -1,7 +1,7 @@
 import http from "../utils/http";
 import { MD5 } from "crypto-js";
 
-const SECRET_KEY = "breakthefangchang";
+const SECRET_KEY = import.meta.env.VITE_APP_SECRET_KEY;
 
 export const authApi = {
   apply(qq: string) {

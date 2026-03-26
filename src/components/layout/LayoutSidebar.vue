@@ -68,50 +68,34 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
-import { useWindowSize } from "@vueuse/core"; // ✨ 引入 VueUse
+import { useWindowSize } from "@vueuse/core";
 import http from "@/utils/http";
 
 const route = useRoute();
-const { width } = useWindowSize(); // ✨ 自动响应式获取当前窗口宽度
+const { width } = useWindowSize();
+const isMobile = ref(false);
+const isOpen = ref(true);
 
-const initialIsMobile = window.innerWidth <= 768;
-
-const isMobile = ref(initialIsMobile);
-const isOpen = ref(!initialIsMobile);
-
-let wasMobile = initialIsMobile;
-const isAdmin = ref(false);
-const isAdminMenuOpen = ref(route.path.includes("/admin"));
-
-const checkWindowSize = () => {
-  const currentlyMobile = window.innerWidth <= 768;
-  isMobile.value = currentlyMobile;
-
-  // 只有当跨越了 768 像素的边界时，才去干预侧边栏状态
-  if (wasMobile !== currentlyMobile) {
-    isOpen.value = !currentlyMobile;
-    wasMobile = currentlyMobile;
-  }
-};
-
-const toggleAdminMenu = () => {
-  isAdminMenuOpen.value = !isAdminMenuOpen.value;
-};
 const toggleSidebar = () => {
   isOpen.value = !isOpen.value;
 };
 
-// ✨ 核心优化：监听屏幕宽度变化，智能处理适配
+// 移动端适配
 watch(
   () => width.value <= 768,
   (mobile) => {
     isMobile.value = mobile;
-    // 只有在“手机端”和“电脑端”互相切换的瞬间，才去自动改变侧边栏的状态！
-    // 这样在手机端上下滑动导致的高频微小 resize，绝对不会强行关掉用户的侧边栏
     isOpen.value = !mobile;
   },
-  { immediate: true }, // 进页面立刻执行一次，取代原先的 checkWindowSize 初始调用
+  { immediate: true },
 );
+
+const isAdmin = ref(false);
+const isAdminMenuOpen = ref(route.path.includes("/admin"));
+
+const toggleAdminMenu = () => {
+  isAdminMenuOpen.value = !isAdminMenuOpen.value;
+};
 
 const checkAdminPermission = async () => {
   const cachedStatus = localStorage.getItem("admin_status");
@@ -136,15 +120,11 @@ const checkAdminPermission = async () => {
 };
 
 onMounted(() => {
-  // ✨ 不再需要手写乱七八糟的 window.addEventListener 了！
   checkAdminPermission();
 });
-
-// ✨ onUnmounted 也被彻底删除了，VueUse 会自动帮你销毁监听器，完全不漏内存！
 </script>
 
 <style scoped>
-/* ================= 原有侧边栏样式保留 ================= */
 .sidebar {
   position: fixed;
   top: 20px;
@@ -214,7 +194,6 @@ onMounted(() => {
   cursor: pointer;
 }
 
-/* 菜单激活时的统一样式 */
 .nav-item:hover,
 .nav-item.is-active {
   background-color: rgba(255, 140, 0, 0.1);
@@ -247,7 +226,6 @@ onMounted(() => {
   color: var(--primary-color);
 }
 
-/* ✨ 新增：子菜单被选中时的高亮样式 */
 .sub-active {
   background-color: rgba(255, 140, 0, 0.05);
   color: var(--primary-color);
@@ -305,7 +283,6 @@ onMounted(() => {
   }
 }
 
-/* 展开收起动画 */
 .expand-enter-active,
 .expand-leave-active {
   transition: all 0.3s ease;
@@ -322,7 +299,6 @@ onMounted(() => {
   padding-bottom: 0;
 }
 
-/* ================= 施工中弹窗样式 (保留你原有的) ================= */
 .wip-modal-overlay {
   position: fixed;
   inset: 0;

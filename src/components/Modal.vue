@@ -42,12 +42,10 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
-// 接收父组件传来的状态
 const props = defineProps<{
   show: boolean;
 }>();
 
-// 定义向父组件发射的事件
 const emit = defineEmits<{
   (e: "update:show", value: boolean): void;
   (e: "confirm", qq: string): void;
@@ -57,7 +55,6 @@ const qqNumber = ref("");
 const isError = ref(false);
 const errorText = ref("输入内容为空");
 
-// 监听弹窗打开状态，每次打开时清空输入框
 watch(
   () => props.show,
   (newVal) => {
@@ -107,7 +104,6 @@ const closeRegisterTip = () => {
   showRegisterDialog.value = false;
 };
 
-// 向父组件暴露触发外部错误的方法
 const showExternalError = (msg: string) => {
   errorText.value = msg;
   isError.value = true;
@@ -119,7 +115,6 @@ defineExpose({
 </script>
 
 <style scoped>
-/* 遮罩层 */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -131,7 +126,6 @@ defineExpose({
   justify-content: center;
 }
 
-/* 弹窗主内容 (已应用放大的尺寸) */
 .modal-content {
   background: #ffffff;
   width: 90%;
@@ -144,7 +138,6 @@ defineExpose({
   animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* 标题 */
 .modal-title {
   margin: 0 0 28px 0;
   font-size: 1.5rem;
@@ -153,7 +146,6 @@ defineExpose({
   text-align: center;
 }
 
-/* 输入框 */
 .modal-input {
   width: 100%;
   box-sizing: border-box;
@@ -177,11 +169,10 @@ defineExpose({
   color: #aaa;
 }
 
-/* 底部按钮区 */
 .modal-footer {
   display: flex;
-  justify-content: space-between; /* 左边链接，右边按钮 */
-  align-items: center; /* 确保文字和按钮在同一水平线上 */
+  justify-content: space-between;
+  align-items: center;
   margin-top: 28px;
 }
 
@@ -213,7 +204,6 @@ defineExpose({
   }
 }
 
-/* 确定按钮 */
 .confirm-btn {
   background: #ff8c00;
   color: #fff;
@@ -236,7 +226,6 @@ defineExpose({
   transform: translateY(0);
 }
 
-/* 过渡动画 */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -257,66 +246,51 @@ defineExpose({
   }
 }
 
-/* =========================================
-   新增：错误提示文字及滑出动画
-========================================= */
-
-/* 错误提示文字样式 */
 .error-msg {
-  color: #ff4d4f; /* 与红框保持一致的红色 */
+  color: #ff4d4f;
   font-size: 0.85rem;
   margin-top: 8px;
   margin-left: 4px;
-  /* 避免占据过大空间，导致底部按钮被猛地撑开 */
   line-height: 1.2;
 }
 
-/* Vue <transition name="slide-down"> 的滑出动画 */
 .slide-down-enter-active,
 .slide-down-leave-active {
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* 初始和离开时的状态：透明且向上偏移 */
 .slide-down-enter-from,
 .slide-down-leave-to {
   opacity: 0;
   transform: translateY(-10px);
 }
 
-/* 新增：蓝色超链接样式 */
 .register-link {
-  color: #1890ff; /* 经典的链接蓝 */
+  color: #1890ff;
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .register-link:hover {
-  color: #40a9ff; /* 鼠标悬停时变亮一点 */
-  text-decoration: underline; /* 悬停时加下划线，体验更好 */
+  color: #40a9ff;
+  text-decoration: underline;
 }
 
-/* =========================================
-   新增：自定义注册提示小弹窗
-========================================= */
-
-/* 提示弹窗的遮罩层，层级(200)要比主弹窗(100)高 */
 .register-overlay {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(0, 0, 0, 0.5); /* 稍微深一点的遮罩，突出焦点 */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* 提示弹窗主体 */
 .register-dialog {
   background: #fff;
   width: 80%;
-  max-width: 300px; /* 比主弹窗小一点，层级感更强 */
+  max-width: 300px;
   border-radius: 12px;
   padding: 24px;
   text-align: center;
@@ -324,7 +298,6 @@ defineExpose({
   animation: popScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* 标题 */
 .register-title {
   margin: 0 0 12px 0;
   font-size: 1.2rem;
@@ -332,7 +305,6 @@ defineExpose({
   color: #333;
 }
 
-/* 描述文字 */
 .register-desc {
   font-size: 0.95rem;
   color: #666;
@@ -340,9 +312,8 @@ defineExpose({
   margin-bottom: 24px;
 }
 
-/* “我知道了”按钮 */
 .got-it-btn {
-  background: #1890ff; /* 蓝色按钮，呼应蓝色链接 */
+  background: #1890ff;
   color: #fff;
   border: none;
   padding: 10px 24px;
@@ -350,7 +321,7 @@ defineExpose({
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  width: 100%; /* 按钮占满弹窗底部，方便手机端点击 */
+  width: 100%;
   transition: all 0.2s ease;
 }
 
@@ -364,7 +335,6 @@ defineExpose({
   transform: translateY(0);
 }
 
-/* 复用之前的弹出放大动画 */
 @keyframes popScale {
   0% {
     transform: scale(0.8);

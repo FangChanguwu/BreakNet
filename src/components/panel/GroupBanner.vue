@@ -31,11 +31,10 @@ const copyGroupNumber = async () => {
 </script>
 
 <style scoped>
-/* 从 PanelView 抽离出来的 Banner 样式 */
 .banner-card {
   text-align: center;
   background: linear-gradient(135deg, rgba(255, 140, 0, 0.05), transparent);
-  position: relative; /* 为了定位复制提示 */
+  position: relative;
 }
 
 .banner-card h2 {
@@ -84,7 +83,6 @@ const copyGroupNumber = async () => {
   }
 }
 
-/* 引入全局卡片样式（如果你的项目中这些类是全局的可以省略，为了组件独立性建议保留） */
 .row-card {
   background: var(--surface-color);
   border-radius: 16px;

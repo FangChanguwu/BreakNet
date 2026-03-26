@@ -271,7 +271,7 @@ const closeHelp = () => {
   helpType.value = null;
 };
 
-// ✨ 新增：Toast 相关状态与控制函数
+// Toast
 const toastMsg = ref("");
 const toastType = ref<"success" | "error">("success");
 let toastTimer: any = null;
@@ -281,7 +281,7 @@ const showToast = (
   type: "success" | "error" = "success",
   duration: number = 4000,
 ) => {
-  if (toastTimer) clearTimeout(toastTimer); // 如果连点，重置定时器
+  if (toastTimer) clearTimeout(toastTimer);
   toastMsg.value = msg;
   toastType.value = type;
 
@@ -289,8 +289,6 @@ const showToast = (
     toastMsg.value = "";
   }, duration);
 };
-
-// ================= 1. 数据计算与格式化 =================
 
 const affectionLevelName = computed(() => {
   if (!creditData.value) return "";
@@ -318,8 +316,6 @@ const hasSignedInToday = computed(() => {
   const todayStr = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, "0")}${today.getDate().toString().padStart(2, "0")}`;
   return creditData.value.LastSignDate === todayStr;
 });
-
-// ================= 2. 网络请求 =================
 
 const fetchAllData = async () => {
   isLoading.value = true;
@@ -350,7 +346,6 @@ const handleSignIn = async () => {
     const res = await http.post("/user/sign");
     if (res.data?.ok) {
       const d = res.data.data;
-      // ✨ 优化：使用 HTML 格式的精美 Toast 提示
       const htmlMsg = `
         <div style="font-weight:bold; margin-bottom:4px; font-size:1.1rem;">签到成功！</div>
         <div style="color:#f59e0b;">💰 积分 +${d.added_credits}</div>
@@ -376,9 +371,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 保持原有所有样式不变 */
-/* ... (请保留你代码里原本的 .app-layout, .stats-grid, .rank-boards-container, .help-modal-overlay 等所有的 CSS) ... */
-
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -828,12 +820,11 @@ onMounted(() => {
   color: #ffffff;
 }
 
-/* ================= ✨ 新增：Toast 轻提示样式 ================= */
 .custom-toast {
   position: fixed;
-  top: 40px; /* 距离顶部的距离 */
+  top: 40px;
   left: 50%;
-  transform: translateX(-50%); /* 水平居中 */
+  transform: translateX(-50%);
   background: var(--surface-color);
   border: 1px solid var(--border-color);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -842,20 +833,20 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  z-index: 9999; /* 确保它在最顶层 */
+  z-index: 9999;
   min-width: 280px;
 }
 
 .custom-toast.success {
   border-left: 4px solid #10b981;
-} /* 成功是绿边 */
+}
 .custom-toast.error {
   border-left: 4px solid #ef4444;
-} /* 失败是红边 */
+}
 
 .toast-icon {
   font-size: 1.2rem;
-  margin-top: 2px; /* 和文字对齐 */
+  margin-top: 2px;
 }
 
 .toast-content {
@@ -863,14 +854,13 @@ onMounted(() => {
   line-height: 1.5;
 }
 
-/* Toast 滑动进入和离开的动画 */
 .toast-slide-enter-active,
 .toast-slide-leave-active {
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 带一点回弹效果 */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .toast-slide-enter-from,
 .toast-slide-leave-to {
   opacity: 0;
-  transform: translate(-50%, -30px); /* 向上缩回 */
+  transform: translate(-50%, -30px);
 }
 </style>

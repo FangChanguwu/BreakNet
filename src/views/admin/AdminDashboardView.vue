@@ -93,7 +93,6 @@ import LayoutHeader from "@/components/layout/LayoutHeader.vue";
 import LayoutFooter from "@/components/layout/LayoutFooter.vue";
 import http from "@/utils/http";
 
-// 引入 ApexCharts
 import apexchart from "vue3-apexcharts";
 import type { ApexOptions } from "apexcharts";
 
@@ -102,35 +101,32 @@ const isInitialLoading = ref(true);
 const dashboardData = ref<any>(null);
 const isPolling = ref(false);
 
-// ================= 图表数据存储 (保留最近 30 秒的数据) =================
 const MAX_POINTS = 30;
 const timeLabels = ref<string[]>([]);
 const cpuData = ref<number[]>([]);
 const qpsData = ref<number[]>([]);
 
-// 注入给图表的 Series 数据
 const cpuSeries = computed(() => [{ name: "CPU 负载", data: cpuData.value }]);
 const qpsSeries = computed(() => [{ name: "接口 QPS", data: qpsData.value }]);
 
-// ================= 图表基础配置 (暗黑风格) =================
 const commonChartOptions: ApexOptions = {
   chart: {
-    animations: { enabled: false }, // 1秒1刷，关掉动画防止闪烁
+    animations: { enabled: false },
     toolbar: { show: false },
     background: "transparent",
     zoom: { enabled: false },
   },
-  theme: { mode: "dark" }, // 完美适配你的深色后台
+  theme: { mode: "dark" },
   dataLabels: { enabled: false },
   stroke: { curve: "smooth", width: 2 },
   tooltip: { theme: "dark" },
   grid: { borderColor: "#333333", strokeDashArray: 4 },
 };
 
-// CPU 图表专属配置
+// CPU图表配置
 const cpuChartOptions = computed<ApexOptions>(() => ({
   ...commonChartOptions,
-  colors: ["#3b82f6"], // 科技蓝
+  colors: ["#3b82f6"],
   fill: {
     type: "gradient",
     gradient: {
@@ -147,10 +143,10 @@ const cpuChartOptions = computed<ApexOptions>(() => ({
   yaxis: { max: 100, min: 0, labels: { style: { colors: "#888" } } },
 }));
 
-// QPS 图表专属配置
+// QPS图表配置
 const qpsChartOptions = computed<ApexOptions>(() => ({
   ...commonChartOptions,
-  colors: ["#10b981"], // 荧光绿
+  colors: ["#10b981"],
   fill: {
     type: "gradient",
     gradient: {
@@ -167,18 +163,15 @@ const qpsChartOptions = computed<ApexOptions>(() => ({
   yaxis: { min: 0, labels: { style: { colors: "#888" } } },
 }));
 
-// ================= 请求逻辑 =================
 const fetchDashboard = async () => {
   try {
     const res = await http.get("/admin/dashboard");
     if (res.data?.ok) {
       dashboardData.value = res.data.data;
 
-      // 组装时间轴标签 (例如 "14:05:30")
       const now = new Date();
       const timeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
 
-      // 压入新数据，如果超长则抛弃旧数据
       if (timeLabels.value.length >= MAX_POINTS) {
         timeLabels.value.shift();
         cpuData.value.shift();
@@ -219,7 +212,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 基础布局 */
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -249,7 +241,6 @@ onUnmounted(() => {
   color: var(--text-muted);
 }
 
-/* 网格系统优化 */
 .stats-grid {
   display: grid;
   gap: 24px;
@@ -262,7 +253,6 @@ onUnmounted(() => {
   margin-top: 10px;
 }
 
-/* 卡片样式 */
 .stat-card {
   background: var(--surface-color);
   border: 1px solid var(--border-color);
@@ -274,7 +264,7 @@ onUnmounted(() => {
 }
 
 .chart-card {
-  padding: 20px 10px 10px 10px; /* 给图表预留更多空间 */
+  padding: 20px 10px 10px 10px;
 }
 
 .card-title {
@@ -307,23 +297,21 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .main-wrapper {
-    margin-left: 0; /* 手机端取消左侧 300px 的推挤 */
-    transition: margin-left 0.3s ease; /* 加上平滑过渡动画 */
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
   }
 
   .content-area {
-    padding: 0 20px 20px 20px; /* 手机端屏幕小，四周的留白缩小一点 */
+    padding: 0 20px 20px 20px;
   }
 
-  /* 针对用户数据页：防止表格太宽把页面撑破 */
   .table-container {
-    overflow-x: auto; /* 允许表格在手机上横向滑动 */
-    -webkit-overflow-scrolling: touch; /* 让苹果手机滑动更丝滑 */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* 针对用户数据页：搜索框适应手机宽度 */
   .search-box {
-    flex-direction: column; /* 手机上搜索框和按钮竖着排 */
+    flex-direction: column;
   }
   .search-box input {
     max-width: 100%;
