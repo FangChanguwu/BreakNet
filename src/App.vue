@@ -35,6 +35,11 @@ const handleStorageChange = (e: StorageEvent) => {
 
 onMounted(() => {
   window.addEventListener("storage", handleStorageChange);
+  
+  // 刷新网页时自动同步一次最新权限状态
+  if (authStore.isLoggedIn) {
+    authStore.refreshStatus();
+  }
 });
 
 onUnmounted(() => {

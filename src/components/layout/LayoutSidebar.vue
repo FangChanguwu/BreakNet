@@ -29,8 +29,44 @@
       <router-link to="/credit" class="nav-item" active-class="is-active">
         积分
       </router-link>
+      <router-link to="/profile" class="nav-item" active-class="is-active">
+        个人中心
+      </router-link>
 
-      <div class="nav-group" v-if="isAdmin">
+      <div class="nav-group">
+        <div
+          class="nav-item group-title"
+          @click="toggleMaimaiMenu"
+          :class="{ 'is-active': route.path.includes('/maimai') }"
+        >
+          <span>Maimai</span>
+          <span class="arrow" :class="{ 'arrow-down': isMaimaiMenuOpen }"
+            >▶</span
+          >
+        </div>
+
+        <transition name="expand">
+          <div class="sub-menu" v-show="isMaimaiMenuOpen">
+            <router-link
+              to="/maimai/songs"
+              class="sub-item"
+              active-class="sub-active"
+            >
+              🔍 乐曲查询
+            </router-link>
+            <router-link
+              v-if="authStore.isAdmin"
+              to="/maimai/delivery"
+              class="sub-item"
+              active-class="sub-active"
+            >
+              📥 Delivery
+            </router-link>
+          </div>
+        </transition>
+      </div>
+
+      <div class="nav-group" v-if="authStore.isAdmin">
         <div
           class="nav-item group-title"
           @click="toggleAdminMenu"
@@ -58,6 +94,13 @@
             >
               👥 用户数据
             </router-link>
+            <router-link
+              to="/admin/roles"
+              class="sub-item"
+              active-class="sub-active"
+            >
+              🛡️ 用户权限
+            </router-link>
           </div>
         </transition>
       </div>
@@ -69,12 +112,16 @@
 import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useWindowSize } from "@vueuse/core";
-import http from "@/utils/http";
+import { useAuthStore } from "@/stores/auth";
 
 const route = useRoute();
 const { width } = useWindowSize();
+const authStore = useAuthStore();
+
+const isOpen = ref(false);
 const isMobile = ref(false);
-const isOpen = ref(true);
+const isAdminMenuOpen = ref(false);
+const isMaimaiMenuOpen = ref(false);
 
 const toggleSidebar = () => {
   isOpen.value = !isOpen.value;
@@ -90,37 +137,16 @@ watch(
   { immediate: true },
 );
 
-const isAdmin = ref(false);
-const isAdminMenuOpen = ref(route.path.includes("/admin"));
-
 const toggleAdminMenu = () => {
   isAdminMenuOpen.value = !isAdminMenuOpen.value;
 };
 
-const checkAdminPermission = async () => {
-  const cachedStatus = localStorage.getItem("admin_status");
-  if (cachedStatus === "true") {
-    isAdmin.value = true;
-    return;
-  } else if (cachedStatus === "false") {
-    isAdmin.value = false;
-    return;
-  }
-
-  try {
-    const res = await http.get("/admin/check");
-    if (res.data?.ok) {
-      isAdmin.value = true;
-      localStorage.setItem("admin_status", "true");
-    }
-  } catch (error) {
-    isAdmin.value = false;
-    localStorage.setItem("admin_status", "false");
-  }
+const toggleMaimaiMenu = () => {
+  isMaimaiMenuOpen.value = !isMaimaiMenuOpen.value;
 };
 
 onMounted(() => {
-  checkAdminPermission();
+  // 不再在这里维护本地的 checkAdminPermission 逻辑，全部交给全局 Store 处理
 });
 </script>
 

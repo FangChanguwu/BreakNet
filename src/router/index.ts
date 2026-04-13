@@ -19,6 +19,11 @@ const Toast = Swal.mixin({
   color: "var(--text-main)",
 });
 
+import AdminRolesView from "@/views/admin/AdminRolesView.vue";
+import ProfileView from "@/views/ProfileView.vue";
+import MaimaiDeliveryView from "@/views/maimai/MaimaiDeliveryView.vue";
+import SongListView from "@/views/maimai/SongListView.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -52,7 +57,27 @@ const router = createRouter({
       name: "admin-users",
       component: AdminUsersView,
     },
+    {
+      path: "/admin/roles",
+      name: "admin-roles",
+      component: AdminRolesView,
+    },
+    {
+      path: "/maimai/delivery",
+      name: "maimai-delivery",
+      component: MaimaiDeliveryView,
+    },
+    {
+      path: "/maimai/songs",
+      name: "maimai-songs",
+      component: SongListView,
+    },
     { path: "/credit", name: "credit", component: CreditView },
+    {
+      path: "/profile",
+      name: "profile",
+      component: ProfileView,
+    },
     {
       path: "/privacy",
       name: "privacy",
@@ -71,6 +96,7 @@ router.beforeEach((to, _from, next) => {
 
   // 白名单
   const publicPaths = ["/", "/privacy", "/contact", "/403", "/404"];
+
   if (!publicPaths.includes(to.path) && !authStore.isLoggedIn) {
     Toast.fire({
       icon: "warning",

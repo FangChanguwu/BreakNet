@@ -23,17 +23,24 @@ const http = axios.create({
 });
 
 http.interceptors.request.use((config) => {
+  let token = "";
+
+  // 尝试从 localStorage 读取
   const authStorage = localStorage.getItem("auth");
   if (authStorage) {
     try {
       const authData = JSON.parse(authStorage);
       if (authData.token) {
-        config.headers = config.headers ?? {};
-        config.headers.Authorization = `Bearer ${authData.token}`;
+        token = authData.token;
       }
     } catch (e) {
       console.error("解析 token 失败", e);
     }
+  }
+
+  if (token) {
+    config.headers = config.headers ?? {};
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });

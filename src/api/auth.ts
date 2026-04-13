@@ -18,4 +18,12 @@ export const authApi = {
       params: { qq: Number(qq) },
     });
   },
+
+  register(data: any) {
+    return http.post("/auth/register", data);
+  },
+
+  login(data: any) {
+    return http.post("/auth/login", data);
+  }
 };

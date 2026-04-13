@@ -70,35 +70,15 @@
       <LoginModal
         ref="loginModalRef"
         v-model:show="showModal"
-        @confirm="handleLogin"
+        @req-login="handleLoginReq"
+        @req-register="handleRegisterReq"
       />
-
-      <transition name="fade">
-        <div v-if="showVerify" class="modal-overlay">
-          <div class="verify-card">
-            <h2 class="modal-title">等待验证</h2>
-            <p class="verify-desc">请前往 Bot 处发送以下指令：</p>
-
-            <div class="code-container">
-              <div class="code-box">/verify {{ verifyCode }}</div>
-              <button class="copy-btn" @click="copyCode">{{ copyText }}</button>
-            </div>
-
-            <div class="polling-status">
-              <span class="loading-dot"></span>
-              {{ pollStatusText }}
-            </div>
-
-            <button class="cancel-btn" @click="cancelVerify">取消登录</button>
-          </div>
-        </div>
-      </transition>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import LoginModal from "../components/Modal.vue";
 import { authApi } from "../api/auth";
@@ -111,11 +91,6 @@ const titleChars = title.split("");
 const startTextAnim = ref(false);
 const showModal = ref(false);
 const loginModalRef = ref<any>(null);
-const copyText = ref("复制");
-const showVerify = ref(false);
-const verifyCode = ref("");
-const pollStatusText = ref("等待您在 Bot 处验证...");
-const currentQQ = ref("");
 
 const authStore = useAuthStore();
 const { isLoggedIn } = storeToRefs(authStore);
@@ -135,7 +110,6 @@ const currentVideo = ref(
 );
 
 const handleVideoEnded = () => {
-  // 如果库里只有一个视频 让它重新播放
   if (videoList.length <= 1) {
     bgVideoRef.value?.play();
     return;
@@ -154,8 +128,6 @@ const handleVideoEnded = () => {
     }
   }, 100);
 };
-
-let pollTimer: number | null = null;
 
 onMounted(() => {
   if (bgVideoRef.value) {
@@ -186,77 +158,29 @@ const handleLogout = () => {
   authStore.logout();
 };
 
-const handleLogin = async (qq: string) => {
+const handleLoginReq = async (data: any) => {
   try {
-    currentQQ.value = qq;
-    const res = await authApi.apply(qq);
-    const data = res.data;
-
-    if (data.ok) {
-      verifyCode.value = data.code;
-      showModal.value = false;
-      showVerify.value = true;
-      startPolling();
+    const res = await authApi.login(data);
+    if(res.data?.ok) {
+       authStore.setLoginInfo(res.data.token, res.data.qq); 
+       router.push("/panel");
     }
-  } catch (error: any) {
-    const errorMsg = error.response?.data?.detail || "请求失败，请稍后重试";
-    loginModalRef.value?.showExternalError(errorMsg);
+  } catch(error: any) {
+    loginModalRef.value?.showExternalError(error.response?.data?.detail || "账号或密码错误");
   }
 };
 
-const startPolling = () => {
-  if (pollTimer) clearInterval(pollTimer);
-
-  pollTimer = setInterval(async () => {
+const handleRegisterReq = async (data: any) => {
     try {
-      const res = await authApi.checkStatus(currentQQ.value);
-      const data = res.data;
-
-      if (data.status === "success") {
-        stopPolling();
-        pollStatusText.value = "验证成功！正在跳转...";
-        authStore.setLoginInfo(data.token, currentQQ.value);
-        setTimeout(() => {
-          router.push("/panel");
-        }, 1000);
-      } else if (data.status === "expired") {
-        stopPolling();
-        pollStatusText.value = "验证已过期，请重新登录";
-      } else if (data.status === "not_found") {
-        stopPolling();
-        pollStatusText.value = "验证记录不存在，请重新登录";
-      }
-    } catch (error) {}
-  }, 2500);
+        const res = await authApi.register(data);
+        if(res.data?.ok) {
+            authStore.setLoginInfo(res.data.token, data.qq); 
+            router.push("/panel");
+        }
+    } catch (error: any) {
+       loginModalRef.value?.showExternalError(error.response?.data?.detail || "注册失败");
+    }
 };
-
-const stopPolling = () => {
-  if (pollTimer) {
-    clearInterval(pollTimer);
-    pollTimer = null;
-  }
-};
-
-const copyCode = async () => {
-  try {
-    await navigator.clipboard.writeText(`/verify ${verifyCode.value}`);
-    copyText.value = "已复制!";
-    setTimeout(() => {
-      copyText.value = "复制";
-    }, 2000);
-  } catch (err) {
-    alert("复制失败，请手动长按或双击选择复制");
-  }
-};
-
-const cancelVerify = () => {
-  stopPolling();
-  showVerify.value = false;
-};
-
-onUnmounted(() => {
-  stopPolling();
-});
 </script>
 
 <style scoped>
