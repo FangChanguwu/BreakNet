@@ -1,30 +1,16 @@
 <template>
-  <div class="app-layout">
-    <LayoutSidebar />
+  <main class="content-area">
+    <GroupBanner />
 
-    <div class="main-wrapper">
-      <LayoutHeader />
+    <div class="two-col-layout">
+      <SongCard />
 
-      <main class="content-area">
-        <GroupBanner />
-
-        <div class="two-col-layout">
-          <SongCard />
-
-          <SponsorCard />
-        </div>
-      </main>
-
-      <LayoutFooter />
+      <SponsorCard />
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
-import LayoutSidebar from "../components/layout/LayoutSidebar.vue";
-import LayoutHeader from "../components/layout/LayoutHeader.vue";
-import LayoutFooter from "../components/layout/LayoutFooter.vue";
-
 import GroupBanner from "../components/panel/GroupBanner.vue";
 import SongCard from "../components/panel/SongCard.vue";
 import SponsorCard from "../components/panel/SponsorCard.vue";
@@ -36,6 +22,7 @@ import SponsorCard from "../components/panel/SponsorCard.vue";
   min-height: 100vh;
   background-color: var(--bg-color);
   color: var(--text-main);
+  overflow-x: hidden;
 }
 
 .main-wrapper {
@@ -44,6 +31,7 @@ import SponsorCard from "../components/panel/SponsorCard.vue";
   flex-direction: column;
   margin-left: 300px;
   transition: margin-left 0.3s ease;
+  min-width: 0;
 }
 
 .content-area {
@@ -52,6 +40,7 @@ import SponsorCard from "../components/panel/SponsorCard.vue";
   display: flex;
   flex-direction: column;
   gap: 24px;
+  min-width: 0;
 }
 
 .col-card {
@@ -100,6 +89,12 @@ import SponsorCard from "../components/panel/SponsorCard.vue";
 @media (max-width: 1100px) {
   .two-col-layout {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1200px) {
+  .main-wrapper {
+    margin-left: 0;
   }
 }
 

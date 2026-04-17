@@ -1,9 +1,5 @@
 <template>
-  <div class="app-layout">
-    <LayoutSidebar />
-    <div class="main-wrapper">
-      <LayoutHeader />
-      <main class="content-area">
+  <main class="content-area">
         <!-- 个人信息卡片 -->
         <div class="profile-hero">
           <div class="hero-bg"></div>
@@ -75,8 +71,6 @@
         </div>
 
       </main>
-      <LayoutFooter />
-    </div>
 
     <!-- 修改昵称弹窗 -->
     <transition name="fade">
@@ -108,15 +102,10 @@
         </div>
       </div>
     </transition>
-
-  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import LayoutSidebar from "@/components/layout/LayoutSidebar.vue";
-import LayoutHeader from "@/components/layout/LayoutHeader.vue";
-import LayoutFooter from "@/components/layout/LayoutFooter.vue";
 import http from "@/utils/http";
 import Swal from "sweetalert2";
 
@@ -507,6 +496,13 @@ onMounted(fetchProfile);
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+@media (max-width: 1200px) {
+  .main-wrapper {
+    margin-left: 0;
+  }
+}
+
 @media (max-width: 768px) {
   .main-wrapper {
     margin-left: 0;
@@ -522,6 +518,19 @@ onMounted(fetchProfile);
     align-items: center;
     text-align: center;
     padding: 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .setting-row {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .modal-box {
+    padding: 24px 16px;
   }
 }
 </style>

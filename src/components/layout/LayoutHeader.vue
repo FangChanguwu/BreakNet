@@ -84,12 +84,14 @@ const handleLogout = () => {
   align-items: center;
   justify-content: flex-end;
   padding: 0 40px;
+  min-width: 0;
 }
 
 .header-right {
   display: flex;
   align-items: center;
   gap: 20px;
+  min-width: 0;
 }
 
 .theme-btn {
@@ -110,6 +112,7 @@ const handleLogout = () => {
 .user-actions {
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
 .action-btn {
@@ -157,5 +160,23 @@ const handleLogout = () => {
 .user-avatar:hover {
   transform: scale(1.1);
   border-color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+  .top-header {
+    height: auto;
+    padding: 16px 16px 12px 68px;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    padding: 8px 18px;
+  }
 }
 </style>

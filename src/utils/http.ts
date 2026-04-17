@@ -61,6 +61,22 @@ http.interceptors.response.use(
       });
       router.push("/");
     }
+    if (
+      error.response &&
+      error.response.status === 403 &&
+      typeof error.response.data?.detail === "string" &&
+      error.response.data.detail.includes("封禁")
+    ) {
+      const authStore = useAuthStore();
+      authStore.logout();
+      localStorage.removeItem("admin_status");
+      localStorage.removeItem("auth");
+      Toast.fire({
+        icon: "error",
+        title: "账号已被封禁，无法继续访问",
+      });
+      router.push("/");
+    }
     return Promise.reject(error);
   },
 );

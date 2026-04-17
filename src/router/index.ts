@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
+import AppShell from "@/components/layout/AppShell.vue";
 import PanelView from "@/views/PanelView.vue";
 import CreditView from "@/views/CreditView.vue";
 import PrivacyView from "@/views/PrivacyView.vue";
@@ -21,8 +22,17 @@ const Toast = Swal.mixin({
 
 import AdminRolesView from "@/views/admin/AdminRolesView.vue";
 import ProfileView from "@/views/ProfileView.vue";
+import MaimaiAccountView from "@/views/maimai/MaimaiAccountView.vue";
 import MaimaiDeliveryView from "@/views/maimai/MaimaiDeliveryView.vue";
+import MaimaiRandomView from "@/views/maimai/MaimaiRandomView.vue";
 import SongListView from "@/views/maimai/SongListView.vue";
+
+const rolePriority: Record<string, number> = {
+  normal: 0,
+  premium: 1,
+  admin: 2,
+  superadmin: 3,
+};
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,40 +53,58 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/panel",
-      name: "panel",
-      component: PanelView,
-    },
-    {
-      path: "/admin/dashboard",
-      name: "admin-dashboard",
-      component: AdminDashboardView,
-    },
-    {
-      path: "/admin/users",
-      name: "admin-users",
-      component: AdminUsersView,
-    },
-    {
-      path: "/admin/roles",
-      name: "admin-roles",
-      component: AdminRolesView,
-    },
-    {
-      path: "/maimai/delivery",
-      name: "maimai-delivery",
-      component: MaimaiDeliveryView,
-    },
-    {
-      path: "/maimai/songs",
-      name: "maimai-songs",
-      component: SongListView,
-    },
-    { path: "/credit", name: "credit", component: CreditView },
-    {
-      path: "/profile",
-      name: "profile",
-      component: ProfileView,
+      path: "/",
+      component: AppShell,
+      children: [
+        {
+          path: "panel",
+          name: "panel",
+          component: PanelView,
+        },
+        {
+          path: "admin/dashboard",
+          name: "admin-dashboard",
+          component: AdminDashboardView,
+        },
+        {
+          path: "admin/users",
+          name: "admin-users",
+          component: AdminUsersView,
+        },
+        {
+          path: "admin/roles",
+          name: "admin-roles",
+          component: AdminRolesView,
+        },
+        {
+          path: "maimai/account",
+          name: "maimai-account",
+          component: MaimaiAccountView,
+          meta: { minRole: "premium" },
+        },
+        {
+          path: "maimai/delivery",
+          name: "maimai-delivery",
+          component: MaimaiDeliveryView,
+          meta: { minRole: "admin" },
+        },
+        {
+          path: "maimai/songs",
+          name: "maimai-songs",
+          component: SongListView,
+        },
+        {
+          path: "maimai/random",
+          name: "maimai-random",
+          component: MaimaiRandomView,
+        },
+        { path: "credit", name: "credit", component: CreditView },
+        {
+          path: "profile",
+          name: "profile",
+          component: ProfileView,
+        },
+      ],
     },
     {
       path: "/privacy",
@@ -106,10 +134,24 @@ router.beforeEach((to, _from, next) => {
   }
 
   if (to.path.startsWith("/admin")) {
-    const isAdmin = localStorage.getItem("admin_status") === "true";
-    if (!isAdmin) {
+    if (!authStore.hasRoleAtLeast("admin")) {
       return next("/403");
     }
+  }
+
+  const minRole = typeof to.meta.minRole === "string" ? to.meta.minRole : null;
+  if (minRole && (rolePriority[authStore.role] ?? 0) < (rolePriority[minRole] ?? 0)) {
+    Toast.fire({
+      icon: "warning",
+      title: "当前账号权限不足",
+    });
+    if (to.path.startsWith("/maimai")) {
+      return next("/panel");
+    }
+    if (to.path.startsWith("/admin")) {
+      return next("/403");
+    }
+    return next("/panel");
   }
 
   next();

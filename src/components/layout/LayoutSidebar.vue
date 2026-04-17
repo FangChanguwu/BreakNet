@@ -1,48 +1,44 @@
 <template>
-  <button class="mobile-toggle-btn" @click="toggleSidebar" v-show="!isOpen">
+  <button class="mobile-toggle-btn" v-show="!isOpen" @click="toggleSidebar">
     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
       <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
     </svg>
   </button>
 
   <div
-    class="sidebar-overlay"
     v-if="isOpen && isMobile"
+    class="sidebar-overlay"
     @click="toggleSidebar"
   ></div>
 
   <aside class="sidebar" :class="{ 'is-open': isOpen }">
     <div class="sidebar-header">
-      <router-link to="/panel" class="brand-link">
+      <router-link to="/panel" class="brand-link" @click="handleNavigate">
         <h1 class="brand-title">Break Net.</h1>
       </router-link>
 
-      <button class="close-btn" v-if="isMobile" @click="toggleSidebar">
-        ×
-      </button>
+      <button class="close-btn" v-if="isMobile" @click="toggleSidebar">×</button>
     </div>
 
     <nav class="sidebar-nav">
-      <router-link to="/panel" class="nav-item" active-class="is-active">
+      <router-link to="/panel" class="nav-item" active-class="is-active" @click="handleNavigate">
         仪表盘
       </router-link>
-      <router-link to="/credit" class="nav-item" active-class="is-active">
+      <router-link to="/credit" class="nav-item" active-class="is-active" @click="handleNavigate">
         积分
       </router-link>
-      <router-link to="/profile" class="nav-item" active-class="is-active">
+      <router-link to="/profile" class="nav-item" active-class="is-active" @click="handleNavigate">
         个人中心
       </router-link>
 
       <div class="nav-group">
         <div
           class="nav-item group-title"
+          :class="{ 'is-active': route.path.startsWith('/maimai') }"
           @click="toggleMaimaiMenu"
-          :class="{ 'is-active': route.path.includes('/maimai') }"
         >
           <span>Maimai</span>
-          <span class="arrow" :class="{ 'arrow-down': isMaimaiMenuOpen }"
-            >▶</span
-          >
+          <span class="arrow" :class="{ 'arrow-down': isMaimaiMenuOpen }">▶</span>
         </div>
 
         <transition name="expand">
@@ -51,16 +47,41 @@
               to="/maimai/songs"
               class="sub-item"
               active-class="sub-active"
+              @click="handleNavigate"
             >
-              🔍 乐曲查询
+              乐曲查询
             </router-link>
+            <router-link
+              to="/maimai/random"
+              class="sub-item"
+              active-class="sub-active"
+              @click="handleNavigate"
+            >
+              随机选曲
+            </router-link>
+
+            <div v-if="authStore.isPremium" class="sub-menu-divider"></div>
+
+            <router-link
+              v-if="authStore.isPremium"
+              to="/maimai/account"
+              class="sub-item"
+              active-class="sub-active"
+              @click="handleNavigate"
+            >
+              账号管理
+            </router-link>
+
+            <div v-if="authStore.isAdmin" class="sub-menu-divider"></div>
+
             <router-link
               v-if="authStore.isAdmin"
               to="/maimai/delivery"
               class="sub-item"
               active-class="sub-active"
+              @click="handleNavigate"
             >
-              📥 Delivery
+              Delivery
             </router-link>
           </div>
         </transition>
@@ -69,13 +90,11 @@
       <div class="nav-group" v-if="authStore.isAdmin">
         <div
           class="nav-item group-title"
+          :class="{ 'is-active': route.path.startsWith('/admin') }"
           @click="toggleAdminMenu"
-          :class="{ 'is-active': route.path.includes('/admin') }"
         >
           <span>管理后台</span>
-          <span class="arrow" :class="{ 'arrow-down': isAdminMenuOpen }"
-            >▶</span
-          >
+          <span class="arrow" :class="{ 'arrow-down': isAdminMenuOpen }">▶</span>
         </div>
 
         <transition name="expand">
@@ -84,22 +103,25 @@
               to="/admin/dashboard"
               class="sub-item"
               active-class="sub-active"
+              @click="handleNavigate"
             >
-              📊 运行状态
+              运行状态
             </router-link>
             <router-link
               to="/admin/users"
               class="sub-item"
               active-class="sub-active"
+              @click="handleNavigate"
             >
-              👥 用户数据
+              用户数据
             </router-link>
             <router-link
               to="/admin/roles"
               class="sub-item"
               active-class="sub-active"
+              @click="handleNavigate"
             >
-              🛡️ 用户权限
+              用户权限
             </router-link>
           </div>
         </transition>
@@ -109,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useWindowSize } from "@vueuse/core";
 import { useAuthStore } from "@/stores/auth";
@@ -127,15 +149,11 @@ const toggleSidebar = () => {
   isOpen.value = !isOpen.value;
 };
 
-// 移动端适配
-watch(
-  () => width.value <= 768,
-  (mobile) => {
-    isMobile.value = mobile;
-    isOpen.value = !mobile;
-  },
-  { immediate: true },
-);
+const handleNavigate = () => {
+  if (isMobile.value) {
+    isOpen.value = false;
+  }
+};
 
 const toggleAdminMenu = () => {
   isAdminMenuOpen.value = !isAdminMenuOpen.value;
@@ -145,9 +163,27 @@ const toggleMaimaiMenu = () => {
   isMaimaiMenuOpen.value = !isMaimaiMenuOpen.value;
 };
 
-onMounted(() => {
-  // 不再在这里维护本地的 checkAdminPermission 逻辑，全部交给全局 Store 处理
-});
+watch(
+  () => width.value <= 1200,
+  (mobile) => {
+    isMobile.value = mobile;
+    isOpen.value = !mobile;
+  },
+  { immediate: true },
+);
+
+watch(
+  () => route.path,
+  (path) => {
+    if (path.startsWith("/maimai")) {
+      isMaimaiMenuOpen.value = true;
+    }
+    if (path.startsWith("/admin")) {
+      isAdminMenuOpen.value = true;
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped>
@@ -232,7 +268,13 @@ onMounted(() => {
   background: var(--bg-color);
   border-radius: 12px;
   margin: 0 8px 12px 8px;
-  padding: 8px 0;
+  padding: 10px 0;
+}
+
+.sub-menu-divider {
+  height: 1px;
+  margin: 10px 16px;
+  background: rgba(148, 163, 184, 0.22);
 }
 
 .sub-item {
@@ -246,6 +288,9 @@ onMounted(() => {
   cursor: pointer;
   border-radius: 8px;
   margin: 0 8px;
+  border: 0;
+  background: transparent;
+  text-align: left;
 }
 
 .sub-item:hover {
@@ -255,13 +300,14 @@ onMounted(() => {
 .sub-active {
   background-color: rgba(255, 140, 0, 0.05);
   color: var(--primary-color);
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .arrow {
   font-size: 0.8rem;
   transition: transform 0.3s;
 }
+
 .arrow-down {
   transform: rotate(90deg);
 }
@@ -285,6 +331,7 @@ onMounted(() => {
   border: none;
   font-size: 1.5rem;
   color: var(--text-muted);
+  cursor: pointer;
 }
 
 .sidebar-overlay {
@@ -295,7 +342,7 @@ onMounted(() => {
   z-index: 95;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .sidebar {
     top: 0;
     left: 0;
@@ -304,6 +351,7 @@ onMounted(() => {
     border: none;
     transform: translateX(-100%);
   }
+
   .sidebar.is-open {
     transform: translateX(0);
   }
@@ -312,9 +360,10 @@ onMounted(() => {
 .expand-enter-active,
 .expand-leave-active {
   transition: all 0.3s ease;
-  max-height: 200px;
+  max-height: 280px;
   overflow: hidden;
 }
+
 .expand-enter-from,
 .expand-leave-to {
   max-height: 0;
@@ -323,94 +372,5 @@ onMounted(() => {
   margin-bottom: 0;
   padding-top: 0;
   padding-bottom: 0;
-}
-
-.wip-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(5px);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.wip-modal-content {
-  background: var(--surface-color);
-  padding: 32px 40px;
-  border-radius: 20px;
-  text-align: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-  max-width: 90%;
-  width: 360px;
-  border: 1px solid var(--border-color);
-}
-.wip-icon {
-  font-size: 4rem;
-  margin-bottom: 16px;
-  animation: bounceWip 2s infinite;
-}
-@keyframes bounceWip {
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-15px);
-  }
-  60% {
-    transform: translateY(-7px);
-  }
-}
-.wip-title {
-  margin: 0 0 12px 0;
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: var(--text-main);
-}
-.wip-desc {
-  margin: 0 0 24px 0;
-  font-size: 0.95rem;
-  color: var(--text-muted);
-}
-.wip-confirm-btn {
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
-  padding: 10px 32px;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 24px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
-}
-.wip-confirm-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 140, 0, 0.4);
-}
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.modal-fade-enter-from,
-.modal-fade-leave-to {
-  opacity: 0;
-}
-.modal-fade-enter-active .wip-modal-content {
-  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-@keyframes popIn {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
 }
 </style>

@@ -162,7 +162,7 @@ const handleLoginReq = async (data: any) => {
   try {
     const res = await authApi.login(data);
     if(res.data?.ok) {
-       authStore.setLoginInfo(res.data.token, res.data.qq); 
+       authStore.setLoginInfo(res.data.token, res.data.qq, res.data.role); 
        router.push("/panel");
     }
   } catch(error: any) {
@@ -174,7 +174,7 @@ const handleRegisterReq = async (data: any) => {
     try {
         const res = await authApi.register(data);
         if(res.data?.ok) {
-            authStore.setLoginInfo(res.data.token, data.qq); 
+            authStore.setLoginInfo(res.data.token, data.qq, res.data.role); 
             router.push("/panel");
         }
     } catch (error: any) {
@@ -222,6 +222,8 @@ const handleRegisterReq = async (data: any) => {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  max-width: 100%;
+  padding: 24px;
   margin-top: -5vh;
 }
 
@@ -236,6 +238,8 @@ const handleRegisterReq = async (data: any) => {
   justify-content: center;
   transform: scale(1.7);
   height: 100px;
+  transform-origin: center;
+  max-width: 100%;
 }
 
 .login-logo {
@@ -276,6 +280,7 @@ const handleRegisterReq = async (data: any) => {
   transform: translateY(20px);
   pointer-events: none;
   transition: all 0.8s ease-out 1.5s;
+  max-width: 100%;
 }
 
 .form-layer.show {
@@ -312,21 +317,44 @@ const handleRegisterReq = async (data: any) => {
 }
 
 @media (max-width: 768px) {
-  .brand-wrapper {
-    transform: scale(1.2);
+  .main-content {
+    padding: 20px 16px;
+    margin-top: 0;
   }
+
+  .brand-wrapper {
+    transform: none;
+    flex-direction: column;
+    gap: 12px;
+    height: auto;
+  }
+
   .brand-wrapper.is-active .login-title {
     width: auto;
   }
+
+  .login-logo {
+    height: 64px;
+    margin-right: 0;
+    top: 0;
+  }
+
   .login-title {
     font-size: 1.6rem;
+    white-space: normal;
+    justify-content: center;
+    text-align: center;
   }
+
   .form-layer {
     margin-top: 30px;
   }
-  .main-content {
-    margin-top: -10vh;
+
+  .action-btn {
+    width: min(100%, 320px);
+    padding: 0.8em 1.5em;
   }
+
   .char-fade-in {
     padding: 0 0.1em;
     margin: 0 -0.05em;
@@ -607,6 +635,8 @@ const handleRegisterReq = async (data: any) => {
   display: flex;
   gap: 20px;
   justify-content: center;
+  flex-wrap: wrap;
+  max-width: 100%;
 }
 
 .enter-btn {

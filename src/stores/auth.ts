@@ -1,5 +1,12 @@
+import { computed, ref } from "vue";
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+
+const rolePriority: Record<string, number> = {
+  normal: 0,
+  premium: 1,
+  admin: 2,
+  superadmin: 3,
+};
 
 export const useAuthStore = defineStore(
   "auth",
@@ -9,12 +16,21 @@ export const useAuthStore = defineStore(
     const role = ref<string>("normal");
 
     const isLoggedIn = computed(() => !!token.value);
-    const isAdmin = computed(() => role.value === "admin" || role.value === "superadmin");
+    const hasRoleAtLeast = (requiredRole: string) =>
+      (rolePriority[role.value] ?? 0) >= (rolePriority[requiredRole] ?? 0);
+
+    const isPremium = computed(() => hasRoleAtLeast("premium"));
+    const isAdmin = computed(() => hasRoleAtLeast("admin"));
+
+    function syncAdminFlag() {
+      localStorage.setItem("admin_status", isAdmin.value ? "true" : "false");
+    }
 
     function setLoginInfo(newToken: string, newQq: string, newRole?: string) {
       token.value = newToken;
       qq.value = newQq;
-      if (newRole) role.value = newRole;
+      role.value = newRole || "normal";
+      syncAdminFlag();
     }
 
     function logout() {
@@ -22,32 +38,40 @@ export const useAuthStore = defineStore(
       qq.value = "";
       role.value = "normal";
       localStorage.removeItem("admin_status");
-      localStorage.removeItem("auth"); // 清理
+      localStorage.removeItem("auth");
     }
 
     async function refreshStatus() {
       if (!token.value) return;
-      
+
       try {
-        // 使用原生的 axios 或者动态导入 http 避免循环依赖
         const { default: http } = await import("@/utils/http");
-        const res = await http.get("/admin/check");
+        const res = await http.get("/auth/me");
         if (res.data?.ok) {
-          role.value = res.data.role || "admin";
-          localStorage.setItem("admin_status", "true");
-        } else {
-          role.value = "normal";
-          localStorage.setItem("admin_status", "false");
+          role.value = res.data.data?.role || "normal";
+          qq.value = String(res.data.data?.qq || qq.value);
+          syncAdminFlag();
+          return;
         }
       } catch (error) {
         console.error("Refresh status failed:", error);
-        // 如果是 401，http 拦截器会处理登出
-        // 这里的报错通常是网络问题或权限不足
-        localStorage.setItem("admin_status", "false");
       }
+
+      syncAdminFlag();
     }
 
-    return { token, qq, role, isLoggedIn, isAdmin, setLoginInfo, logout, refreshStatus };
+    return {
+      token,
+      qq,
+      role,
+      isLoggedIn,
+      isPremium,
+      isAdmin,
+      hasRoleAtLeast,
+      setLoginInfo,
+      logout,
+      refreshStatus,
+    };
   },
   {
     persist: true,

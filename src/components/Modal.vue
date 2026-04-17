@@ -27,6 +27,11 @@
             @keyup.enter="handleLoginClick"
           />
           
+          <label class="remember-row">
+            <input v-model="rememberMe" type="checkbox" class="remember-checkbox" />
+            <span>7天内免登录</span>
+          </label>
+
           <transition name="slide-down">
             <div v-if="isError" class="error-msg">{{ errorText }}</div>
           </transition>
@@ -135,6 +140,7 @@ const mode = ref<"login" | "register">("login");
 // Form Data
 const identifier = ref("");
 const password = ref("");
+const rememberMe = ref(false);
 const qqNumber = ref("");
 const username = ref("");
 const nickname = ref("");
@@ -169,6 +175,7 @@ watch(
 const resetForm = () => {
     identifier.value = "";
     password.value = "";
+    rememberMe.value = false;
     qqNumber.value = "";
     username.value = "";
     nickname.value = "";
@@ -273,7 +280,11 @@ const handleLoginClick = () => {
     showExternalError("请填满所有字段");
     return;
   }
-  emit("req-login", { identifier: identifier.value.trim(), password: password.value.trim() });
+  emit("req-login", {
+    identifier: identifier.value.trim(),
+    password: password.value.trim(),
+    remember_me: rememberMe.value,
+  });
 };
 
 
@@ -391,6 +402,24 @@ defineExpose({
 }
 
 /* QQ 验证特供区域 */
+.remember-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  margin-left: 2px;
+  color: #666;
+  font-size: 0.92rem;
+  user-select: none;
+}
+
+.remember-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #ff8c00;
+  cursor: pointer;
+}
+
 .qq-verify-group {
     display: flex;
     gap: 10px;

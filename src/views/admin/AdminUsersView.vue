@@ -1,93 +1,106 @@
 <template>
-  <div class="app-layout">
-    <LayoutSidebar />
-    <div class="main-wrapper">
-      <LayoutHeader />
-      <main class="content-area">
-        <div class="page-header">
-          <h2>👥 用户数据管理</h2>
-          <p class="subtitle">检索并修改用户数据</p>
-        </div>
-
-        <div class="admin-section">
-          <div class="section-header">
-            <div class="search-box">
-              <input
-                type="number"
-                v-model="searchQuery"
-                placeholder="输入精确QQ号检索"
-                @keyup.enter="fetchUsers"
-              />
-              <button class="search-btn" @click="fetchUsers">🔍 检索</button>
-              <button class="reset-btn" @click="resetSearch" v-if="searchQuery">
-                重置
-              </button>
-            </div>
-          </div>
-
-          <div class="table-container">
-            <table class="user-table">
-              <thead>
-                <tr>
-                  <th>QQ号</th>
-                  <th>当前积分</th>
-                  <th>好感度</th>
-                  <th>最近签到</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="user in userList" :key="user._id">
-                  <td>
-                    <div class="user-info">
-                      <img
-                        :src="`http://q1.qlogo.cn/g?b=qq&nk=${user._id}&s=100`"
-                        class="avatar-sm"
-                      />
-                      <span>{{ user._id }}</span>
-                    </div>
-                  </td>
-                  <td style="color: #ff8c00; font-weight: bold">
-                    {{ user.Credits }}
-                  </td>
-                  <td style="color: #ff4d4f; font-weight: bold">
-                    {{ user.Affection || 0 }}
-                  </td>
-                  <td>{{ user.LastSignDate || "暂无记录" }}</td>
-                  <td>
-                    <button
-                      class="action-btn edit"
-                      @click="openEditModal(user)"
-                    >
-                      编辑
-                    </button>
-                    <button class="action-btn delete" @click="deleteUser(user)">
-                      删除
-                    </button>
-                  </td>
-                </tr>
-                <tr v-if="userList.length === 0">
-                  <td colspan="5" class="empty-text">未找到数据</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
-      <LayoutFooter />
+  <main class="content-area">
+    <div class="page-header">
+      <h2>用户数据管理</h2>
+      <p class="subtitle">默认展示全部用户，按积分和好感度从高到低排序</p>
     </div>
 
+    <section class="admin-section">
+      <div class="toolbar">
+        <div class="search-box">
+          <input
+            v-model.trim="searchQuery"
+            type="text"
+            placeholder="输入 QQ 号进行模糊检索"
+            @keyup.enter="applySearch"
+          />
+          <button class="search-btn" @click="applySearch">检索</button>
+          <button v-if="searchQuery" class="reset-btn" @click="resetSearch">
+            重置
+          </button>
+        </div>
+
+        <div class="summary-text">
+          共 {{ totalUsers }} 条，当前第 {{ currentPage }} / {{ totalPages }} 页，每页 50 条
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>QQ</th>
+              <th>积分</th>
+              <th>好感度</th>
+              <th>最近签到</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="user in userList" :key="user._id">
+              <td>
+                <div class="user-info">
+                  <img
+                    :src="`http://q1.qlogo.cn/g?b=qq&nk=${user._id}&s=100`"
+                    class="avatar-sm"
+                  />
+                  <span>{{ user._id }}</span>
+                </div>
+              </td>
+              <td class="accent-credit">{{ user.Credits }}</td>
+              <td class="accent-affection">{{ user.Affection || 0 }}</td>
+              <td>{{ user.LastSignDate || "暂无记录" }}</td>
+              <td>
+                <div class="action-group">
+                  <button class="action-btn edit" @click="openEditModal(user)">
+                    编辑
+                  </button>
+                  <button class="action-btn delete" @click="deleteUser(user)">
+                    删除
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr v-if="!userList.length">
+              <td colspan="5" class="empty-text">没有符合条件的数据</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination-bar">
+        <button class="page-btn" :disabled="currentPage <= 1" @click="goToPage(currentPage - 1)">
+          上一页
+        </button>
+        <div class="page-jump">
+          <span>跳转到</span>
+          <input
+            v-model.number="pageInput"
+            type="number"
+            min="1"
+            :max="totalPages"
+            @keyup.enter="jumpToPage"
+          />
+          <span>页</span>
+          <button class="page-btn" @click="jumpToPage">前往</button>
+        </div>
+        <button class="page-btn" :disabled="currentPage >= totalPages" @click="goToPage(currentPage + 1)">
+          下一页
+        </button>
+      </div>
+    </section>
+
     <transition name="fade">
-      <div class="modal-overlay" v-if="isEditModalOpen" @click="closeEditModal">
+      <div v-if="isEditModalOpen" class="modal-overlay" @click="closeEditModal">
         <div class="modal-content" @click.stop>
-          <h3>修改数据 - QQ: {{ editingUser._id }}</h3>
+          <h3>修改数据 - QQ: {{ editingUser?._id }}</h3>
 
           <div class="form-group">
-            <label>积分 (Credits)</label>
+            <label>积分</label>
             <input type="number" v-model.number="editForm.Credits" />
           </div>
           <div class="form-group">
-            <label>好感度 (Affection)</label>
+            <label>好感度</label>
             <input type="number" v-model.number="editForm.Affection" />
           </div>
           <div class="form-group">
@@ -104,87 +117,123 @@
         </div>
       </div>
     </transition>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import LayoutSidebar from "@/components/layout/LayoutSidebar.vue";
-import LayoutHeader from "@/components/layout/LayoutHeader.vue";
-import LayoutFooter from "@/components/layout/LayoutFooter.vue";
-import http from "@/utils/http";
 import Swal from "sweetalert2";
+import http from "@/utils/http";
+
+type UserRow = {
+  _id: number;
+  Credits: number;
+  Affection?: number;
+  LastSignDate?: string;
+};
 
 const router = useRouter();
-const userList = ref<any[]>([]);
-const searchQuery = ref<string>("");
+const PAGE_SIZE = 50;
 
-// 弹窗状态
+const userList = ref<UserRow[]>([]);
+const searchQuery = ref("");
+const currentPage = ref(1);
+const totalPages = ref(1);
+const totalUsers = ref(0);
+const pageInput = ref(1);
+
 const isEditModalOpen = ref(false);
 const isSaving = ref(false);
-const editingUser = ref<any>(null);
+const editingUser = ref<UserRow | null>(null);
 const editForm = ref({ Credits: 0, Affection: 0, LastSignDate: "" });
 
-const fetchUsers = async () => {
+const fetchUsers = async (page = currentPage.value) => {
   try {
-    const params: any = { page: 1, limit: 20 };
-    if (searchQuery.value) params.search_qq = searchQuery.value;
+    const params: Record<string, string | number> = {
+      page,
+      limit: PAGE_SIZE,
+      sort_by: "credits",
+    };
+
+    if (searchQuery.value) {
+      params.search_qq = searchQuery.value;
+    }
 
     const res = await http.get("/admin/users", { params });
-    if (res.data?.ok) userList.value = res.data.data.list;
+    if (res.data?.ok) {
+      userList.value = res.data.data.list;
+      totalUsers.value = res.data.data.total || 0;
+      totalPages.value = res.data.data.total_pages || 1;
+      currentPage.value = res.data.data.page || 1;
+      pageInput.value = currentPage.value;
+    }
   } catch (error: any) {
     if (error.response?.status === 403) {
-      alert("权限不足");
       router.push("/panel");
     }
   }
 };
 
-const resetSearch = () => {
-  searchQuery.value = "";
-  fetchUsers();
+const applySearch = () => {
+  currentPage.value = 1;
+  pageInput.value = 1;
+  fetchUsers(1);
 };
 
-const openEditModal = (user: any) => {
+const resetSearch = () => {
+  searchQuery.value = "";
+  applySearch();
+};
+
+const goToPage = (page: number) => {
+  const targetPage = Math.min(Math.max(page, 1), totalPages.value);
+  fetchUsers(targetPage);
+};
+
+const jumpToPage = () => {
+  goToPage(pageInput.value || 1);
+};
+
+const openEditModal = (user: UserRow) => {
   editingUser.value = user;
   editForm.value = {
     Credits: user.Credits,
     Affection: user.Affection || 0,
-    LastSignDate: user.LastSignDate,
+    LastSignDate: user.LastSignDate || "",
   };
   isEditModalOpen.value = true;
 };
+
 const closeEditModal = () => {
   isEditModalOpen.value = false;
   editingUser.value = null;
 };
 
 const saveUserData = async () => {
+  if (!editingUser.value) return;
+
   isSaving.value = true;
   try {
-    const res = await http.put(
-      `/admin/user/${editingUser.value._id}`,
-      editForm.value,
-    );
+    const res = await http.put(`/admin/user/${editingUser.value._id}`, editForm.value);
     if (res.data?.ok) {
       closeEditModal();
       fetchUsers();
-    } else alert(res.data?.message);
+    }
   } finally {
     isSaving.value = false;
   }
 };
 
-const deleteUser = async (user: any) => {
+const deleteUser = async (user: UserRow) => {
   const result = await Swal.fire({
-    title: "⚠️ 极度危险",
-    text: `您确定要彻底删除 QQ: ${user._id} 的所有数据吗？此操作不可逆，数据将永久丢失！`,
+    title: "确认删除？",
+    text: `用户 ${user._id} 的站内数据将被彻底删除，此操作不可恢复。`,
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#ef4444",
     cancelButtonColor: "#4b5563",
-    confirmButtonText: "确定删除",
+    confirmButtonText: "确认删除",
     cancelButtonText: "取消",
     background: "var(--surface-color)",
     color: "var(--text-main)",
@@ -192,290 +241,277 @@ const deleteUser = async (user: any) => {
   });
 
   if (!result.isConfirmed) return;
+
   try {
     const res = await http.delete(`/admin/user/${user._id}`);
-
     if (res.data?.ok) {
       Swal.fire({
-        title: "已抹除",
-        text: `用户 ${user._id} 的数据已彻底从虚空中抹除！`,
+        title: "删除成功",
         icon: "success",
         background: "var(--surface-color)",
         color: "var(--text-main)",
-        confirmButtonColor: "#3b82f6",
-        timer: 2000,
-        timerProgressBar: true,
+        timer: 1800,
+        showConfirmButton: false,
       });
-      fetchUsers();
-    } else {
-      Swal.fire({
-        title: "删除失败",
-        text: res.data?.message || "请检查后端日志",
-        icon: "error",
-        background: "var(--surface-color)",
-        color: "var(--text-main)",
-      });
+
+      if (userList.value.length === 1 && currentPage.value > 1) {
+        fetchUsers(currentPage.value - 1);
+      } else {
+        fetchUsers();
+      }
     }
   } catch (error: any) {
-    if (error.response?.status === 403) {
-      Swal.fire({
-        title: "权限不足",
-        text: "只有超级管理员可以执行死刑！",
-        icon: "error",
-        background: "var(--surface-color)",
-        color: "var(--text-main)",
-      });
-    } else {
-      Swal.fire({
-        title: "网络错误",
-        text: "后端接口异常，请检查控制台",
-        icon: "error",
-        background: "var(--surface-color)",
-        color: "var(--text-main)",
-      });
-      console.error(error);
-    }
+    Swal.fire({
+      title: "删除失败",
+      text: error.response?.data?.message || error.response?.data?.detail || "网络异常",
+      icon: "error",
+      background: "var(--surface-color)",
+      color: "var(--text-main)",
+    });
   }
 };
+
 onMounted(() => fetchUsers());
 </script>
 
 <style scoped>
-.app-layout {
-  display: flex;
-  min-height: 100vh;
-  background-color: var(--bg-color);
-  color: var(--text-main);
-}
-.main-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  margin-left: 300px;
-  min-width: 0;
-}
 .content-area {
   flex: 1;
   padding: 0 40px 40px 40px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
   min-width: 0;
 }
+
 .page-header h2 {
   margin: 0 0 8px 0;
   font-size: 1.8rem;
 }
 
-.admin-section {
-  width: 100%;
-  min-width: 0;
-}
 .subtitle {
   margin: 0;
   color: var(--text-muted);
 }
 
-.section-header {
-  margin-bottom: 20px;
+.admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
 }
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .search-box {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
 }
-.search-box input {
-  padding: 10px 16px;
-  border-radius: 8px;
+
+.search-box input,
+.page-jump input,
+.form-group input {
+  padding: 10px 14px;
+  border-radius: 10px;
   border: 1px solid var(--border-color);
   background: var(--surface-color);
   color: var(--text-main);
   outline: none;
-  flex: 1;
-  max-width: 300px;
 }
+
+.search-box input {
+  min-width: 280px;
+}
+
 .search-btn,
-.reset-btn {
-  padding: 0 20px;
-  border-radius: 8px;
+.reset-btn,
+.page-btn,
+.action-btn,
+.cancel-btn,
+.save-btn {
   border: none;
-  font-weight: bold;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 700;
   cursor: pointer;
 }
-.search-btn {
+
+.search-btn,
+.save-btn,
+.action-btn.edit {
   background: var(--primary-color);
-  color: white;
+  color: #fff;
 }
-.reset-btn {
-  background: var(--bg-color);
-  border: 1px solid var(--border-color);
+
+.reset-btn,
+.page-btn,
+.cancel-btn {
+  background: var(--surface-color);
   color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+.action-btn.delete {
+  background: #ef4444;
+  color: #fff;
+}
+
+.summary-text {
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }
 
 .table-container {
   background: var(--surface-color);
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid var(--border-color);
-  width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
+
 .user-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
+
 .user-table th,
 .user-table td {
-  padding: 16px 20px;
+  padding: 16px 18px;
   border-bottom: 1px solid var(--border-color);
   white-space: nowrap;
 }
+
 .user-table th {
-  background: rgba(0, 0, 0, 0.02);
-  color: var(--text-secondary);
-  font-weight: normal;
+  color: var(--text-muted);
+  font-weight: 600;
 }
+
 .user-table tr:hover {
-  background: var(--bg-color);
+  background: rgba(255, 140, 0, 0.03);
 }
+
 .user-info {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-weight: bold;
+  font-weight: 700;
 }
+
 .avatar-sm {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
 }
 
-.action-btn {
-  padding: 6px 16px;
-  border-radius: 6px;
-  border: none;
-  background: #3b82f6;
-  color: white;
-  cursor: pointer;
-  font-size: 0.9rem;
+.accent-credit {
+  color: #ff8c00;
+  font-weight: 800;
 }
+
+.accent-affection {
+  color: #ff4d4f;
+  font-weight: 800;
+}
+
+.action-group {
+  display: flex;
+  gap: 8px;
+}
+
 .empty-text {
   text-align: center;
   color: var(--text-muted);
-  padding: 40px !important;
+}
+
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.page-jump {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+}
+
+.page-jump input {
+  width: 88px;
 }
 
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(15, 23, 42, 0.42);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
+  justify-content: center;
+  z-index: 120;
 }
+
 .modal-content {
+  width: min(460px, calc(100vw - 32px));
+  border-radius: 18px;
+  padding: 24px;
   background: var(--surface-color);
-  padding: 30px;
-  border-radius: 16px;
-  width: 400px;
   border: 1px solid var(--border-color);
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.22);
 }
+
 .modal-content h3 {
   margin-top: 0;
-  margin-bottom: 24px;
 }
+
 .form-group {
-  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-bottom: 14px;
 }
-.form-group label {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-.form-group input {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-color);
-  color: var(--text-main);
-}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 30px;
-}
-.cancel-btn,
-.save-btn {
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-.cancel-btn {
-  background: var(--bg-color);
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
-}
-.save-btn {
-  background: var(--primary-color);
-  color: white;
+  margin-top: 12px;
 }
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s;
+  transition: opacity 0.2s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
 
 @media (max-width: 768px) {
-  .main-wrapper {
-    margin-left: 0;
-    transition: margin-left 0.3s ease;
-  }
-
   .content-area {
     padding: 0 20px 20px 20px;
   }
 
-  .table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .search-box {
+  .search-box,
+  .pagination-bar,
+  .action-group,
+  .modal-actions {
     flex-direction: column;
+    align-items: stretch;
   }
+
   .search-box input {
-    max-width: 100%;
+    min-width: 0;
+    width: 100%;
   }
-}
-
-.action-btn.delete {
-  background: #ef4444;
-  margin-left: 8px;
-}
-
-.action-btn.delete:hover {
-  background: #dc2626;
-  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
-}
-
-.action-btn.edit {
-  transition: all 0.2s ease;
-}
-.action-btn.edit:hover {
-  background: #2563eb;
-  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
 }
 </style>

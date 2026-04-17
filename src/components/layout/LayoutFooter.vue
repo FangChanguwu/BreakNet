@@ -70,6 +70,8 @@ const currentYear = new Date().getFullYear();
   gap: 20px;
   align-items: center;
   margin-top: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .footer-links a {
@@ -95,8 +97,17 @@ const currentYear = new Date().getFullYear();
   .site-footer {
     padding: 2.5rem 0;
   }
+
+  .footer-content {
+    padding: 0 20px;
+  }
+
   .footer-logo {
     height: 40px;
+  }
+
+  .footer-links {
+    gap: 10px;
   }
 }
 </style>

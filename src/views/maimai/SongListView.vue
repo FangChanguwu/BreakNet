@@ -1,24 +1,30 @@
 <template>
-  <div class="app-layout">
-    <LayoutSidebar />
-
-    <div class="main-wrapper">
-      <LayoutHeader />
-
-      <main class="content-area">
+  <main class="content-area">
         <div class="page-header">
           <div class="title-section">
+            <span class="page-kicker">Maimai Song Explorer</span>
             <h2>🎵 舞萌乐曲查询</h2>
-            <p class="subtitle">Stop playing Maimai.</p>
+            <p class="subtitle">查询乐曲、筛选版本与定数，并查看谱面详情和对应谱师信息。</p>
           </div>
           <div class="search-box-wrapper">
+            <label class="search-shell">
+              <span class="search-icon">⌕</span>
             <input
               v-model="filters.search"
               type="text"
               placeholder="搜索曲名、别名或艺术家..."
               class="main-search-input"
             />
-            <button class="filter-toggle-btn" @click="showAdvanced = !showAdvanced">
+              <button
+                v-if="filters.search"
+                class="search-clear-btn"
+                type="button"
+                @click="filters.search = ''"
+              >
+                清空
+              </button>
+            </label>
+            <button class="filter-toggle-btn" type="button" @click="showAdvanced = !showAdvanced">
               {{ showAdvanced ? '收起筛选' : '高级筛选' }}
               <span class="arrow" :class="{ 'up': showAdvanced }">▼</span>
             </button>
@@ -54,8 +60,8 @@
                 </select>
               </div>
 
-              <div class="filter-group">
-                <label>BPM 范围</label>
+              <div class="filter-group range-filter">
+                <label>BPM</label>
                 <div class="range-inputs">
                   <input v-model.number="filters.bpmMin" type="number" placeholder="最小" />
                   <span>-</span>
@@ -63,8 +69,8 @@
                 </div>
               </div>
 
-              <div class="filter-group">
-                <label>等级范围</label>
+              <div class="filter-group range-filter">
+                <label>等级</label>
                 <div class="range-inputs">
                   <select v-model="filters.levelMin">
                     <option value="">不限</option>
@@ -79,7 +85,7 @@
               </div>
 
               <div class="filter-group ds-filter">
-                <label>定数筛选 (针对特定难度)</label>
+                <label>定数范围筛选</label>
                 <div class="ds-controls">
                   <select v-model="filters.dsDiff" class="diff-select">
                     <option :value="0">Basic</option>
@@ -94,13 +100,6 @@
                     <input v-model.number="filters.dsMax" type="number" step="0.1" placeholder="最大" />
                   </div>
                 </div>
-              </div>
-              
-              <div class="filter-group toggle-group">
-                <label class="checkbox-label">
-                  <input type="checkbox" v-model="filters.showUtage" />
-                  显示宴谱
-                </label>
               </div>
             </div>
             <div class="filter-actions">
@@ -123,23 +122,34 @@
 
         <div v-else class="song-list-container">
           <div class="result-stats">
-            共找到 <b>{{ filteredSongs.length }}</b> 首乐曲
+            <span>共找到 <b>{{ filteredSongs.length }}</b> 首乐曲</span>
+            <!--
+              随机选曲
+            -->
           </div>
+          <!--
+            已为你随机到 <strong>{{ randomPickedSong.title }}</strong>
+            <span>{{ randomPickedSong.basic_info.genre }} · {{ randomPickedSong.type }}</span>
+          -->
           
           <div class="song-grid">
             <div 
               v-for="song in displayedSongs" 
-              :key="song.id + song.type" 
+              :key="getSongKey(song)"
               class="song-card"
-              :class="{ 'is-expanded': expandedId === song.id }"
-              @click="toggleCard(song.id)"
+              :class="{ 'is-expanded': expandedKey === getSongKey(song) }"
+              :data-song-key="getSongKey(song)"
+              @click="toggleCard(song)"
             >
               <div class="card-inner">
-                <div class="song-id-badge">#{{ song.id }}</div>
+                <div class="card-topline">
+                  <div class="song-id-badge">#{{ song.id }}</div>
+                  <div class="song-version-badge" :class="getVersionThemeClass(song.basic_info.from)">{{ song.basic_info.from }}</div>
+                </div>
                 <div class="card-main-row">
                   <div class="cover-wrapper">
                   <img 
-                    :key="song.id"
+                    :key="getSongKey(song)"
                     :src="getCoverUrl(song.id)" 
                     alt="Cover" 
                     class="song-cover"
@@ -170,13 +180,62 @@
                       <span class="ds-text" v-if="song.ds && song.ds[idx]">({{ (song.ds[idx]).toFixed(1) }})</span>
                     </div>
                   </div>
+                  <div class="card-action-hint">
+                    {{ expandedKey === getSongKey(song) ? '点击收起详情' : '点击查看详情' }}
+                  </div>
                 </div>
               </div>
             </div>
 
               <!-- 展开详情区域 -->
               <transition name="expand">
-                <div v-if="expandedId === song.id" class="song-expanded-detail" @click.stop>
+                <div v-if="expandedKey === getSongKey(song)" class="song-expanded-detail" @click.stop>
+                  <div class="detail-hero">
+                    <div class="detail-hero-main">
+                      <p class="detail-kicker">{{ song.basic_info.from }} · {{ song.type }}</p>
+                      <h4 class="detail-song-title">{{ song.title }}</h4>
+                      <p class="detail-song-artist">{{ song.basic_info.artist }}</p>
+                    </div>
+                    <div class="detail-meta-grid">
+                      <div class="detail-meta-card">
+                        <span class="detail-meta-label">流派</span>
+                        <strong>{{ song.basic_info.genre }}</strong>
+                      </div>
+                      <div class="detail-meta-card">
+                        <span class="detail-meta-label">BPM</span>
+                        <strong>{{ song.basic_info.bpm }}</strong>
+                      </div>
+                      <div class="detail-meta-card">
+                        <span class="detail-meta-label">谱面数</span>
+                        <strong>{{ song.level.length }}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div v-if="song.aliases?.length" class="detail-section">
+                    <h4>别名</h4>
+                    <div class="alias-list">
+                      <span v-for="alias in song.aliases.slice(0, 6)" :key="alias" class="alias-pill">
+                        {{ alias }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div v-if="getCharterEntries(song).length" class="detail-section">
+                    <h4>谱师信息</h4>
+                    <div class="charter-grid">
+                      <div
+                        v-for="entry in getCharterEntries(song)"
+                        :key="entry.idx"
+                        class="charter-card"
+                        :class="`charter-${entry.idx}`"
+                      >
+                        <span class="charter-level">{{ entry.name }}</span>
+                        <strong class="charter-name">{{ entry.charter }}</strong>
+                        <span class="charter-short">{{ entry.short }}</span>
+                      </div>
+                    </div>
+                  </div>
                   <div class="detail-section">
                     <h4>📊 物量统计 (Notes)</h4>
                     <div class="notes-table-wrapper">
@@ -207,7 +266,43 @@
                   </div>
 
                   <div class="detail-section">
-                    <h4>📈 Rating 对照表 (整数分)</h4>
+                    <h4>DX分数对照表</h4>
+                    <p class="dx-score-intro">
+                      DX分理论值 = 该难度总 Notes*3。下表按各难度理论满分，给出对应星级所需的 DX 分门槛。
+                    </p>
+                    <div class="rating-table-wrapper">
+                      <table class="detail-table rating-table dx-score-table">
+                        <thead>
+                          <tr>
+                            <th>评级</th>
+                            <th>占比</th>
+                            <th v-for="(_ds, idx) in song.ds" :key="`dx-head-${idx}`">
+                              {{ getDiffNameShort(idx) }} ({{ getDxMaxScore(song, idx) }})
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="threshold in dxScoreThresholds"
+                            :key="threshold.label"
+                            :class="['dx-row', threshold.className]"
+                          >
+                            <td class="rank-cell">
+                              <span class="rank-name dx-rank-name">{{ threshold.label }}</span>
+                            </td>
+                            <td class="dx-percent-cell">{{ threshold.range }}</td>
+                            <td v-for="(_ds, idx) in song.ds" :key="`dx-score-${threshold.label}-${idx}`">
+                              {{ getDxThresholdScore(song, idx, threshold.minRatio) }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <p class="rating-tip">* “✦✦✦✦✦✦” 为玩家常用的民间 6 星定义，这里按 99.00% 一并展示。</p>
+                  </div>
+
+                  <div class="detail-section">
+                    <h4>📈 Rating 对照表</h4>
                     <div class="rating-table-wrapper">
                       <table class="detail-table rating-table">
                         <thead>
@@ -219,9 +314,20 @@
                           </tr>
                         </thead>
                         <tbody>
+                          <tr class="rank-ap">
+                            <td class="rank-cell">
+                              <span class="rank-name">AP</span>
+                              <span class="rank-ach">SSS+ 100.5%</span>
+                            </td>
+                            <td v-for="(ds, idx) in song.ds" :key="idx">
+                              {{ calcRating(ds, 100.5, 22.4) + 1 }}
+                            </td>
+                          </tr>
                           <tr v-for="threshold in ratingThresholds" :key="threshold.rank + threshold.ach" :class="threshold.class">
                             <td class="rank-cell">
-                              <span class="rank-name">{{ threshold.rank }}</span>
+                              <span class="rank-name" v-if="threshold.rank === 'SSS+'"><span class="sss-s1">S</span><span class="sss-s2">S</span><span class="sss-s3">S</span><span>+</span></span>
+                              <span class="rank-name" v-else-if="threshold.rank === 'SSS'"><span class="sss-s1">S</span><span class="sss-s2">S</span><span class="sss-s3">S</span></span>
+                              <span class="rank-name" v-else>{{ threshold.rank }}</span>
                               <span class="rank-ach">{{ threshold.ach }}%</span>
                             </td>
                             <td v-for="(ds, idx) in song.ds" :key="idx">
@@ -231,7 +337,7 @@
                         </tbody>
                       </table>
                     </div>
-                    <p class="rating-tip">* 计算不遵循四舍五入，直接取整数部分。包含 AP (+1分) 修正。</p>
+                    <p class="rating-tip">* CiRCLE的 AP+1 分机制。</p>
                   </div>
                 </div>
               </transition>
@@ -243,19 +349,12 @@
             <p>正在努力加载更多内容...</p>
           </div>
         </div>
-      </main>
-
-      <LayoutFooter />
-    </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, useTemplateRef } from "vue";
+import { ref, reactive, computed, onMounted, watch, useTemplateRef, nextTick } from "vue";
 import { useInfiniteScroll } from "@vueuse/core";
-import LayoutSidebar from "@/components/layout/LayoutSidebar.vue";
-import LayoutHeader from "@/components/layout/LayoutHeader.vue";
-import LayoutFooter from "@/components/layout/LayoutFooter.vue";
 import { maimaiApi } from "@/api/maimai";
 
 interface Song {
@@ -279,9 +378,16 @@ interface Song {
   aliases?: string[];
 }
 
+interface CharterEntry {
+  idx: number;
+  name: string;
+  short: string;
+  charter: string;
+}
+
 const loading = ref(true);
 const showAdvanced = ref(false);
-const expandedId = ref<string | null>(null);
+const expandedKey = ref<string | null>(null);
 const allSongs = ref<Song[]>([]);
 const aliases = ref<Record<string, { Name: string; Alias: string[] }>>({});
 
@@ -297,7 +403,6 @@ const filters = reactive({
   dsMin: null as number | null,
   dsMax: null as number | null,
   dsDiff: 3, // 默认 Master 难度
-  showUtage: false
 });
 
 const versions = ref<string[]>([]);
@@ -320,6 +425,16 @@ const ratingThresholds = [
   { rank: "S", ach: 97.0, coeff: 20.0, class: "rank-s" },
 ];
 
+const dxScoreThresholds = [
+  { label: "✦✦✦✦✦✦", range: "99.00% - 100.00%", minRatio: 0.99, className: "dx-six" },
+  { label: "✦✦✦✦✦", range: "97.00% - 100.00%", minRatio: 0.97, className: "dx-five" },
+  { label: "✦✦✦✦", range: "95.00% - 96.99%", minRatio: 0.95, className: "dx-four" },
+  { label: "✦✦✦", range: "93.00% - 94.99%", minRatio: 0.93, className: "dx-three" },
+  { label: "✦✦", range: "90.00% - 92.99%", minRatio: 0.9, className: "dx-two" },
+  { label: "✦", range: "85.00% - 89.99%", minRatio: 0.85, className: "dx-one" },
+  { label: "-", range: "0.00% - 84.99%", minRatio: 0, className: "dx-zero" },
+];
+
 const pageSize = 40;
 const displayCount = ref(pageSize);
 const loadMoreRef = useTemplateRef<HTMLElement>("loadMoreRef");
@@ -333,6 +448,8 @@ useInfiniteScroll(
   },
   { distance: 200 }
 );
+
+const getSongKey = (song: Song) => `${song.id}-${song.type}`;
 
 const fetchData = async () => {
   loading.value = true;
@@ -376,11 +493,6 @@ const handleImgError = (e: Event) => {
 
 const filteredSongs = computed(() => {
   let result = allSongs.value;
-
-  // 1. 基本 ID 过滤 (宴谱)
-  if (!filters.showUtage) {
-    result = result.filter(s => s.id.length < 6);
-  }
 
   // 2. 搜索过滤 (标题, 别名, 艺术家)
   if (filters.search) {
@@ -493,8 +605,33 @@ watch(() => filters, () => {
   displayCount.value = pageSize; // 筛选条件变化时重置滚动位置
 }, { deep: true });
 
-const toggleCard = (id: string) => {
-  expandedId.value = expandedId.value === id ? null : id;
+watch(filteredSongs, (songs) => {
+  if (!expandedKey.value) {
+    return;
+  }
+
+  const stillVisible = songs.some((song) => getSongKey(song) === expandedKey.value);
+  if (!stillVisible) {
+    expandedKey.value = null;
+  }
+});
+
+const scrollSongIntoView = async (songKey: string) => {
+  await nextTick();
+  const target = document.querySelector<HTMLElement>(`[data-song-key="${songKey}"]`);
+  target?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+const toggleCard = async (song: Song) => {
+  const songKey = getSongKey(song);
+  expandedKey.value = expandedKey.value === songKey ? null : songKey;
+
+  if (expandedKey.value === songKey) {
+    if (window.innerWidth <= 768 && showAdvanced.value) {
+      showAdvanced.value = false;
+    }
+    await scrollSongIntoView(songKey);
+  }
 };
 
 const getDiffName = (idx: number) => {
@@ -507,6 +644,34 @@ const getDiffNameShort = (idx: number) => {
   return names[idx] || "??";
 };
 
+const getVersionThemeClass = (version: string) => {
+  const normalized = version.toUpperCase();
+
+  if (normalized.includes("CIRCLE")) return "theme-circle";
+  if (normalized.includes("BUDDIES")) return "theme-buddies";
+  if (normalized.includes("FESTIVAL")) return "theme-festival";
+  if (normalized.includes("UNIVERSE")) return "theme-universe";
+  if (normalized.includes("SPLASH")) return "theme-splash";
+  if (normalized.includes("DX")) return "theme-dx";
+  if (normalized.includes("MILK")) return "theme-milk";
+  if (normalized.includes("MURASAKI")) return "theme-murasaki";
+  if (normalized.includes("PINK")) return "theme-pink";
+  if (normalized.includes("ORANGE")) return "theme-orange";
+  if (normalized.includes("GREEN")) return "theme-green";
+
+  return "theme-default";
+};
+
+const getCharterEntries = (song: Song): CharterEntry[] =>
+  [2, 3, 4]
+    .filter((idx) => Boolean(song.charts?.[idx]?.charter))
+    .map((idx) => ({
+      idx,
+      name: getDiffName(idx),
+      short: getDiffNameShort(idx),
+      charter: song.charts[idx].charter,
+    }));
+
 const formatNotes = (notes: number[]) => {
   if (notes.length === 4) {
     return [notes[0], notes[1], notes[2], 0, notes[3]]; // [Tap, Hold, Slide, Touch(0), Break]
@@ -518,10 +683,21 @@ const getTotalNotes = (notes: number[]) => {
   return notes.reduce((a, b) => a + b, 0);
 };
 
+const getDxMaxScore = (song: Song, idx: number) => {
+  const notes = song.charts?.[idx]?.notes;
+  if (!notes?.length) return "-";
+  return getTotalNotes(notes) * 3;
+};
+
+const getDxThresholdScore = (song: Song, idx: number, ratio: number) => {
+  const maxScore = getDxMaxScore(song, idx);
+  if (maxScore === "-") return "-";
+  return Math.ceil(Number(maxScore) * ratio);
+};
+
 const calcRating = (ds: number, ach: number, coeff: number) => {
-  // Rating = Math.floor(ds * Math.min(ach / 100, 1.005) * coeff)
   const base = ds * Math.min(ach / 100, 1.005) * coeff;
-  return Math.floor(base) + 1; // 默认显示 AP 奖励后的分值 (+1)
+  return Math.floor(base);
 };
 
 onMounted(() => {
@@ -536,6 +712,8 @@ onMounted(() => {
   background-color: var(--bg-color);
   color: var(--text-main);
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 .main-wrapper {
@@ -544,6 +722,8 @@ onMounted(() => {
   flex-direction: column;
   margin-left: 300px;
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .content-area {
@@ -552,6 +732,9 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .page-header {
@@ -581,6 +764,7 @@ onMounted(() => {
   gap: 12px;
   flex: 1;
   max-width: 600px;
+  min-width: 0;
 }
 
 .main-search-input {
@@ -637,13 +821,21 @@ onMounted(() => {
   border-radius: 20px;
   padding: 24px;
   box-shadow: 0 10px 30px var(--shadow-color);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .filter-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.range-filter {
+  grid-column: span 2;
 }
 
 .filter-group {
@@ -667,6 +859,9 @@ onMounted(() => {
   color: var(--text-main);
   outline: none;
   transition: border-color 0.2s;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .filter-group select:focus,
@@ -678,21 +873,27 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .range-inputs input,
 .range-inputs select {
   flex: 1;
-  min-width: 0;
+  min-width: 60px;
+  width: 0;
 }
 
 .ds-filter {
-  grid-column: span 2;
+  grid-column: 1 / -1;
 }
 
 .ds-controls {
   display: flex;
   gap: 12px;
+}
+
+.ds-controls .range-inputs {
+  flex: 1;
 }
 
 .diff-select {
@@ -735,6 +936,11 @@ onMounted(() => {
 
 /* 列表统计 */
 .result-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
   font-size: 0.9rem;
   color: var(--text-muted);
   margin-bottom: 16px;
@@ -744,16 +950,61 @@ onMounted(() => {
   color: var(--primary-color);
 }
 
+/* .random-pick-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  color: #fff;
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(249, 115, 22, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+} */
+
+.random-pick-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px rgba(249, 115, 22, 0.24);
+}
+
+.random-picked-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: -4px 0 18px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 237, 213, 0.86), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(249, 115, 22, 0.16);
+  color: #9a3412;
+}
+
+.random-picked-banner strong {
+  color: #7c2d12;
+}
+
+.random-picked-banner span {
+  color: #c2410c;
+  font-size: 0.84rem;
+}
+
 /* 乐曲网格 */
 .song-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .song-card {
   perspective: 1000px;
   cursor: pointer;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .song-card.is-expanded {
@@ -768,24 +1019,28 @@ onMounted(() => {
   padding: 16px;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   box-shadow: 0 4px 15px var(--shadow-color);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .song-id-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
+  position: static;
+  display: inline-flex;
+  align-items: center;
   font-size: 0.7rem;
   font-weight: bold;
   color: var(--text-muted);
   background: rgba(0,0,0,0.05);
-  padding: 2px 6px;
-  border-radius: 6px;
-  z-index: 2;
+  padding: 5px 10px;
+  border-radius: 999px;
+  z-index: 1;
 }
 
 .card-main-row {
   display: flex;
   gap: 16px;
+  margin-top: 12px;
 }
 
 .card-inner:hover {
@@ -998,6 +1253,9 @@ onMounted(() => {
   flex-direction: column;
   gap: 28px;
   animation: slideDown 0.4s ease-out;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 @keyframes slideDown {
@@ -1079,14 +1337,30 @@ onMounted(() => {
 }
 
 /* 等级色彩 */
-.rank-sssp { color: #facc15; background: rgba(250, 204, 21, 0.05); }
-.rank-sssp .rank-name { text-shadow: 0 0 10px rgba(250, 204, 21, 0.4); }
+.rank-sssp { background: rgba(250, 204, 21, 0.05); }
+.rank-sss { background: transparent; }
 
-.rank-sss { color: #fbbf24; }
-.rank-ssp { color: #94a3b8; background: rgba(148, 163, 184, 0.05); }
-.rank-ss { color: #64748b; }
-.rank-sp { color: #fb923c; background: rgba(251, 146, 60, 0.05); }
-.rank-s { color: #ea580c; }
+.sss-s1 { color: #facc15; } /* 黄 */
+.sss-s2 { color: #60a5fa; } /* 蓝 */
+.sss-s3 { color: #f87171; } /* 红 */
+
+.rank-sssp .rank-ach,
+.rank-sss .rank-ach { color: var(--text-muted); }
+
+.rank-ssp { color: #d4a017; background: rgba(212, 160, 23, 0.05); }
+.rank-ssp .rank-name { text-shadow: 0 0 6px rgba(212, 160, 23, 0.3); }
+.rank-ss { color: #d4a017; }
+.rank-sp { color: #d4a017; background: rgba(212, 160, 23, 0.05); }
+.rank-s { color: #d4a017; }
+
+.rank-ap {
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.08);
+  border-top: 2px dashed rgba(250, 204, 21, 0.4);
+}
+.rank-ap .rank-name {
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+}
 
 .rating-table td:not(.rank-cell) {
   font-weight: 600;
@@ -1101,10 +1375,423 @@ onMounted(() => {
   font-style: italic;
 }
 
+.dx-score-intro {
+  margin: 0 0 12px 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.dx-score-table .rank-cell {
+  min-width: 110px;
+}
+
+.dx-rank-name {
+  font-style: normal;
+}
+
+.dx-percent-cell {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.dx-one,
+.dx-two {
+  color: #16a34a;
+}
+
+.dx-three,
+.dx-four {
+  color: #ea580c;
+}
+
+.dx-five,
+.dx-six {
+  color: #ca8a04;
+}
+
+.page-header {
+  position: relative;
+  overflow: hidden;
+  padding: 28px;
+  border: 1px solid rgba(255, 196, 61, 0.18);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 196, 61, 0.18), transparent 24%),
+    radial-gradient(circle at left center, rgba(34, 211, 238, 0.12), transparent 28%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(247, 251, 255, 0.94));
+  box-shadow: 0 18px 36px rgba(255, 183, 3, 0.12);
+}
+
+.page-kicker {
+  display: inline-flex;
+  margin-bottom: 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 183, 3, 0.14);
+  color: #f59e0b;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.search-shell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  padding: 0 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 196, 61, 0.18);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 28px rgba(56, 189, 248, 0.08);
+}
+
+.search-icon {
+  color: #f59e0b;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.search-clear-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 10px;
+  background: rgba(148, 163, 184, 0.14);
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.result-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(45, 212, 191, 0.14);
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.card-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.song-version-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  border: 1px solid transparent;
+}
+
+.song-version-badge.theme-default {
+  background: rgba(45, 212, 191, 0.12);
+  color: #0f766e;
+}
+
+.song-version-badge.theme-circle {
+  background: rgba(236, 72, 153, 0.14);
+  border-color: rgba(236, 72, 153, 0.2);
+  color: #be185d;
+}
+
+.song-version-badge.theme-buddies {
+  background: rgba(249, 115, 22, 0.14);
+  border-color: rgba(249, 115, 22, 0.2);
+  color: #c2410c;
+}
+
+.song-version-badge.theme-festival {
+  background: rgba(234, 179, 8, 0.16);
+  border-color: rgba(234, 179, 8, 0.2);
+  color: #a16207;
+}
+
+.song-version-badge.theme-universe {
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(59, 130, 246, 0.2);
+  color: #1d4ed8;
+}
+
+.song-version-badge.theme-splash {
+  background: rgba(6, 182, 212, 0.14);
+  border-color: rgba(6, 182, 212, 0.2);
+  color: #0f766e;
+}
+
+.song-version-badge.theme-dx {
+  background: rgba(168, 85, 247, 0.14);
+  border-color: rgba(168, 85, 247, 0.2);
+  color: #7e22ce;
+}
+
+.song-version-badge.theme-milk {
+  background: rgba(148, 163, 184, 0.14);
+  border-color: rgba(148, 163, 184, 0.2);
+  color: #475569;
+}
+
+.song-version-badge.theme-murasaki {
+  background: rgba(192, 132, 252, 0.14);
+  border-color: rgba(192, 132, 252, 0.2);
+  color: #9333ea;
+}
+
+.song-version-badge.theme-pink {
+  background: rgba(244, 114, 182, 0.14);
+  border-color: rgba(244, 114, 182, 0.2);
+  color: #db2777;
+}
+
+.song-version-badge.theme-orange {
+  background: rgba(251, 146, 60, 0.14);
+  border-color: rgba(251, 146, 60, 0.2);
+  color: #ea580c;
+}
+
+.song-version-badge.theme-green {
+  background: rgba(34, 197, 94, 0.14);
+  border-color: rgba(34, 197, 94, 0.2);
+  color: #15803d;
+}
+
+.card-action-hint {
+  margin-top: 12px;
+  color: #fb8500;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.card-inner {
+  border-color: rgba(255, 196, 61, 0.16);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(246, 251, 255, 0.94)),
+    linear-gradient(135deg, rgba(255, 196, 61, 0.05), rgba(34, 211, 238, 0.05));
+  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.08);
+}
+
+.song-expanded-detail {
+  margin-top: 12px;
+  border-top: 1px solid rgba(255, 196, 61, 0.14);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 252, 255, 0.96)),
+    linear-gradient(135deg, rgba(255, 183, 3, 0.06), rgba(34, 211, 238, 0.04));
+}
+
+.detail-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 183, 3, 0.1), rgba(45, 212, 191, 0.12));
+}
+
+.detail-song-title {
+  margin: 6px 0;
+  color: #1f2937;
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
+}
+
+.detail-song-artist,
+.detail-kicker {
+  margin: 0;
+}
+
+.detail-kicker {
+  color: #0f766e;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.detail-song-artist {
+  color: #64748b;
+}
+
+.detail-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.detail-meta-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.detail-meta-label {
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.alias-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.alias-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.charter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.charter-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 18px;
+  color: #fff;
+  min-width: 0;
+}
+
+.charter-2 { background: linear-gradient(135deg, #fb7185, #ef4444); }
+.charter-3 { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+.charter-4 { background: linear-gradient(135deg, #f472b6, #db2777); }
+
+.charter-level,
+.charter-short {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.charter-name {
+  font-size: 1rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.charter-short {
+  width: fit-content;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+[data-theme="dark"] .app-layout {
+  background:
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.12), transparent 24%),
+    radial-gradient(circle at left top, rgba(45, 212, 191, 0.1), transparent 24%),
+    linear-gradient(180deg, #0f172a 0%, #111827 52%, #0b1220 100%);
+}
+
+[data-theme="dark"] .page-header,
+[data-theme="dark"] .advanced-filter-panel,
+[data-theme="dark"] .card-inner,
+[data-theme="dark"] .song-expanded-detail,
+[data-theme="dark"] .detail-meta-card,
+[data-theme="dark"] .alias-pill,
+[data-theme="dark"] .search-shell {
+  background: linear-gradient(180deg, rgba(20, 28, 43, 0.98), rgba(15, 23, 42, 0.96));
+  border-color: rgba(71, 85, 105, 0.36);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.24);
+}
+
+[data-theme="dark"] .page-header {
+  background:
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.14), transparent 24%),
+    radial-gradient(circle at left center, rgba(34, 211, 238, 0.1), transparent 28%),
+    linear-gradient(135deg, rgba(20, 28, 43, 0.98), rgba(15, 23, 42, 0.96));
+}
+
+[data-theme="dark"] .detail-hero {
+  background: linear-gradient(135deg, rgba(120, 53, 15, 0.32), rgba(17, 94, 89, 0.24));
+}
+
+[data-theme="dark"] .detail-song-title,
+[data-theme="dark"] .song-title,
+[data-theme="dark"] .main-search-input {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .detail-song-artist,
+[data-theme="dark"] .detail-kicker,
+[data-theme="dark"] .detail-meta-label,
+[data-theme="dark"] .song-artist,
+[data-theme="dark"] .dx-percent-cell,
+[data-theme="dark"] .page-kicker,
+[data-theme="dark"] .subtitle {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .song-id-badge,
+[data-theme="dark"] .genre-tag,
+[data-theme="dark"] .bpm-tag,
+[data-theme="dark"] .detail-table th,
+[data-theme="dark"] .rating-table .rank-cell,
+[data-theme="dark"] .total-notes {
+  background: rgba(30, 41, 59, 0.9);
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .random-picked-banner {
+  background: linear-gradient(135deg, rgba(120, 53, 15, 0.4), rgba(30, 41, 59, 0.92));
+  border-color: rgba(249, 115, 22, 0.22);
+  color: #fdba74;
+}
+
+[data-theme="dark"] .random-picked-banner strong {
+  color: #ffedd5;
+}
+
+[data-theme="dark"] .random-picked-banner span,
+[data-theme="dark"] .card-action-hint {
+  color: #fb923c;
+}
+
+[data-theme="dark"] .filter-group select,
+[data-theme="dark"] .filter-group input {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(71, 85, 105, 0.36);
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .notes-table-wrapper,
+[data-theme="dark"] .rating-table-wrapper {
+  border-color: rgba(71, 85, 105, 0.36);
+}
+
 @media (max-width: 1200px) {
   .main-wrapper { margin-left: 260px; }
   .filter-grid { grid-template-columns: repeat(2, 1fr); }
   .ds-filter { grid-column: span 2; }
+  .range-filter { grid-column: span 2; }
 }
 
 @media (max-width: 1024px) {
@@ -1113,44 +1800,97 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
+  .app-layout,
+  .main-wrapper,
+  .content-area {
+    overflow-x: clip;
+  }
+
+  .content-area {
+    padding: 0 16px 20px;
+  }
+
   .page-header {
     flex-direction: column;
     align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 18px;
   }
   .search-box-wrapper {
     max-width: none;
     flex-direction: column;
     width: 100%;
+    min-width: 0;
   }
   .main-search-input {
     width: 100%;
+    min-width: 0;
+  }
+  .search-shell {
+    width: 100%;
+    box-sizing: border-box;
   }
   .filter-toggle-btn {
     width: 100%;
     justify-content: center;
     padding: 12px;
+    min-width: 0;
+  }
+  .random-pick-btn {
+    width: 100%;
+    justify-content: center;
   }
   .advanced-filter-panel {
     padding: 16px;
+    border-radius: 12px;
   }
+
   .filter-grid {
     grid-template-columns: 1fr;
   }
   .ds-filter {
     grid-column: span 1;
   }
+  .range-filter {
+    grid-column: span 1;
+  }
   .ds-controls {
     flex-direction: column;
+  }
+
+  .range-inputs {
+    flex-wrap: wrap;
+  }
+
+  .diff-select {
+    flex: unset;
+    width: 100%;
+  }
+
+  .song-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
   }
 
   .song-expanded-detail {
     padding: 16px;
     padding-top: 32px;
   }
+  .detail-meta-grid,
+  .charter-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .alias-list {
+    justify-content: center;
+  }
+
   .card-main-row {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    width: 100%;
+    min-width: 0;
   }
   .cover-wrapper {
     width: 140px;
@@ -1160,21 +1900,32 @@ onMounted(() => {
     width: 100%;
     align-items: center;
   }
+  .song-title,
+  .song-artist {
+    max-width: 100%;
+  }
   .song-tags {
     justify-content: center;
+    flex-wrap: wrap;
   }
   .difficulty-row {
     justify-content: center;
   }
+  .card-action-hint {
+    text-align: center;
+  }
+
+  .notes-table-wrapper,
+  .rating-table-wrapper {
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
   .rank-cell {
     background: var(--bg-color) !important;
     min-width: 80px;
-  }
-  .rating-table-wrapper {
-    margin: 0 -16px;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
   }
   .detail-table th, .detail-table td {
     padding: 8px 6px;

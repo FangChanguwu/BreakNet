@@ -1,11 +1,5 @@
 <template>
-  <div class="app-layout">
-    <LayoutSidebar />
-
-    <div class="main-wrapper">
-      <LayoutHeader />
-
-      <main class="content-area">
+  <main class="content-area">
         <div class="page-header">
           <div class="title-row">
             <h2>💰 我的积分</h2>
@@ -128,10 +122,16 @@
                     </div>
                     <img
                       class="rank-avatar"
-                      :src="`http://q1.qlogo.cn/g?b=qq&nk=${item.qq}&s=100`"
-                      :title="'QQ: ' + item.qq"
+                      :src="item.avatar_url"
+                      :title="item.display_name"
                       alt="avatar"
                     />
+                    <div class="rank-user">
+                      <div class="rank-name-row">
+                        <span class="rank-name">{{ item.display_name }}</span>
+                      </div>
+                      <span v-if="item.secondary_name" class="rank-meta">{{ item.secondary_name }}</span>
+                    </div>
                   </div>
                   <div class="rank-score">
                     {{ item.score }} <span>pts</span>
@@ -164,10 +164,16 @@
                     </div>
                     <img
                       class="rank-avatar"
-                      :src="`http://q1.qlogo.cn/g?b=qq&nk=${item.qq}&s=100`"
-                      :title="'QQ: ' + item.qq"
+                      :src="item.avatar_url"
+                      :title="item.display_name"
                       alt="avatar"
                     />
+                    <div class="rank-user">
+                      <div class="rank-name-row">
+                        <span class="rank-name">{{ item.display_name }}</span>
+                      </div>
+                      <span v-if="item.secondary_name" class="rank-meta">{{ item.secondary_name }}</span>
+                    </div>
                   </div>
                   <div class="rank-score affection-color">
                     {{ item.score }} <span>♥</span>
@@ -179,11 +185,6 @@
         </template>
 
         <div v-else class="error-msg">获取资产数据失败，请刷新页面重试。</div>
-      </main>
-
-      <LayoutFooter />
-    </div>
-
     <transition name="fade">
       <div class="help-modal-overlay" v-if="helpType" @click="closeHelp">
         <div class="help-modal-content" @click.stop>
@@ -239,14 +240,11 @@
         <div class="toast-content" v-html="toastMsg"></div>
       </div>
     </transition>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import LayoutSidebar from "@/components/layout/LayoutSidebar.vue";
-import LayoutHeader from "@/components/layout/LayoutHeader.vue";
-import LayoutFooter from "@/components/layout/LayoutFooter.vue";
 import http from "@/utils/http";
 
 interface CreditData {
@@ -258,10 +256,31 @@ interface CreditData {
   TotalSignCount: number;
 }
 
+interface RankItem {
+  rank: number;
+  qq: number;
+  score: number;
+  is_me: boolean;
+  display_name: string;
+  secondary_name: string;
+  registered: boolean;
+  avatar_url: string;
+}
+
+interface RankSection {
+  list: RankItem[];
+  my_rank: string | number;
+}
+
+interface RankData {
+  credit_rank: RankSection;
+  affection_rank: RankSection;
+}
+
 const isLoading = ref(true);
 const isSigning = ref(false);
 const creditData = ref<CreditData | null>(null);
-const rankData = ref<any>(null);
+const rankData = ref<RankData | null>(null);
 
 const helpType = ref<"credit" | "affection" | null>(null);
 const openHelp = (type: "credit" | "affection") => {
@@ -384,6 +403,7 @@ onMounted(() => {
   flex-direction: column;
   margin-left: 300px;
   transition: margin-left 0.3s ease;
+  min-width: 0;
 }
 .content-area {
   flex: 1;
@@ -391,10 +411,19 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 32px;
+  min-width: 0;
 }
 
 .page-header {
   margin-bottom: 8px;
+  padding: 28px;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 196, 61, 0.16);
+  background:
+    radial-gradient(circle at top right, rgba(255, 196, 61, 0.16), transparent 22%),
+    radial-gradient(circle at left center, rgba(56, 189, 248, 0.1), transparent 26%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(247, 251, 255, 0.94));
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08);
 }
 .title-row {
   display: flex;
@@ -616,11 +645,12 @@ onMounted(() => {
   margin-top: 10px;
 }
 .rank-section {
-  background: var(--surface-color);
-  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.94));
+  border-radius: 22px;
   padding: 24px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 15px var(--shadow-color);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
   flex: 0 1 360px;
   min-width: 280px;
 }
@@ -636,12 +666,12 @@ onMounted(() => {
   color: var(--text-main);
 }
 .my-rank-badge {
-  background: var(--bg-color);
-  padding: 4px 12px;
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 6px 12px;
+  border-radius: 999px;
   font-size: 0.85rem;
   color: var(--text-muted);
-  border: 1px solid var(--border-color);
+  border: 1px solid rgba(148, 163, 184, 0.16);
 }
 .my-rank-badge b {
   color: var(--primary-color);
@@ -656,25 +686,29 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
-  border-radius: 12px;
-  background: var(--bg-color);
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.12);
   transition:
     transform 0.2s,
-    background 0.3s;
+    background 0.3s,
+    box-shadow 0.3s;
 }
 .rank-item:hover {
-  transform: translateX(5px);
-  background: var(--surface-color);
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
 }
 .rank-item.is-me {
-  border: 1px solid var(--primary-color);
-  background: rgba(var(--primary-color-rgb), 0.05);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  background: linear-gradient(135deg, rgba(255, 237, 213, 0.72), rgba(255, 255, 255, 0.96));
 }
 .rank-left {
   display: flex;
   align-items: center;
   gap: 16px;
+  min-width: 0;
 }
 .rank-num {
   width: 28px;
@@ -699,15 +733,42 @@ onMounted(() => {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: 2px solid var(--border-color);
+  border: 2px solid rgba(255, 255, 255, 0.96);
   object-fit: cover;
-  cursor: help;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
+}
+.rank-user {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.rank-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.rank-name {
+  color: #0f172a;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.2;
+  word-break: break-word;
+}
+.rank-meta {
+  color: #64748b;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  word-break: break-word;
 }
 .rank-score {
   font-weight: 900;
   font-size: 1.1rem;
   color: #ff8c00;
   text-align: right;
+  flex-shrink: 0;
 }
 .rank-score.affection-color {
   color: #ff4d4f;
@@ -797,8 +858,42 @@ onMounted(() => {
   .title-row {
     flex-wrap: wrap;
   }
+
+  .sign-btn {
+    width: 100%;
+  }
+
+  .rank-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .rank-item {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .rank-left {
+    min-width: 0;
+    gap: 10px;
+  }
+
+  .rank-score {
+    font-size: 1rem;
+  }
+
   .rank-section {
     flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .custom-toast {
+    top: 20px;
+    width: calc(100vw - 32px);
+    min-width: 0;
+    max-width: 420px;
+    padding: 14px 16px;
   }
 }
 
@@ -862,5 +957,82 @@ onMounted(() => {
 .toast-slide-leave-to {
   opacity: 0;
   transform: translate(-50%, -30px);
+}
+
+[data-theme="dark"] .page-header {
+  border-color: rgba(251, 191, 36, 0.18);
+  background:
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.16), transparent 22%),
+    radial-gradient(circle at left center, rgba(56, 189, 248, 0.12), transparent 26%),
+    linear-gradient(135deg, rgba(20, 28, 43, 0.96), rgba(15, 23, 42, 0.96));
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28);
+}
+
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .rank-section {
+  background: linear-gradient(180deg, rgba(21, 29, 45, 0.98), rgba(17, 24, 39, 0.96));
+  border-color: rgba(71, 85, 105, 0.4);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.22);
+}
+
+[data-theme="dark"] .card-icon,
+[data-theme="dark"] .help-modal-content,
+[data-theme="dark"] .close-modal-btn,
+[data-theme="dark"] .skeleton-icon,
+[data-theme="dark"] .skeleton-text .line {
+  background: rgba(30, 41, 59, 0.96);
+}
+
+[data-theme="dark"] .highlight-card {
+  background: linear-gradient(145deg, rgba(21, 29, 45, 0.98) 60%, rgba(255, 140, 0, 0.16));
+}
+
+[data-theme="dark"] .affection-card {
+  background: linear-gradient(145deg, rgba(21, 29, 45, 0.98) 60%, rgba(255, 77, 79, 0.12));
+}
+
+[data-theme="dark"] .aff-level {
+  background: rgba(255, 77, 79, 0.16);
+}
+
+[data-theme="dark"] .rank-item {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(71, 85, 105, 0.34);
+}
+
+[data-theme="dark"] .rank-item:hover {
+  background: rgba(17, 24, 39, 0.96);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.24);
+}
+
+[data-theme="dark"] .rank-item.is-me {
+  border-color: rgba(249, 115, 22, 0.35);
+  background: linear-gradient(135deg, rgba(91, 45, 12, 0.5), rgba(17, 24, 39, 0.96));
+}
+
+[data-theme="dark"] .my-rank-badge,
+[data-theme="dark"] .modal-close,
+[data-theme="dark"] .custom-toast {
+  background: rgba(15, 23, 42, 0.96);
+  border-color: rgba(71, 85, 105, 0.34);
+}
+
+[data-theme="dark"] .rank-name {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .rank-meta,
+[data-theme="dark"] .my-rank-badge {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .error-msg {
+  background: rgba(127, 29, 29, 0.24);
+}
+
+@media (max-width: 1200px) {
+  .main-wrapper {
+    margin-left: 0;
+  }
 }
 </style>
