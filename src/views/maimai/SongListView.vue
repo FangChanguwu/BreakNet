@@ -536,23 +536,20 @@ const filteredSongs = computed(() => {
       if (l.includes('+')) val += 0.7;
       return val;
     };
+    const getLevelUpperBound = (l: string) => {
+      const val = getLevelVal(l);
+      if (val === null) return null;
+      return l.includes('+') ? Math.floor(val) + 0.9 : Math.floor(val) + 0.5;
+    };
     const minVal = getLevelVal(filters.levelMin);
-    const maxVal = getLevelVal(filters.levelMax);
+    const maxVal = filters.levelMax ? getLevelUpperBound(filters.levelMax) : null;
     
     result = result.filter(s => {
-      // 只要乐曲中【任何一个】难度在指定范围内，就显示该乐曲
       return s.level.some(l => {
         const v = getLevelVal(l);
         if (v === null) return false;
         if (minVal !== null && v < minVal) return false;
-        // 注意：如果用户选了 12 作为上限，通常希望包含 12 和 12+，但目前 12+ 是 12.7
-        // 所以我们对 maxVal 的判断稍作调整：如果 maxVal 是整数且不带 +，则允许到 x.9
-        let effectiveMax = maxVal;
-        if (maxVal !== null && !filters.levelMax.includes('+')) {
-          effectiveMax = Math.floor(maxVal) + 0.9;
-        }
-
-        if (effectiveMax !== null && v > effectiveMax) return false;
+        if (maxVal !== null && v > maxVal) return false;
         return true;
       });
     });
@@ -824,6 +821,7 @@ onMounted(() => {
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  overflow: visible;
 }
 
 .filter-grid {
@@ -831,7 +829,7 @@ onMounted(() => {
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-bottom: 24px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .range-filter {
@@ -842,6 +840,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
+  z-index: 2;
 }
 
 .filter-group label {
@@ -862,6 +862,15 @@ onMounted(() => {
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
+}
+
+.filter-group select {
+  appearance: auto;
+  -webkit-appearance: menulist;
+  font-size: 16px;
+  line-height: 1.2;
+  position: relative;
+  z-index: 3;
 }
 
 .filter-group select:focus,

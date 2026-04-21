@@ -66,36 +66,49 @@
             @input="clearError"
           />
           
-          <!-- QQ 复合验证区域 -->
+          <!-- QQ 邮箱验证区域 -->
           <div class="qq-verify-group mt-3">
             <input
-              v-model="qqNumber"
-              type="text"
+              v-model="emailAddress"
+              type="email"
               class="modal-input qq-input"
-              placeholder="输入验证QQ号"
-              :disabled="verifyStatus === 'waiting' || verifyStatus === 'success'"
-              @input="clearError"
+              placeholder="输入用于验证的 QQ 邮箱"
+              :disabled="isVerifyBusy || verifyStatus === 'success'"
+              @input="handleEmailInput"
             />
             <button 
                 class="verify-btn" 
-                :class="{ 'is-waiting': verifyStatus === 'waiting', 'is-success': verifyStatus === 'success' }"
-                :disabled="verifyStatus === 'waiting' || verifyStatus === 'success'"
-                @click="startVerification"
+                :class="{ 'is-waiting': isVerifyBusy, 'is-success': verifyStatus === 'success' }"
+                :disabled="isVerifyBusy"
+                @click="sendEmailCode"
             >
               {{ verifyBtnText }}
             </button>
           </div>
 
-          <!-- 内联验证码提示部分 -->
           <transition name="slide-down">
-            <div v-if="verifyStatus === 'waiting'" class="inline-verify-area">
+            <div v-if="showCodeInput" class="inline-verify-area">
                <div class="verify-instructions">
-                 请给Bot发送指令: 
-                 <strong class="code-copy-text" @click="copyCode" :title="'点击复制'">/verify {{ verifyCode }}</strong>
+                 验证码已发送，请输入邮箱中收到的 6 位验证码
                </div>
-               <div class="polling-status">
-                 <span class="loading-dot"></span>
-                 等待机器人处理中... <span class="cancel-verify-text" @click="cancelVerify">(取消)</span>
+               <div class="qq-verify-group mt-3">
+                 <input
+                   v-model="emailCode"
+                   type="text"
+                   class="modal-input qq-input"
+                   maxlength="6"
+                   placeholder="输入 6 位验证码"
+                   :disabled="verifyStatus === 'verifying' || verifyStatus === 'success'"
+                   @input="clearError"
+                 />
+                 <button
+                   class="verify-btn secondary"
+                   :class="{ 'is-waiting': verifyStatus === 'verifying', 'is-success': verifyStatus === 'success' }"
+                   :disabled="verifyStatus === 'verifying' || verifyStatus === 'success'"
+                   @click="confirmEmailCode"
+                 >
+                   {{ verifyCodeBtnText }}
+                 </button>
                </div>
             </div>
           </transition>
@@ -122,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed, onUnmounted } from "vue";
+import { computed, ref, watch } from "vue";
 import { authApi } from "../api/auth";
 
 const props = defineProps<{
@@ -137,27 +150,42 @@ const emit = defineEmits<{
 
 const mode = ref<"login" | "register">("login");
 
-// Form Data
 const identifier = ref("");
 const password = ref("");
 const rememberMe = ref(false);
-const qqNumber = ref("");
 const username = ref("");
 const nickname = ref("");
+const emailAddress = ref("");
+const emailCode = ref("");
+const verificationEmail = ref("");
 
-// State
 const isError = ref(false);
 const errorText = ref("");
+const verifyStatus = ref<
+  "idle" | "sending" | "code-sent" | "verifying" | "success" | "error"
+>("idle");
 
-// Verification State
-const verifyStatus = ref<"idle" | "waiting" | "success" | "error">("idle");
-const verifyCode = ref("");
-let pollTimer: number | null = null;
-
+const isVerifyBusy = computed(
+  () => verifyStatus.value === "sending" || verifyStatus.value === "verifying"
+);
+const showCodeInput = computed(
+  () =>
+    verifyStatus.value === "code-sent" ||
+    verifyStatus.value === "verifying" ||
+    verifyStatus.value === "success"
+);
 const verifyBtnText = computed(() => {
-    if (verifyStatus.value === 'success') return '✔ 验证成功';
-    if (verifyStatus.value === 'waiting') return '检测中...';
-    return '获取验证码';
+  if (verifyStatus.value === "sending") return "发送中...";
+  if (verifyStatus.value === "success") return "✔ 已验证";
+  if (verifyStatus.value === "code-sent" || verifyStatus.value === "verifying") {
+    return "重新发送";
+  }
+  return "发送验证码";
+});
+const verifyCodeBtnText = computed(() => {
+  if (verifyStatus.value === "verifying") return "验证中...";
+  if (verifyStatus.value === "success") return "✔ 已通过";
+  return "确认验证码";
 });
 
 watch(
@@ -166,23 +194,27 @@ watch(
     if (newVal) {
       mode.value = "login";
       resetForm();
-    } else {
-      stopPolling();
     }
   }
 );
 
+const resetVerificationState = () => {
+  verifyStatus.value = "idle";
+  verificationEmail.value = "";
+  emailCode.value = "";
+};
+
 const resetForm = () => {
-    identifier.value = "";
-    password.value = "";
-    rememberMe.value = false;
-    qqNumber.value = "";
-    username.value = "";
-    nickname.value = "";
-    isError.value = false;
-    verifyStatus.value = "idle";
-    verifyCode.value = "";
-    stopPolling();
+  identifier.value = "";
+  password.value = "";
+  rememberMe.value = false;
+  username.value = "";
+  nickname.value = "";
+  emailAddress.value = "";
+  emailCode.value = "";
+  verificationEmail.value = "";
+  isError.value = false;
+  verifyStatus.value = "idle";
 };
 
 const clearError = () => {
@@ -191,12 +223,19 @@ const clearError = () => {
   }
 };
 
+const handleEmailInput = () => {
+  clearError();
+  const normalized = emailAddress.value.trim().toLowerCase();
+  if (verificationEmail.value && normalized !== verificationEmail.value) {
+    resetVerificationState();
+  }
+};
+
 const switchMode = (m: "login" | "register") => {
   mode.value = m;
   isError.value = false;
-  if(m === 'login'){
-      verifyStatus.value = "idle";
-      stopPolling();
+  if (m === "login") {
+    resetVerificationState();
   }
 };
 
@@ -204,76 +243,57 @@ const onClose = () => {
   emit("update:show", false);
 };
 
-// ============ 获取验证码逻辑 ============
-const startVerification = async () => {
-    const qq = qqNumber.value.trim();
-    if (!qq) {
-      showExternalError("请先填写左侧您的QQ号");
-      return;
-    }
-    const qqRegex = /^[1-9][0-9]{4,10}$/;
-    if (!qqRegex.test(qq)) {
-      showExternalError("请输入合法的QQ格式");
-      return;
-    }
+const sendEmailCode = async () => {
+  const email = emailAddress.value.trim().toLowerCase();
+  const qqEmailRegex = /^[1-9][0-9]{4,10}@qq\.com$/i;
 
-    try {
-        isError.value = false;
-        verifyStatus.value = "waiting";
-        const res = await authApi.apply(qq);
-        if (res.data?.ok) {
-            verifyCode.value = res.data.code;
-            startPolling(qq);
-        }
-    } catch (e: any) {
-        verifyStatus.value = "error";
-        showExternalError(e.response?.data?.detail || "获取失败，请重试");
-        setTimeout(() => { verifyStatus.value = "idle"; }, 2000);
-    }
-};
+  if (!email) {
+    showExternalError("请先输入用于验证的 QQ 邮箱");
+    return;
+  }
+  if (!qqEmailRegex.test(email)) {
+    showExternalError("请输入正确的 QQ 邮箱地址");
+    return;
+  }
 
-const startPolling = (qq: string) => {
-  stopPolling();
-  pollTimer = setInterval(async () => {
-    try {
-      const res = await authApi.checkStatus(qq);
-      const data = res.data;
-      if (data.status === "success") {
-        stopPolling();
-        verifyStatus.value = "success";
-      } else if (data.status === "expired") {
-        stopPolling();
-        verifyStatus.value = "idle";
-        showExternalError("验证码已过期，请重新点击获取");
-      }
-    } catch (error) {}
-  }, 2500);
-};
-
-const stopPolling = () => {
-  if (pollTimer) {
-    clearInterval(pollTimer);
-    pollTimer = null;
+  try {
+    clearError();
+    verifyStatus.value = "sending";
+    await authApi.sendEmailCode(email);
+    verificationEmail.value = email;
+    emailCode.value = "";
+    verifyStatus.value = "code-sent";
+  } catch (error: any) {
+    verifyStatus.value = "error";
+    showExternalError(error.response?.data?.detail || "验证码发送失败，请稍后重试");
+    verifyStatus.value = "idle";
   }
 };
 
-const cancelVerify = () => {
-    stopPolling();
-    verifyStatus.value = "idle";
-};
+const confirmEmailCode = async () => {
+  const email = verificationEmail.value || emailAddress.value.trim().toLowerCase();
+  const code = emailCode.value.trim();
 
-const copyCode = async () => {
+  if (!email) {
+    showExternalError("请先发送邮箱验证码");
+    return;
+  }
+  if (!/^\d{6}$/.test(code)) {
+    showExternalError("请输入 6 位数字验证码");
+    return;
+  }
+
   try {
-    await navigator.clipboard.writeText(`/verify ${verifyCode.value}`);
-    alert("验证指令已复制！");
-  } catch (err) {}
+    clearError();
+    verifyStatus.value = "verifying";
+    await authApi.verifyEmailCode(email, code);
+    verifyStatus.value = "success";
+    emailAddress.value = email;
+  } catch (error: any) {
+    verifyStatus.value = "code-sent";
+    showExternalError(error.response?.data?.detail || "验证码校验失败，请重试");
+  }
 };
-
-onUnmounted(() => {
-    stopPolling();
-});
-
-// ============ 提交表单 ============
 
 const handleLoginClick = () => {
   if (!identifier.value.trim() || !password.value.trim()) {
@@ -287,19 +307,22 @@ const handleLoginClick = () => {
   });
 };
 
-
-
 const handleRegisterComplete = () => {
   if (verifyStatus.value !== "success") {
-      showExternalError("请先完成QQ身份验证！");
-      return;
+    showExternalError("请先完成 QQ 邮箱验证");
+    return;
   }
-  if (!username.value.trim() || !password.value.trim() || !nickname.value.trim()) {
+  if (
+    !username.value.trim() ||
+    !password.value.trim() ||
+    !nickname.value.trim() ||
+    !emailAddress.value.trim()
+  ) {
     showExternalError("请将信息填写完整");
     return;
   }
   emit("req-register", {
-    qq: Number(qqNumber.value.trim()),
+    email: emailAddress.value.trim().toLowerCase(),
     username: username.value.trim(),
     password: password.value.trim(),
     nickname: nickname.value.trim(),
@@ -312,7 +335,7 @@ const showExternalError = (msg: string) => {
 };
 
 defineExpose({
-  showExternalError
+  showExternalError,
 });
 </script>
 
@@ -444,6 +467,14 @@ defineExpose({
     background: #ffa73b;
 }
 
+.verify-btn.secondary {
+    background: #1890ff;
+}
+
+.verify-btn.secondary:hover:not(:disabled) {
+    background: #40a9ff;
+}
+
 /* 等待状态 */
 .verify-btn.is-waiting {
     background: #d9d9d9;
@@ -471,51 +502,6 @@ defineExpose({
 .verify-instructions {
     margin-bottom: 8px;
 }
-
-.code-copy-text {
-    cursor: pointer;
-    background: #fff;
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: #ff8c00;
-    font-size: 1.05rem;
-    border: 1px solid #ffa73b;
-    margin-left: 6px;
-    transition: all 0.2s;
-}
-
-.code-copy-text:hover {
-    background: #fff2e8;
-}
-
-.polling-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #1890ff;
-  font-weight: 500;
-}
-
-.loading-dot {
-  width: 6px;
-  height: 6px;
-  background-color: #1890ff;
-  border-radius: 50%;
-  animation: blink 1s infinite alternate;
-}
-
-.cancel-verify-text {
-    margin-left: auto;
-    color: #999;
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-@keyframes blink {
-  0% { opacity: 0.3; }
-  100% { opacity: 1; }
-}
-
 
 .modal-footer {
   display: flex;

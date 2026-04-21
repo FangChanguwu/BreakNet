@@ -19,6 +19,19 @@ export const authApi = {
     });
   },
 
+  sendEmailCode(email: string) {
+    return http.post("/auth/email/send-code", {
+      email: email.trim().toLowerCase(),
+    });
+  },
+
+  verifyEmailCode(email: string, code: string) {
+    return http.post("/auth/email/verify", {
+      email: email.trim().toLowerCase(),
+      code: code.trim(),
+    });
+  },
+
   register(data: any) {
     return http.post("/auth/register", data);
   },

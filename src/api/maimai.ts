@@ -1,12 +1,12 @@
 import type { AxiosRequestConfig } from "axios";
 import http from "@/utils/http";
 
-const getRootBaseUrl = () =>
+const getSiteBaseUrl = () =>
   String(http.defaults.baseURL || "").replace(/\/break\/?$/, "");
 
-const requestRoot = (config: AxiosRequestConfig) =>
+const requestSiteRoot = (config: AxiosRequestConfig) =>
   http.request({
-    baseURL: getRootBaseUrl(),
+    baseURL: getSiteBaseUrl(),
     ...config,
   });
 
@@ -16,40 +16,48 @@ export const maimaiApi = {
   },
 
   getAccounts() {
-    return requestRoot({
-      url: "/maimai/accounts",
+    return requestSiteRoot({
+      url: "/api/maimai/accounts",
       method: "get",
     });
   },
 
   bindAccount(qrcode: string) {
-    return requestRoot({
-      url: "/maimai/accounts/bind",
+    return requestSiteRoot({
+      url: "/api/maimai/accounts/bind",
       method: "post",
       data: { qrcode },
     });
   },
 
   switchAccount(index: number) {
-    return requestRoot({
-      url: "/maimai/accounts/switch",
+    return requestSiteRoot({
+      url: "/api/maimai/accounts/switch",
       method: "post",
       data: { index },
     });
   },
 
   unbindAccount(index: number) {
-    return requestRoot({
-      url: `/maimai/accounts/${index}`,
+    return requestSiteRoot({
+      url: `/api/maimai/accounts/${index}`,
       method: "delete",
     });
   },
 
   activateAccount(qrcode: string) {
-    return requestRoot({
-      url: "/maimai/accounts/activate",
+    return requestSiteRoot({
+      url: "/api/maimai/accounts/activate",
       method: "post",
       data: { qrcode },
+      timeout: 60000,
+    });
+  },
+
+  getDelivery(ver?: string) {
+    return http.get("/maimai/delivery", {
+      params: ver ? { ver } : {},
+      timeout: 60000,
     });
   },
 };

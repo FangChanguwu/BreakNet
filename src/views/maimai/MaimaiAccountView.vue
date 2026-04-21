@@ -5,7 +5,7 @@
         <span class="page-kicker">Maimai Account Hub</span>
         <h2>账号管理</h2>
         <p class="subtitle">
-          管理当前 QQ 绑定的舞萌账号，支持二维码绑定、切换当前账号，以及通过激活刷新预览缓存和操作所需的 cookie。
+          管理当前 QQ 绑定的舞萌账号。
         </p>
       </div>
       <button class="ghost-btn" type="button" :disabled="loading" @click="fetchAccounts">
@@ -29,22 +29,15 @@
         <strong>{{ accounts.length }}</strong>
         <p>个舞萌账号</p>
       </article>
-      <article class="summary-card">
-        <span class="summary-label">当前 Rating</span>
-        <strong>{{ currentAccount?.preview.playerRating ?? "--" }}</strong>
-        <p>{{ formatLastPlay(currentAccount?.preview.lastPlayDate) }}</p>
-      </article>
     </section>
 
-    <div v-if="error" class="error-banner">
-      {{ error }}
-    </div>
+    <div v-if="error" class="error-banner">{{ error }}</div>
 
     <section class="panel-card">
       <div class="panel-head">
         <div>
           <h3>已绑定账号</h3>
-          <p>可以切换当前操作账号，也可以解绑不再使用的 UID。</p>
+          <p>已绑定的账号，可切换进行操作的当前账号或解绑</p>
         </div>
       </div>
 
@@ -54,21 +47,40 @@
       </div>
 
       <div v-else-if="!accounts.length" class="state-box empty">
-        <p>当前还没有绑定任何舞萌账号，可以先在下方粘贴二维码内容或上传二维码截图进行绑定。</p>
+        <p>当前还没有绑定任何舞萌账号，可以在下方粘贴二维码内容或上传截图进行绑定。</p>
       </div>
 
       <div v-else class="account-grid">
-        <article v-for="account in accounts" :key="account.uid" class="account-card" :class="{ current: account.isCurrent }">
+        <article
+          v-for="account in accounts"
+          :key="account.uid"
+          class="account-card"
+          :class="{ current: account.isCurrent }"
+        >
           <div class="account-top">
-            <div>
+            <div class="account-heading">
               <div class="account-name-row">
-                <h4>{{ account.displayName }}</h4>
-                <span v-if="account.isCurrent" class="current-badge">当前</span>
+                <img
+                  :src="getIconUrl(account.preview.iconId)"
+                  alt="icon"
+                  class="account-icon"
+                  @error="handleIconError"
+                />
+                <div class="account-title-block">
+                  <div class="account-title-line">
+                    <h4>{{ account.displayName }}</h4>
+                    <span v-if="account.isCurrent" class="current-badge">当前</span>
+                  </div>
+                  <p class="uid-text">UID {{ account.uid }}</p>
+                </div>
               </div>
-              <p class="uid-text">UID {{ account.uid }}</p>
             </div>
             <div class="rating-pill">
-              {{ account.preview.playerRating ?? "--" }}
+              <MaimaiRatingBadge
+                v-if="account.preview.playerRating !== undefined"
+                :rating="account.preview.playerRating"
+              />
+              <span v-else class="rating-fallback">--</span>
             </div>
           </div>
 
@@ -94,8 +106,8 @@
           <p class="cache-note" :class="{ muted: !account.preview.hasCache }">
             {{
               account.preview.hasCache
-                ? `预览缓存更新于 ${formatUpdatedAt(account.preview.updatedAt)}`
-                : "暂未发现 preview 缓存，激活后通常会自动补齐。"
+                ? `更新于 ${formatUpdatedAt(account.preview.updatedAt)}`
+                : "暂未发现缓存，激活后通常会自动补齐。"
             }}
           </p>
 
@@ -154,6 +166,7 @@
             {{ binding ? "绑定中..." : "绑定到列表" }}
           </button>
         </div>
+
         <p class="tool-tip">{{ bindHint }}</p>
         <input
           ref="bindFileInput"
@@ -168,7 +181,7 @@
         <div class="panel-head">
           <div>
             <h3>二维码激活</h3>
-            <p>激活会尝试刷新该 UID 的 cookie，并补齐 preview / region 缓存，同时设为当前账号。</p>
+            <p>激活会尝试对这个账号进行登录，同时设为当前账号。</p>
           </div>
         </div>
 
@@ -186,6 +199,7 @@
             {{ activating ? "激活中..." : "执行激活" }}
           </button>
         </div>
+
         <p class="tool-tip">{{ activateHint }}</p>
         <input
           ref="activateFileInput"
@@ -203,6 +217,7 @@
 import { computed, onMounted, ref } from "vue";
 import Swal from "sweetalert2";
 import { maimaiApi } from "@/api/maimai";
+import MaimaiRatingBadge from "@/components/maimai/MaimaiRatingBadge.vue";
 import { useAuthStore } from "@/stores/auth";
 
 type RegionEntry = {
@@ -281,7 +296,7 @@ const accountsPayload = ref<AccountsPayload>({
 
 const accounts = computed(() => accountsPayload.value.accounts || []);
 const currentAccount = computed(
-  () => accounts.value.find((account) => account.isCurrent) || null,
+  () => accounts.value.find(account => account.isCurrent) || null,
 );
 
 const Toast = Swal.mixin({
@@ -289,6 +304,8 @@ const Toast = Swal.mixin({
   position: "top-end",
   timer: 2500,
   showConfirmButton: false,
+  background: "var(--surface-color)",
+  color: "var(--text-main)",
 });
 
 const hydrateAccounts = (payload?: AccountsPayload) => {
@@ -302,9 +319,7 @@ const hydrateAccounts = (payload?: AccountsPayload) => {
 
 const getBarcodeDetectorCtor = (): BarcodeDetectorCtor | null => {
   if (typeof window === "undefined") return null;
-  const detector = (window as Window & { BarcodeDetector?: BarcodeDetectorCtor })
-    .BarcodeDetector;
-  return detector || null;
+  return (window as Window & { BarcodeDetector?: BarcodeDetectorCtor }).BarcodeDetector || null;
 };
 
 const decodeQrFromFile = async (file: File) => {
@@ -317,7 +332,7 @@ const decodeQrFromFile = async (file: File) => {
   try {
     const detector = new Detector({ formats: ["qr_code"] });
     const results = await detector.detect(bitmap);
-    const rawValue = results.find((item) => item.rawValue)?.rawValue?.trim();
+    const rawValue = results.find(item => item.rawValue)?.rawValue?.trim();
     if (!rawValue) {
       throw new Error("没有在截图中识别到二维码，请换一张更清晰的图片。");
     }
@@ -436,7 +451,7 @@ const activateAccount = async () => {
 };
 
 const switchCurrent = async (index: number) => {
-  const target = accounts.value.find((item) => item.index === index);
+  const target = accounts.value.find(item => item.index === index);
   if (!target) return;
 
   switchingUid.value = target.uid;
@@ -509,6 +524,22 @@ const formatUpdatedAt = (value?: string) => {
   });
 };
 
+const formatAssetId = (value?: number | string | null) => {
+  if (value === undefined || value === null || value === "") {
+    return "000000";
+  }
+  return String(value).slice(-6).padStart(6, "0");
+};
+
+const getIconUrl = (iconId?: number | string | null) => {
+  return `http://assets.fangchang.asia/maimai/icon/UI_Icon_${formatAssetId(iconId)}.png`;
+};
+
+const handleIconError = (event: Event) => {
+  (event.target as HTMLImageElement).src =
+    "https://placehold.co/84x84/f2fbff/f97316?text=Icon";
+};
+
 onMounted(() => {
   fetchAccounts();
 });
@@ -561,7 +592,7 @@ onMounted(() => {
 
 .page-header h2,
 .panel-head h3,
-.account-name-row h4 {
+.account-title-line h4 {
   margin: 0;
   color: #0f172a;
 }
@@ -583,7 +614,7 @@ onMounted(() => {
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -679,7 +710,6 @@ onMounted(() => {
 }
 
 .account-top,
-.account-name-row,
 .tool-actions,
 .action-row {
   display: flex;
@@ -688,8 +718,35 @@ onMounted(() => {
   gap: 12px;
 }
 
+.account-top {
+  align-items: flex-start;
+}
+
+.account-heading,
+.account-title-block {
+  min-width: 0;
+}
+
+.account-name-row,
+.account-title-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .account-name-row {
   justify-content: flex-start;
+}
+
+.account-title-line {
+  flex-wrap: wrap;
+}
+
+.account-icon {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .uid-text {
@@ -698,7 +755,6 @@ onMounted(() => {
 }
 
 .current-badge,
-.rating-pill,
 .region-tag {
   display: inline-flex;
   align-items: center;
@@ -715,10 +771,23 @@ onMounted(() => {
 }
 
 .rating-pill {
-  min-width: 70px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 0;
+  flex-shrink: 0;
+  margin-top: 12px;
+}
+
+.rating-fallback {
+  display: inline-flex;
+  min-width: 56px;
+  justify-content: center;
   padding: 10px 12px;
+  border-radius: 999px;
   background: rgba(59, 130, 246, 0.1);
   color: #1d4ed8;
+  font-weight: 800;
 }
 
 .meta-grid {
@@ -760,7 +829,7 @@ onMounted(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .region-tag {
@@ -768,6 +837,10 @@ onMounted(() => {
   background: rgba(15, 23, 42, 0.06);
   color: #475569;
   font-size: 0.78rem;
+}
+
+.action-row {
+  margin-top: 16px;
 }
 
 .tool-card {
@@ -855,7 +928,7 @@ onMounted(() => {
 
 [data-theme="dark"] .page-header h2,
 [data-theme="dark"] .panel-head h3,
-[data-theme="dark"] .account-name-row h4,
+[data-theme="dark"] .account-title-line h4,
 [data-theme="dark"] .summary-card strong,
 [data-theme="dark"] .meta-item strong,
 [data-theme="dark"] .qr-textarea {
@@ -877,7 +950,7 @@ onMounted(() => {
   background: linear-gradient(135deg, rgba(120, 53, 15, 0.28), rgba(30, 41, 59, 0.96));
 }
 
-[data-theme="dark"] .rating-pill {
+[data-theme="dark"] .rating-fallback {
   background: rgba(29, 78, 216, 0.24);
   color: #93c5fd;
 }
@@ -899,39 +972,32 @@ onMounted(() => {
 
 @media (max-width: 1200px) {
   .summary-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 1024px) {
   .content-area {
-    padding: 0 20px 24px;
+    padding: 0 24px 32px;
   }
 
   .account-grid,
   .tool-grid {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 720px) {
   .content-area {
-    padding: 0 16px 20px;
+    padding: 0 16px 24px;
   }
 
-  .page-header,
-  .panel-card {
-    padding: 18px;
-    border-radius: 20px;
-  }
-
-  .page-header,
-  .panel-head,
-  .tool-actions,
-  .action-row,
-  .account-top {
+  .page-header {
     flex-direction: column;
-    align-items: stretch;
   }
 
   .summary-grid,
@@ -939,10 +1005,16 @@ onMounted(() => {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .primary-btn,
-  .ghost-btn,
-  .danger-btn {
-    width: 100%;
+  .account-top,
+  .tool-actions,
+  .action-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rating-pill {
+    justify-content: flex-start;
+    margin-top: 0;
   }
 }
 </style>

@@ -285,6 +285,12 @@ const getLevelValue = (level: string) => {
   return value;
 };
 
+const getLevelUpperBound = (level: string) => {
+  const value = getLevelValue(level);
+  if (value === null) return null;
+  return level.includes("+") ? Math.floor(value) + 0.9 : Math.floor(value) + 0.5;
+};
+
 const fetchData = async () => {
   loading.value = true;
   try {
@@ -351,20 +357,14 @@ const filteredSongs = computed(() => {
 
   if (filters.levelMin || filters.levelMax) {
     const minValue = getLevelValue(filters.levelMin);
-    const maxValue = getLevelValue(filters.levelMax);
+    const maxValue = filters.levelMax ? getLevelUpperBound(filters.levelMax) : null;
 
     result = result.filter((song) =>
       song.level.some((level) => {
         const value = getLevelValue(level);
         if (value === null) return false;
         if (minValue !== null && value < minValue) return false;
-
-        let effectiveMax = maxValue;
-        if (maxValue !== null && filters.levelMax && !filters.levelMax.includes("+")) {
-          effectiveMax = Math.floor(maxValue) + 0.9;
-        }
-
-        if (effectiveMax !== null && value > effectiveMax) return false;
+        if (maxValue !== null && value > maxValue) return false;
         return true;
       }),
     );
@@ -568,6 +568,7 @@ onMounted(() => {
 .advanced-filter-panel,
 .result-panel {
   padding: 24px;
+  overflow: visible;
 }
 
 .toolbar-row,
@@ -645,6 +646,15 @@ onMounted(() => {
   box-sizing: border-box;
 }
 
+.filter-group select {
+  appearance: auto;
+  -webkit-appearance: menulist;
+  font-size: 16px;
+  line-height: 1.2;
+  position: relative;
+  z-index: 3;
+}
+
 .action-btn,
 .ghost-btn {
   border: 0;
@@ -701,6 +711,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
+  z-index: 2;
 }
 
 .range-filter {

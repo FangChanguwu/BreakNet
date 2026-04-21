@@ -174,7 +174,7 @@ const handleRegisterReq = async (data: any) => {
     try {
         const res = await authApi.register(data);
         if(res.data?.ok) {
-            authStore.setLoginInfo(res.data.token, data.qq, res.data.role); 
+            authStore.setLoginInfo(res.data.token, res.data.qq, res.data.role); 
             router.push("/panel");
         }
     } catch (error: any) {

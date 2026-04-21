@@ -27,6 +27,9 @@
       <router-link to="/credit" class="nav-item" active-class="is-active" @click="handleNavigate">
         积分
       </router-link>
+      <router-link v-if="false" to="/shop" class="nav-item" active-class="is-active" @click="handleNavigate">
+        商店
+      </router-link>
       <router-link to="/profile" class="nav-item" active-class="is-active" @click="handleNavigate">
         个人中心
       </router-link>

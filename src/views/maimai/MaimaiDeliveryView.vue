@@ -220,7 +220,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import http from "@/utils/http";
+import { maimaiApi } from "@/api/maimai";
 import Swal from "sweetalert2";
 
 interface DeliveryPackage {
@@ -273,7 +273,7 @@ const fetchDelivery = async () => {
       params.ver = versionInput.value.trim();
     }
 
-    const res = await http.get("/maimai/delivery", { params, timeout: 60000 });
+    const res = await maimaiApi.getDelivery(params.ver);
     if (res.data?.ok) {
       deliveryData.value = {
         txt_uri: res.data.data.txt_uri ?? "",

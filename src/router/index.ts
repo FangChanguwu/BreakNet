@@ -25,6 +25,7 @@ import ProfileView from "@/views/ProfileView.vue";
 import MaimaiAccountView from "@/views/maimai/MaimaiAccountView.vue";
 import MaimaiDeliveryView from "@/views/maimai/MaimaiDeliveryView.vue";
 import MaimaiRandomView from "@/views/maimai/MaimaiRandomView.vue";
+import ShopView from "@/views/ShopView.vue";
 import SongListView from "@/views/maimai/SongListView.vue";
 
 const rolePriority: Record<string, number> = {
@@ -99,6 +100,7 @@ const router = createRouter({
           component: MaimaiRandomView,
         },
         { path: "credit", name: "credit", component: CreditView },
+        { path: "shop", name: "shop", component: ShopView },
         {
           path: "profile",
           name: "profile",
@@ -137,6 +139,10 @@ router.beforeEach((to, _from, next) => {
     if (!authStore.hasRoleAtLeast("admin")) {
       return next("/403");
     }
+  }
+
+  if (to.path.startsWith("/shop")) {
+    return next("/403");
   }
 
   const minRole = typeof to.meta.minRole === "string" ? to.meta.minRole : null;
