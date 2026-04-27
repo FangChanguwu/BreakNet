@@ -4,8 +4,9 @@ import { defineStore } from "pinia";
 const rolePriority: Record<string, number> = {
   normal: 0,
   premium: 1,
-  admin: 2,
-  superadmin: 3,
+  tech_premium: 2,
+  admin: 3,
+  superadmin: 4,
 };
 
 export const useAuthStore = defineStore(
@@ -20,6 +21,7 @@ export const useAuthStore = defineStore(
       (rolePriority[role.value] ?? 0) >= (rolePriority[requiredRole] ?? 0);
 
     const isPremium = computed(() => hasRoleAtLeast("premium"));
+    const isTechPremium = computed(() => hasRoleAtLeast("tech_premium"));
     const isAdmin = computed(() => hasRoleAtLeast("admin"));
 
     function syncAdminFlag() {
@@ -66,6 +68,7 @@ export const useAuthStore = defineStore(
       role,
       isLoggedIn,
       isPremium,
+      isTechPremium,
       isAdmin,
       hasRoleAtLeast,
       setLoginInfo,

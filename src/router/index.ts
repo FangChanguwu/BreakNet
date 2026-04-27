@@ -23,16 +23,19 @@ const Toast = Swal.mixin({
 import AdminRolesView from "@/views/admin/AdminRolesView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import MaimaiAccountView from "@/views/maimai/MaimaiAccountView.vue";
+import MaimaiCollectionsView from "@/views/maimai/MaimaiCollectionsView.vue";
 import MaimaiDeliveryView from "@/views/maimai/MaimaiDeliveryView.vue";
 import MaimaiRandomView from "@/views/maimai/MaimaiRandomView.vue";
 import ShopView from "@/views/ShopView.vue";
+import SpyGameView from "@/views/SpyGameView.vue";
 import SongListView from "@/views/maimai/SongListView.vue";
 
 const rolePriority: Record<string, number> = {
   normal: 0,
   premium: 1,
-  admin: 2,
-  superadmin: 3,
+  tech_premium: 2,
+  admin: 3,
+  superadmin: 4,
 };
 
 const router = createRouter({
@@ -52,6 +55,18 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+    },
+    {
+      path: "/game/spy",
+      name: "spy-game-entry",
+      component: SpyGameView,
+      meta: { allowGuest: true },
+    },
+    {
+      path: "/game/spy/:roomId",
+      name: "spy-game-room",
+      component: SpyGameView,
+      meta: { allowGuest: true },
     },
     {
       path: "/",
@@ -87,7 +102,7 @@ const router = createRouter({
           path: "maimai/delivery",
           name: "maimai-delivery",
           component: MaimaiDeliveryView,
-          meta: { minRole: "admin" },
+          meta: { minRole: "tech_premium" },
         },
         {
           path: "maimai/songs",
@@ -98,6 +113,11 @@ const router = createRouter({
           path: "maimai/random",
           name: "maimai-random",
           component: MaimaiRandomView,
+        },
+        {
+          path: "maimai/collections",
+          name: "maimai-collections",
+          component: MaimaiCollectionsView,
         },
         { path: "credit", name: "credit", component: CreditView },
         { path: "shop", name: "shop", component: ShopView },
@@ -126,8 +146,8 @@ router.beforeEach((to, _from, next) => {
 
   // 白名单
   const publicPaths = ["/", "/privacy", "/contact", "/403", "/404"];
-
-  if (!publicPaths.includes(to.path) && !authStore.isLoggedIn) {
+  const allowGuest = to.meta.allowGuest === true;
+  if (!publicPaths.includes(to.path) && !authStore.isLoggedIn && !allowGuest) {
     Toast.fire({
       icon: "warning",
       title: "请先登录后再访问该页面",
@@ -146,7 +166,11 @@ router.beforeEach((to, _from, next) => {
   }
 
   const minRole = typeof to.meta.minRole === "string" ? to.meta.minRole : null;
-  if (minRole && (rolePriority[authStore.role] ?? 0) < (rolePriority[minRole] ?? 0)) {
+  if (
+    minRole &&
+    authStore.isLoggedIn &&
+    (rolePriority[authStore.role] ?? 0) < (rolePriority[minRole] ?? 0)
+  ) {
     Toast.fire({
       icon: "warning",
       title: "当前账号权限不足",

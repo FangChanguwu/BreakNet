@@ -454,10 +454,9 @@ const getSongKey = (song: Song) => `${song.id}-${song.type}`;
 const fetchData = async () => {
   loading.value = true;
   try {
-    const res = await maimaiApi.getMusicData();
-    if (res.data?.ok) {
-      allSongs.value = res.data.data.songs;
-      aliases.value = res.data.data.aliases;
+    const data = await maimaiApi.getMusicData();
+    allSongs.value = data.songs;
+    aliases.value = data.aliases;
 
       // 提取版本和流派用于筛选器
       const vSet = new Set<string>();
@@ -472,9 +471,8 @@ const fetchData = async () => {
           s.aliases = aliasEntry.Alias;
         }
       });
-      versions.value = Array.from(vSet).sort();
-      genres.value = Array.from(gSet);
-    }
+    versions.value = Array.from(vSet).sort();
+    genres.value = Array.from(gSet);
   } catch (error) {
     console.error("Failed to fetch music data:", error);
   } finally {

@@ -294,10 +294,9 @@ const getLevelUpperBound = (level: string) => {
 const fetchData = async () => {
   loading.value = true;
   try {
-    const res = await maimaiApi.getMusicData();
-    if (res.data?.ok) {
-      allSongs.value = res.data.data.songs;
-      aliases.value = res.data.data.aliases;
+    const data = await maimaiApi.getMusicData();
+    allSongs.value = data.songs;
+    aliases.value = data.aliases;
 
       const versionSet = new Set<string>();
       const genreSet = new Set<string>();
@@ -312,9 +311,8 @@ const fetchData = async () => {
         }
       });
 
-      versions.value = Array.from(versionSet).sort();
-      genres.value = Array.from(genreSet);
-    }
+    versions.value = Array.from(versionSet).sort();
+    genres.value = Array.from(genreSet);
   } catch (error) {
     console.error("Failed to fetch music data:", error);
   } finally {

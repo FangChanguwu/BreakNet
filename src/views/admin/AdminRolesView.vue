@@ -2,7 +2,7 @@
   <main class="content-area">
     <div class="page-header">
       <h2>用户权限管理</h2>
-      <p class="subtitle">默认展示全部用户，按权限高低排序，并支持封禁与解封</p>
+      <p class="subtitle">默认展示全部用户，按权限高低排序，并支持封禁与解封。</p>
     </div>
 
     <section class="admin-section">
@@ -15,9 +15,7 @@
             @keyup.enter="applySearch"
           />
           <button class="search-btn" @click="applySearch">检索</button>
-          <button v-if="searchQuery" class="reset-btn" @click="resetSearch">
-            重置
-          </button>
+          <button v-if="searchQuery" class="reset-btn" @click="resetSearch">重置</button>
         </div>
 
         <div class="summary-text">
@@ -29,7 +27,7 @@
         <table class="user-table">
           <thead>
             <tr>
-              <th>QQ</th>
+              <th>用户信息</th>
               <th>权限</th>
               <th>状态</th>
               <th>操作</th>
@@ -42,13 +40,18 @@
                   <img
                     :src="`http://q1.qlogo.cn/g?b=qq&nk=${user._id}&s=100`"
                     class="avatar-sm"
+                    alt="avatar"
                   />
-                  <span>{{ user._id }}</span>
+                  <div class="user-text">
+                    <span class="user-qq">{{ user._id }}</span>
+                    <span class="user-meta">昵称：{{ user.Nickname || "-" }}</span>
+                    <span class="user-meta">用户名：{{ user.Username || "-" }}</span>
+                  </div>
                 </div>
               </td>
               <td>
                 <span :class="['role-badge', user.Role || 'normal']">
-                  {{ roleMap[user.Role || "normal"] }}
+                  {{ getRoleLabel(user.Role || "normal") }}
                 </span>
               </td>
               <td>
@@ -58,9 +61,7 @@
               </td>
               <td>
                 <div class="action-group">
-                  <button class="action-btn edit" @click="openRoleModal(user)">
-                    修改权限
-                  </button>
+                  <button class="action-btn edit" @click="openRoleModal(user)">修改权限</button>
                   <button
                     class="action-btn"
                     :class="user.Banned ? 'unban' : 'ban'"
@@ -105,15 +106,19 @@
         <div class="modal-content" @click.stop>
           <h3>修改权限 - QQ: {{ editingUser?._id }}</h3>
 
+          <div v-if="editingUser" class="modal-user-meta">
+            <span>昵称：{{ editingUser.Nickname || "-" }}</span>
+            <span>用户名：{{ editingUser.Username || "-" }}</span>
+          </div>
+
           <div class="form-group">
             <label>新的权限等级</label>
             <select v-model="selectedRole">
               <option value="normal">普通用户</option>
               <option value="premium">网站会员</option>
+              <option value="tech_premium">技术会员</option>
               <option value="admin">管理员</option>
-              <option value="superadmin" :disabled="myRole !== 'superadmin'">
-                超级管理员
-              </option>
+              <option value="superadmin" :disabled="myRole !== 'superadmin'">超级管理员</option>
             </select>
           </div>
 
@@ -138,6 +143,8 @@ import http from "@/utils/http";
 
 type UserRow = {
   _id: number;
+  Username?: string;
+  Nickname?: string;
   Role?: string;
   Banned?: boolean;
 };
@@ -157,9 +164,12 @@ const pageInput = ref(1);
 const roleMap: Record<string, string> = {
   normal: "普通用户",
   premium: "网站会员",
+  tech_premium: "技术会员",
   admin: "管理员",
   superadmin: "超级管理员",
 };
+
+const getRoleLabel = (role: string) => roleMap[role] || role;
 
 const isRoleModalOpen = ref(false);
 const isSaving = ref(false);
@@ -462,7 +472,30 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.user-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-qq {
   font-weight: 700;
+  color: var(--text-main);
+}
+
+.user-meta,
+.modal-user-meta {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.modal-user-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
 }
 
 .avatar-sm {
@@ -489,6 +522,11 @@ onMounted(() => {
 .role-badge.premium {
   background: rgba(245, 158, 11, 0.14);
   color: #b45309;
+}
+
+.role-badge.tech_premium {
+  background: rgba(20, 184, 166, 0.14);
+  color: #0f766e;
 }
 
 .role-badge.admin {

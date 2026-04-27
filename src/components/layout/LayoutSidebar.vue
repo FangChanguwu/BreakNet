@@ -34,6 +34,10 @@
         个人中心
       </router-link>
 
+      <router-link v-if="authStore.isPremium" to="/game/spy" class="nav-item" active-class="is-active" @click="handleNavigate">
+        谁是卧底？！
+      </router-link>
+
       <div class="nav-group">
         <div
           class="nav-item group-title"
@@ -63,6 +67,15 @@
               随机选曲
             </router-link>
 
+            <router-link
+              to="/maimai/collections"
+              class="sub-item"
+              active-class="sub-active"
+              @click="handleNavigate"
+            >
+              收藏品总览
+            </router-link>
+
             <div v-if="authStore.isPremium" class="sub-menu-divider"></div>
 
             <router-link
@@ -75,10 +88,10 @@
               账号管理
             </router-link>
 
-            <div v-if="authStore.isAdmin" class="sub-menu-divider"></div>
+            <div v-if="authStore.isTechPremium" class="sub-menu-divider"></div>
 
             <router-link
-              v-if="authStore.isAdmin"
+              v-if="authStore.isTechPremium"
               to="/maimai/delivery"
               class="sub-item"
               active-class="sub-active"
