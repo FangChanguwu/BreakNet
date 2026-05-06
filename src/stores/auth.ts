@@ -47,11 +47,16 @@ export const useAuthStore = defineStore(
       if (!token.value) return;
 
       try {
-        const { default: http } = await import("@/utils/http");
-        const res = await http.get("/auth/me");
-        if (res.data?.ok) {
-          role.value = res.data.data?.role || "normal";
-          qq.value = String(res.data.data?.qq || qq.value);
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+        const res = await fetch(`${baseUrl}/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token.value}`,
+          },
+        });
+        const data = await res.json();
+        if (data?.ok) {
+          role.value = data.data?.role || "normal";
+          qq.value = String(data.data?.qq || qq.value);
           syncAdminFlag();
           return;
         }

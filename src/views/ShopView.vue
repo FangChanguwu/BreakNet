@@ -155,16 +155,24 @@ const shopData = ref<ShopData | null>(null);
 const selectedItem = ref<ShopItem | null>(null);
 const imageErrors = ref<Record<string, boolean>>({});
 
+const normalizeShopItem = (item: ShopItem): ShopItem => ({
+  ...item,
+  image: item.id === "premium-card" ? "/img/shop/premium.png" : item.image,
+});
+
 const fetchShopData = async () => {
   isLoading.value = true;
   try {
     const res = await http.get("/shop/items");
     if (res.data?.ok) {
       const nextShopData = res.data.data as ShopData;
-      shopData.value = nextShopData;
+      shopData.value = {
+        ...nextShopData,
+        items: nextShopData.items.map(normalizeShopItem),
+      };
       if (selectedItem.value) {
         selectedItem.value =
-          nextShopData.items.find((item) => item.id === selectedItem.value?.id) || null;
+          shopData.value.items.find((item) => item.id === selectedItem.value?.id) || null;
       }
     }
   } finally {
@@ -347,7 +355,7 @@ onMounted(() => {
 .product-image,
 .detail-image {
   width: 100%;
-  aspect-ratio: 1 / 0.82;
+  aspect-ratio: 1 / 1;
   border-radius: 20px;
   border: 1px solid rgba(148, 163, 184, 0.16);
   background:
@@ -358,7 +366,7 @@ onMounted(() => {
   color: #9a3412;
   font-size: 1.1rem;
   font-weight: 800;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .placeholder {

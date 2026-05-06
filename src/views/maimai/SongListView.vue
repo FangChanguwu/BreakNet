@@ -102,6 +102,25 @@
                 </div>
               </div>
             </div>
+            <div class="sort-panel">
+              <span class="sort-title">排序</span>
+              <div class="sort-button-row">
+                <button
+                  v-for="option in sortOptions"
+                  :key="option.key"
+                  class="sort-btn"
+                  :class="{ active: sortState.key === option.key }"
+                  type="button"
+                  @click="toggleSort(option.key)"
+                >
+                  <span>{{ option.label }}</span>
+                  <span class="sort-arrows" aria-hidden="true">
+                    <i :class="{ active: sortState.key === option.key && sortState.direction === 'asc' }">▲</i>
+                    <i :class="{ active: sortState.key === option.key && sortState.direction === 'desc' }">▼</i>
+                  </span>
+                </button>
+              </div>
+            </div>
             <div class="filter-actions">
               <button class="reset-btn" @click="resetFilters">重置全部筛选</button>
             </div>
@@ -112,6 +131,12 @@
         <div v-if="loading" class="loading-state">
           <div class="spinner"></div>
           <p>正在同步曲库数据...</p>
+        </div>
+
+        <div v-else-if="loadError" class="empty-state">
+          <div class="empty-icon">!</div>
+          <p>{{ loadError }}</p>
+          <button class="reset-btn" @click="fetchData">重新加载</button>
         </div>
 
         <div v-else-if="filteredSongs.length === 0" class="empty-state">
@@ -353,8 +378,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, useTemplateRef, nextTick } from "vue";
-import { useInfiniteScroll } from "@vueuse/core";
+import { ref, reactive, computed, onBeforeUnmount, onMounted, watch, nextTick } from "vue";
 import { maimaiApi } from "@/api/maimai";
 
 interface Song {
@@ -385,7 +409,11 @@ interface CharterEntry {
   charter: string;
 }
 
+type SortKey = "id" | "ds" | "version" | "bpm" | "notes";
+type SortDirection = "asc" | "desc";
+
 const loading = ref(true);
+const loadError = ref("");
 const showAdvanced = ref(false);
 const expandedKey = ref<string | null>(null);
 const allSongs = ref<Song[]>([]);
@@ -405,6 +433,70 @@ const filters = reactive({
   dsDiff: 3, // 默认 Master 难度
 });
 
+const sortState = reactive<{
+  key: SortKey;
+  direction: SortDirection;
+}>({
+  key: "id",
+  direction: "desc",
+});
+
+const sortOptions: { key: SortKey; label: string }[] = [
+  { key: "id", label: "ID" },
+  { key: "ds", label: "定数" },
+  { key: "version", label: "版本" },
+  { key: "bpm", label: "BPM" },
+  { key: "notes", label: "物量" },
+];
+
+const versionOrder = [
+  "maimai",
+  "maimai PLUS",
+  "maimai GreeN",
+  "maimai GreeN PLUS",
+  "maimai ORANGE",
+  "maimai ORANGE PLUS",
+  "maimai PiNK",
+  "maimai PiNK PLUS",
+  "maimai MURASAKi",
+  "maimai MURASAKi PLUS",
+  "maimai MiLK",
+  "maimai MiLK PLUS",
+  "maimai FiNALE",
+  "maimai でらっくす",
+  "maimai でらっくす PLUS",
+  "maimai Splash",
+  "maimai Splash PLUS",
+  "maimai UNiVERSE",
+  "maimai UNiVERSE PLUS",
+  "maimai FESTiVAL",
+  "maimai FESTiVAL PLUS",
+  "maimai BUDDiES",
+  "maimai BUDDiES PLUS",
+  "maimai PRiSM",
+  "maimai PRiSM PLUS",
+  "maimai CiRCLE",
+  "maimai CiRCLE PLUS",
+] as const;
+
+const getVersionAliases = (version: string) => {
+  const trimmed = version.trim();
+  const aliases = new Set<string>([trimmed]);
+  if (trimmed.startsWith("maimai ")) {
+    aliases.add(trimmed.replace(/^maimai\s+/, ""));
+  }
+  if (trimmed.startsWith("maimai でらっくす ")) {
+    aliases.add(trimmed.replace(/^maimai\s+でらっくす\s+/, ""));
+  }
+  if (trimmed === "maimai でらっくす") {
+    aliases.add("でらっくす");
+  }
+  return Array.from(aliases);
+};
+
+const versionOrderMap = new Map<string, number>(
+  versionOrder.flatMap((version, index) => getVersionAliases(version).map((alias) => [alias, index] as const)),
+);
 const versions = ref<string[]>([]);
 const genres = ref<string[]>([]);
 const levels = [
@@ -437,44 +529,41 @@ const dxScoreThresholds = [
 
 const pageSize = 40;
 const displayCount = ref(pageSize);
-const loadMoreRef = useTemplateRef<HTMLElement>("loadMoreRef");
-
-useInfiniteScroll(
-  loadMoreRef,
-  () => {
-    if (hasMore.value) {
-      loadMore();
-    }
-  },
-  { distance: 200 }
-);
+const loadMoreRef = ref<HTMLElement | null>(null);
+const userHasScrolled = ref(false);
+const resettingInitialScroll = ref(false);
+let scrollFrame = 0;
 
 const getSongKey = (song: Song) => `${song.id}-${song.type}`;
 
 const fetchData = async () => {
   loading.value = true;
+  loadError.value = "";
   try {
     const data = await maimaiApi.getMusicData();
-    allSongs.value = data.songs;
-    aliases.value = data.aliases;
+    allSongs.value = Array.isArray(data.songs) ? data.songs.filter((song) => song?.id && song?.basic_info) : [];
+    aliases.value = data.aliases || {};
 
       // 提取版本和流派用于筛选器
       const vSet = new Set<string>();
       const gSet = new Set<string>();
       allSongs.value.forEach(s => {
-        if (s.basic_info.from) vSet.add(s.basic_info.from);
-        if (s.basic_info.genre) gSet.add(s.basic_info.genre);
+        if (s.basic_info?.from) vSet.add(s.basic_info.from);
+        if (s.basic_info?.genre) gSet.add(s.basic_info.genre);
         
         // 绑定别名到乐曲对象方便搜索
-        const aliasEntry = aliases.value[s.id];
+        const aliasEntry = aliases.value?.[s.id];
         if (aliasEntry) {
           s.aliases = aliasEntry.Alias;
         }
-      });
-    versions.value = Array.from(vSet).sort();
+    });
+    versions.value = Array.from(vSet).sort(compareVersions);
     genres.value = Array.from(gSet);
   } catch (error) {
     console.error("Failed to fetch music data:", error);
+    loadError.value = "曲库数据读取失败，请稍后重试。";
+    allSongs.value = [];
+    aliases.value = {};
   } finally {
     loading.value = false;
   }
@@ -489,6 +578,50 @@ const handleImgError = (e: Event) => {
   (e.target as HTMLImageElement).src = "https://placehold.co/120x120/1e1e1e/ff8c00?text=No+Cover";
 };
 
+const getSongIdValue = (song: Song) => Number.parseInt(song.id, 10) || 0;
+
+const getMasterDs = (song: Song) => Number(song.ds?.[3] ?? -1);
+
+const getMasterNotes = (song: Song) => (song.charts?.[3]?.notes || []).reduce((sum, value) => sum + value, 0);
+
+const getVersionIndex = (version: string) => {
+  for (const alias of getVersionAliases(version)) {
+    const index = versionOrderMap.get(alias);
+    if (index !== undefined) return index;
+  }
+  return Number.MAX_SAFE_INTEGER;
+};
+
+const compareVersions = (left: string, right: string) =>
+  getVersionIndex(left) - getVersionIndex(right) || left.localeCompare(right);
+
+const compareBySort = (left: Song, right: Song) => {
+  let result = 0;
+  if (sortState.key === "id") {
+    result = getSongIdValue(left) - getSongIdValue(right);
+  } else if (sortState.key === "ds") {
+    result = getMasterDs(left) - getMasterDs(right);
+  } else if (sortState.key === "version") {
+    result = compareVersions(left.basic_info?.from || "", right.basic_info?.from || "");
+  } else if (sortState.key === "bpm") {
+    result = Number(left.basic_info?.bpm || 0) - Number(right.basic_info?.bpm || 0);
+  } else if (sortState.key === "notes") {
+    result = getMasterNotes(left) - getMasterNotes(right);
+  }
+
+  const directionValue = sortState.direction === "asc" ? 1 : -1;
+  return result === 0 ? getSongIdValue(right) - getSongIdValue(left) : result * directionValue;
+};
+
+const toggleSort = (key: SortKey) => {
+  if (sortState.key === key) {
+    sortState.direction = sortState.direction === "asc" ? "desc" : "asc";
+    return;
+  }
+  sortState.key = key;
+  sortState.direction = key === "version" ? "asc" : "desc";
+};
+
 const filteredSongs = computed(() => {
   let result = allSongs.value;
 
@@ -496,8 +629,8 @@ const filteredSongs = computed(() => {
   if (filters.search) {
     const s = filters.search.toLowerCase();
     result = result.filter(song => {
-      const matchTitle = song.title.toLowerCase().includes(s);
-      const matchArtist = song.basic_info.artist.toLowerCase().includes(s);
+      const matchTitle = (song.title || "").toLowerCase().includes(s);
+      const matchArtist = (song.basic_info?.artist || "").toLowerCase().includes(s);
       const matchAlias = song.aliases?.some(a => a.toLowerCase().includes(s));
       return matchTitle || matchArtist || matchAlias;
     });
@@ -505,12 +638,12 @@ const filteredSongs = computed(() => {
 
   // 3. 版本筛选
   if (filters.version) {
-    result = result.filter(s => s.basic_info.from === filters.version);
+    result = result.filter(s => s.basic_info?.from === filters.version);
   }
 
   // 4. 流派筛选
   if (filters.genre) {
-    result = result.filter(s => s.basic_info.genre === filters.genre);
+    result = result.filter(s => s.basic_info?.genre === filters.genre);
   }
 
   // 5. 类型筛选 (SD/DX)
@@ -520,10 +653,10 @@ const filteredSongs = computed(() => {
 
   // 6. BPM 范围
   if (filters.bpmMin !== null) {
-    result = result.filter(s => s.basic_info.bpm >= filters.bpmMin!);
+    result = result.filter(s => Number(s.basic_info?.bpm || 0) >= filters.bpmMin!);
   }
   if (filters.bpmMax !== null) {
-    result = result.filter(s => s.basic_info.bpm <= filters.bpmMax!);
+    result = result.filter(s => Number(s.basic_info?.bpm || 0) <= filters.bpmMax!);
   }
 
   // 7. 等级范围
@@ -565,9 +698,7 @@ const filteredSongs = computed(() => {
     });
   }
 
-  // 默认排序：ID 从大到小 (除了 6 位宴谱外的正常 ID)
-  // 注意：ID 是字符串，但由于 maimai ID 的特性（10001+ 为 DX），转换成数字排序较稳
-  return result.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+  return [...result].sort(compareBySort);
 });
 
 const displayedSongs = computed(() => {
@@ -582,6 +713,36 @@ const loadMore = () => {
   displayCount.value += pageSize;
 };
 
+const maybeLoadMore = () => {
+  if (!userHasScrolled.value || loading.value || !hasMore.value) return;
+
+  const sentinel = loadMoreRef.value;
+  if (!sentinel) return;
+
+  const rect = sentinel.getBoundingClientRect();
+  if (rect.top <= window.innerHeight + 240) {
+    loadMore();
+  }
+};
+
+const handleWindowScroll = () => {
+  if (resettingInitialScroll.value) return;
+  userHasScrolled.value = true;
+  if (scrollFrame) return;
+  scrollFrame = window.requestAnimationFrame(() => {
+    scrollFrame = 0;
+    maybeLoadMore();
+  });
+};
+
+const resetInitialScrollPosition = () => {
+  resettingInitialScroll.value = true;
+  userHasScrolled.value = false;
+  window.setTimeout(() => {
+    resettingInitialScroll.value = false;
+  }, 250);
+};
+
 const resetFilters = () => {
   filters.search = "";
   filters.version = "";
@@ -594,10 +755,17 @@ const resetFilters = () => {
   filters.dsMin = null;
   filters.dsMax = null;
   filters.dsDiff = 3;
+  sortState.key = "id";
+  sortState.direction = "desc";
 };
 
 watch(() => filters, () => {
   displayCount.value = pageSize; // 筛选条件变化时重置滚动位置
+}, { deep: true });
+
+watch(sortState, () => {
+  displayCount.value = pageSize;
+  expandedKey.value = null;
 }, { deep: true });
 
 watch(filteredSongs, (songs) => {
@@ -696,7 +864,16 @@ const calcRating = (ds: number, ach: number, coeff: number) => {
 };
 
 onMounted(() => {
+  resetInitialScrollPosition();
   fetchData();
+  window.addEventListener("scroll", handleWindowScroll, { passive: true });
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", handleWindowScroll);
+  if (scrollFrame) {
+    window.cancelAnimationFrame(scrollFrame);
+  }
 });
 </script>
 
@@ -918,6 +1095,78 @@ onMounted(() => {
   cursor: pointer;
   font-size: 0.9rem;
   color: var(--text-secondary) !important;
+}
+
+.sort-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: -4px 0 18px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 183, 3, 0.08);
+  border: 1px solid rgba(255, 196, 61, 0.14);
+}
+
+.sort-title {
+  flex: 0 0 auto;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.sort-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sort-btn:hover,
+.sort-btn.active {
+  border-color: rgba(245, 158, 11, 0.42);
+  background: rgba(255, 255, 255, 0.94);
+  color: #d97706;
+  transform: translateY(-1px);
+}
+
+.sort-arrows {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 1px;
+  color: rgba(148, 163, 184, 0.72);
+  font-size: 0.58rem;
+  line-height: 0.8;
+}
+
+.sort-arrows i {
+  display: block;
+  font-style: normal;
+}
+
+.sort-arrows i.active {
+  color: #f59e0b;
 }
 
 .filter-actions {
@@ -1724,6 +1973,8 @@ onMounted(() => {
 [data-theme="dark"] .song-expanded-detail,
 [data-theme="dark"] .detail-meta-card,
 [data-theme="dark"] .alias-pill,
+[data-theme="dark"] .sort-panel,
+[data-theme="dark"] .sort-btn,
 [data-theme="dark"] .search-shell {
   background: linear-gradient(180deg, rgba(20, 28, 43, 0.98), rgba(15, 23, 42, 0.96));
   border-color: rgba(71, 85, 105, 0.36);
@@ -1787,6 +2038,12 @@ onMounted(() => {
   background: rgba(15, 23, 42, 0.9);
   border-color: rgba(71, 85, 105, 0.36);
   color: #e2e8f0;
+}
+
+[data-theme="dark"] .sort-btn.active,
+[data-theme="dark"] .sort-btn:hover {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.4);
 }
 
 [data-theme="dark"] .notes-table-wrapper,
@@ -1864,6 +2121,20 @@ onMounted(() => {
   }
   .ds-controls {
     flex-direction: column;
+  }
+
+  .sort-panel {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .sort-button-row,
+  .sort-btn {
+    width: 100%;
+  }
+
+  .sort-btn {
+    justify-content: space-between;
   }
 
   .range-inputs {

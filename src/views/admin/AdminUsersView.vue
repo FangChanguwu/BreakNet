@@ -52,6 +52,13 @@
               <td>{{ user.LastSignDate || "暂无记录" }}</td>
               <td>
                 <div class="action-group">
+                  <button
+                    v-if="isSuperAdmin"
+                    class="action-btn account"
+                    @click="openAccountModal(user)"
+                  >
+                    账号信息
+                  </button>
                   <button class="action-btn edit" @click="openEditModal(user)">
                     编辑
                   </button>
@@ -117,14 +124,62 @@
         </div>
       </div>
     </transition>
+
+    <transition name="fade">
+      <div v-if="isAccountModalOpen" class="modal-overlay" @click="closeAccountModal">
+        <div class="modal-content account-modal" @click.stop>
+          <h3>账号信息 - QQ: {{ accountForm.qq || accountUser?._id }}</h3>
+          <p class="modal-hint">
+            密码不会明文展示，填写新密码后保存即可覆盖原密码。
+          </p>
+
+          <div class="form-group">
+            <label>QQ</label>
+            <input type="number" v-model.number="accountForm.qq" />
+          </div>
+          <div class="form-group">
+            <label>账号</label>
+            <input type="text" v-model.trim="accountForm.username" />
+          </div>
+          <div class="form-group">
+            <label>昵称</label>
+            <input type="text" v-model.trim="accountForm.nickname" />
+          </div>
+          <div class="form-group">
+            <label>邮箱</label>
+            <input type="email" v-model.trim="accountForm.email" />
+          </div>
+          <div class="form-group">
+            <label>新密码</label>
+            <input
+              :type="showAccountPassword ? 'text' : 'password'"
+              v-model="accountForm.password"
+              placeholder="留空则不修改密码"
+            />
+          </div>
+          <label class="checkbox-row">
+            <input type="checkbox" v-model="showAccountPassword" />
+            <span>显示新密码</span>
+          </label>
+
+          <div class="modal-actions">
+            <button class="cancel-btn" @click="closeAccountModal">取消</button>
+            <button class="save-btn" @click="saveAccountInfo" :disabled="isAccountSaving">
+              {{ isAccountSaving ? "保存中..." : "保存账号信息" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </main>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import Swal from "sweetalert2";
 import http from "@/utils/http";
+import { useAuthStore } from "@/stores/auth";
 
 type UserRow = {
   _id: number;
@@ -133,8 +188,18 @@ type UserRow = {
   LastSignDate?: string;
 };
 
+type AccountInfo = {
+  qq: number;
+  username: string;
+  nickname: string;
+  email: string;
+  password: string;
+};
+
 const router = useRouter();
+const authStore = useAuthStore();
 const PAGE_SIZE = 50;
+const isSuperAdmin = computed(() => authStore.hasRoleAtLeast("superadmin"));
 
 const userList = ref<UserRow[]>([]);
 const searchQuery = ref("");
@@ -147,6 +212,17 @@ const isEditModalOpen = ref(false);
 const isSaving = ref(false);
 const editingUser = ref<UserRow | null>(null);
 const editForm = ref({ Credits: 0, Affection: 0, LastSignDate: "" });
+const isAccountModalOpen = ref(false);
+const isAccountSaving = ref(false);
+const showAccountPassword = ref(false);
+const accountUser = ref<UserRow | null>(null);
+const accountForm = ref<AccountInfo>({
+  qq: 0,
+  username: "",
+  nickname: "",
+  email: "",
+  password: "",
+});
 
 const fetchUsers = async (page = currentPage.value) => {
   try {
@@ -222,6 +298,89 @@ const saveUserData = async () => {
     }
   } finally {
     isSaving.value = false;
+  }
+};
+
+const openAccountModal = async (user: UserRow) => {
+  accountUser.value = user;
+  accountForm.value = {
+    qq: user._id,
+    username: "",
+    nickname: "",
+    email: "",
+    password: "",
+  };
+  showAccountPassword.value = false;
+  isAccountModalOpen.value = true;
+
+  try {
+    const res = await http.get(`/admin/user/${user._id}/account`);
+    const data = res.data?.data || res.data?.user || {};
+    accountForm.value = {
+      qq: Number(data.qq || data._id || user._id),
+      username: data.username || data.Username || "",
+      nickname: data.nickname || data.Nickname || "",
+      email: data.email || data.Email || "",
+      password: "",
+    };
+  } catch (error: any) {
+    closeAccountModal();
+    Swal.fire({
+      title: "读取失败",
+      text: error.response?.data?.message || error.response?.data?.detail || "账号信息接口暂不可用",
+      icon: "error",
+      background: "var(--surface-color)",
+      color: "var(--text-main)",
+    });
+  }
+};
+
+const closeAccountModal = () => {
+  isAccountModalOpen.value = false;
+  accountUser.value = null;
+  showAccountPassword.value = false;
+};
+
+const saveAccountInfo = async () => {
+  if (!accountUser.value) return;
+
+  const payload: Record<string, string | number> = {
+    qq: Number(accountForm.value.qq),
+    username: accountForm.value.username,
+    nickname: accountForm.value.nickname,
+    email: accountForm.value.email,
+  };
+  if (accountForm.value.password.trim()) {
+    payload.password = accountForm.value.password;
+  }
+
+  isAccountSaving.value = true;
+  try {
+    const res = await http.put(`/admin/user/${accountUser.value._id}/account`, payload);
+    if (res.data?.ok) {
+      closeAccountModal();
+      await Swal.fire({
+        title: "修改成功",
+        icon: "success",
+        background: "var(--surface-color)",
+        color: "var(--text-main)",
+        timer: 1400,
+        showConfirmButton: false,
+      });
+      fetchUsers();
+    } else {
+      throw new Error(res.data?.message || "修改失败");
+    }
+  } catch (error: any) {
+    Swal.fire({
+      title: "修改失败",
+      text: error.response?.data?.message || error.response?.data?.detail || error.message || "网络异常",
+      icon: "error",
+      background: "var(--surface-color)",
+      color: "var(--text-main)",
+    });
+  } finally {
+    isAccountSaving.value = false;
   }
 };
 
@@ -363,6 +522,11 @@ onMounted(() => fetchUsers());
   color: #fff;
 }
 
+.action-btn.account {
+  background: #111827;
+  color: #fff;
+}
+
 .summary-text {
   color: var(--text-muted);
   font-size: 0.95rem;
@@ -472,11 +636,37 @@ onMounted(() => fetchUsers());
   margin-top: 0;
 }
 
+.account-modal {
+  width: min(520px, calc(100vw - 32px));
+}
+
+.modal-hint {
+  margin: -4px 0 18px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 14px;
+}
+
+.checkbox-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.checkbox-row input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-color);
 }
 
 .modal-actions {

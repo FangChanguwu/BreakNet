@@ -4,18 +4,12 @@
           <div class="title-row">
             <h2>💰 我的积分</h2>
             <button
-              class="sign-btn"
-              :class="{ 'is-disabled': hasSignedInToday }"
-              @click="handleSignIn"
-              :disabled="hasSignedInToday || isSigning"
+              class="redeem-btn"
+              type="button"
+              :disabled="isRedeeming"
+              @click="handleRedeemCode"
             >
-              {{
-                isSigning
-                  ? "签到中..."
-                  : hasSignedInToday
-                    ? "今日已签到"
-                    : "🎁 立即签到"
-              }}
+              {{ isRedeeming ? "兑换中..." : "兑换码" }}
             </button>
           </div>
           <p class="subtitle">在这里查看你的积分、好感度与签到记录</p>
@@ -244,7 +238,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import Swal from "sweetalert2";
 import http from "@/utils/http";
 
 interface CreditData {
@@ -278,7 +273,7 @@ interface RankData {
 }
 
 const isLoading = ref(true);
-const isSigning = ref(false);
+const isRedeeming = ref(false);
 const creditData = ref<CreditData | null>(null);
 const rankData = ref<RankData | null>(null);
 
@@ -329,13 +324,6 @@ const formattedLastSignDate = computed(() => {
   return `${y}-${m}-${d}`;
 });
 
-const hasSignedInToday = computed(() => {
-  if (!creditData.value?.LastSignDate) return false;
-  const today = new Date();
-  const todayStr = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, "0")}${today.getDate().toString().padStart(2, "0")}`;
-  return creditData.value.LastSignDate === todayStr;
-});
-
 const fetchAllData = async () => {
   isLoading.value = true;
   try {
@@ -357,35 +345,68 @@ const fetchAllData = async () => {
   }
 };
 
-const handleSignIn = async () => {
-  if (hasSignedInToday.value || isSigning.value) return;
+const handleRedeemCode = async () => {
+  if (isRedeeming.value) return;
 
-  isSigning.value = true;
-  try {
-    const res = await http.post("/user/sign");
-    if (res.data?.ok) {
-      const d = res.data.data;
-      const htmlMsg = `
-        <div style="font-weight:bold; margin-bottom:4px; font-size:1.1rem;">签到成功！</div>
-        <div style="color:#f59e0b;">💰 积分 +${d.added_credits}</div>
-        <div style="color:#ef4444; margin-bottom:4px;">❤️ 好感度 +${d.added_affection}</div>
-        <div style="font-size:0.9rem; color:var(--text-secondary);">${d.event_info.replace(/\n/g, "<br>")}</div>
-        <div style="font-size:0.9rem; color:var(--text-secondary);">${d.affection_info.replace(/\n/g, "<br>")}</div>
-      `;
-      showToast(htmlMsg, "success");
-      await fetchAllData();
-    } else {
-      showToast(res.data?.message || "签到失败", "error");
-    }
-  } catch (err) {
-    showToast("网络请求出错，请稍后重试", "error");
-  } finally {
-    isSigning.value = false;
-  }
+  const result = await Swal.fire({
+    title: "兑换码",
+    input: "text",
+    inputPlaceholder: "请输入兑换码",
+    showCancelButton: true,
+    confirmButtonText: "兑换",
+    cancelButtonText: "取消",
+    background: "var(--surface-color)",
+    color: "var(--text-main)",
+    confirmButtonColor: "var(--primary-color)",
+    showLoaderOnConfirm: true,
+    inputValidator: (value) => {
+      if (!value.trim()) return "请输入兑换码";
+      return null;
+    },
+    preConfirm: async (value) => {
+      const code = String(value || "").trim();
+      if (!code) {
+        Swal.showValidationMessage("请输入兑换码");
+        return false;
+      }
+      isRedeeming.value = true;
+      try {
+        const res = await http.post("/user/redeem-code", { code });
+        if (res.data?.ok) return res.data;
+        Swal.showValidationMessage(res.data?.message || "兑换失败");
+        return false;
+      } catch (error: any) {
+        Swal.showValidationMessage(
+          error?.response?.data?.detail || error?.response?.data?.message || "兑换码不存在",
+        );
+        return false;
+      } finally {
+        isRedeeming.value = false;
+      }
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  });
+
+  if (!result.isConfirmed || !result.value?.ok) return;
+  const reward = Number(result.value.data?.credits || result.value.data?.reward || 0);
+  showToast(
+    `<div style="font-weight:bold; margin-bottom:4px; font-size:1.1rem;">兑换成功！</div><div style="color:#f59e0b;">💰 积分 +${reward}</div>`,
+    "success",
+  );
+  await fetchAllData();
+};
+
+const handleCreditUpdated = () => {
+  fetchAllData();
 };
 
 onMounted(() => {
   fetchAllData();
+  window.addEventListener("breaknet:credit-updated", handleCreditUpdated);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("breaknet:credit-updated", handleCreditUpdated);
 });
 </script>
 
@@ -442,7 +463,8 @@ onMounted(() => {
   font-size: 0.95rem;
 }
 
-.sign-btn {
+.sign-btn,
+.redeem-btn {
   background: var(--primary-color);
   color: #fff;
   border: none;
@@ -455,9 +477,41 @@ onMounted(() => {
   transition: all 0.3s ease;
   white-space: nowrap;
 }
-.sign-btn:hover:not(.is-disabled) {
+
+.redeem-btn {
+  background: linear-gradient(135deg, #f97316, #f59e0b);
+}
+
+.sign-btn:hover:not(.is-disabled),
+.redeem-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(var(--primary-color-rgb), 0.4);
+}
+
+:global(.swal2-input.swal2-inputerror) {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16) !important;
+}
+
+:global(.swal2-popup .swal2-input) {
+  border-radius: 16px !important;
+}
+
+:global(.swal2-validation-message) {
+  width: calc(100% - 5em) !important;
+  margin: 6px 2em 0 auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  color: #dc2626 !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+:global(.swal2-validation-message::before) {
+  display: none !important;
 }
 .sign-btn.is-disabled {
   background: var(--border-color);

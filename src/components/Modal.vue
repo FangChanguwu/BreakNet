@@ -4,7 +4,7 @@
       <div class="modal-content">
         <button class="modal-close-btn" @click="onClose" title="关闭">×</button>
         <h2 class="modal-title">
-          {{ mode === 'login' ? '账号登录' : '点我注册' }}
+          {{ modalTitle }}
         </h2>
 
         <!-- ================= 登录模式 ================= -->
@@ -17,20 +17,44 @@
             placeholder="用户名 或 QQ号码"
             @input="clearError"
           />
-          <input
-            v-model="password"
-            type="password"
-            class="modal-input mt-3"
-            :class="{ 'is-error': isError && !identifier }"
-            placeholder="登录密码"
-            @input="clearError"
-            @keyup.enter="handleLoginClick"
-          />
+          <div class="password-field mt-3">
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              class="modal-input password-input"
+              :class="{ 'is-error': isError && !identifier }"
+              placeholder="登录密码"
+              @input="clearError"
+              @keyup.enter="handleLoginClick"
+            />
+            <button
+              class="password-eye-btn"
+              type="button"
+              :aria-label="showPassword ? '隐藏密码' : '显示密码'"
+              @click="showPassword = !showPassword"
+            >
+              <svg v-if="!showPassword" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 3l18 18" />
+                <path d="M10.6 5.2A10.5 10.5 0 0 1 12 5c6 0 9.5 7 9.5 7a17.4 17.4 0 0 1-3 3.8" />
+                <path d="M6.5 6.9A16.9 16.9 0 0 0 2.5 12s3.5 7 9.5 7a9.8 9.8 0 0 0 4.1-.9" />
+                <path d="M9.8 9.8a3 3 0 0 0 4.4 4.4" />
+              </svg>
+            </button>
+          </div>
           
-          <label class="remember-row">
-            <input v-model="rememberMe" type="checkbox" class="remember-checkbox" />
-            <span>7天内免登录</span>
-          </label>
+          <div class="login-options-row">
+            <label class="remember-row">
+              <input v-model="rememberMe" type="checkbox" class="remember-checkbox" />
+              <span>7天内免登录</span>
+            </label>
+            <button class="forgot-password-btn" type="button" @click="switchMode('forgot')">
+              忘记密码？
+            </button>
+          </div>
 
           <transition name="slide-down">
             <div v-if="isError" class="error-msg">{{ errorText }}</div>
@@ -58,13 +82,32 @@
             placeholder="用户昵称 (仅展示用)"
             @input="clearError"
           />
-          <input
-            v-model="password"
-            type="password"
-            class="modal-input mt-3"
-            placeholder="用户密码"
-            @input="clearError"
-          />
+          <div class="password-field mt-3">
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              class="modal-input password-input"
+              placeholder="用户密码"
+              @input="clearError"
+            />
+            <button
+              class="password-eye-btn"
+              type="button"
+              :aria-label="showPassword ? '隐藏密码' : '显示密码'"
+              @click="showPassword = !showPassword"
+            >
+              <svg v-if="!showPassword" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 3l18 18" />
+                <path d="M10.6 5.2A10.5 10.5 0 0 1 12 5c6 0 9.5 7 9.5 7a17.4 17.4 0 0 1-3 3.8" />
+                <path d="M6.5 6.9A16.9 16.9 0 0 0 2.5 12s3.5 7 9.5 7a9.8 9.8 0 0 0 4.1-.9" />
+                <path d="M9.8 9.8a3 3 0 0 0 4.4 4.4" />
+              </svg>
+            </button>
+          </div>
           
           <!-- QQ 邮箱验证区域 -->
           <div class="qq-verify-group mt-3">
@@ -129,6 +172,88 @@
           </div>
         </template>
 
+        <!-- ================= 忘记密码模式 ================= -->
+        <template v-if="mode === 'forgot'">
+          <div class="qq-verify-group">
+            <input
+              v-model="emailAddress"
+              type="email"
+              class="modal-input qq-input"
+              placeholder="输入注册账号绑定的 QQ 邮箱"
+              :disabled="isVerifyBusy"
+              @input="handleEmailInput"
+            />
+            <button
+              class="verify-btn"
+              :class="{ 'is-waiting': isVerifyBusy }"
+              :disabled="isVerifyBusy"
+              @click="sendEmailCode"
+            >
+              {{ verifyBtnText }}
+            </button>
+          </div>
+
+          <transition name="slide-down">
+            <div v-if="showCodeInput" class="inline-verify-area">
+               <div class="verify-instructions">
+                 验证码已发送，请输入邮箱中收到的 6 位验证码并设置新密码
+               </div>
+               <input
+                 v-model="emailCode"
+                 type="text"
+                 class="modal-input mt-3"
+                 maxlength="6"
+                 placeholder="输入 6 位验证码"
+                 :disabled="isVerifyBusy"
+                 @input="clearError"
+               />
+               <div class="password-field mt-3">
+                 <input
+                   v-model="resetPassword"
+                   :type="showPassword ? 'text' : 'password'"
+                   class="modal-input password-input"
+                   placeholder="新密码（6-32位）"
+                   :disabled="isVerifyBusy"
+                   @input="clearError"
+                   @keyup.enter="handleResetPassword"
+                 />
+                 <button
+                   class="password-eye-btn"
+                   type="button"
+                   :aria-label="showPassword ? '隐藏密码' : '显示密码'"
+                   @click="showPassword = !showPassword"
+                 >
+                   <svg v-if="!showPassword" viewBox="0 0 24 24" aria-hidden="true">
+                     <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+                     <circle cx="12" cy="12" r="3" />
+                   </svg>
+                   <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+                     <path d="M3 3l18 18" />
+                     <path d="M10.6 5.2A10.5 10.5 0 0 1 12 5c6 0 9.5 7 9.5 7a17.4 17.4 0 0 1-3 3.8" />
+                     <path d="M6.5 6.9A16.9 16.9 0 0 0 2.5 12s3.5 7 9.5 7a9.8 9.8 0 0 0 4.1-.9" />
+                     <path d="M9.8 9.8a3 3 0 0 0 4.4 4.4" />
+                   </svg>
+                 </button>
+               </div>
+            </div>
+          </transition>
+
+          <transition name="slide-down">
+            <div v-if="isError" class="error-msg mt-3">{{ errorText }}</div>
+          </transition>
+
+          <div class="modal-footer">
+            <span class="register-link" @click="switchMode('login')">返回登录</span>
+            <button
+              class="confirm-btn"
+              :class="{ 'disabled-btn': !showCodeInput || isVerifyBusy }"
+              @click="handleResetPassword"
+            >
+              {{ verifyStatus === 'verifying' ? '重设中...' : '重设密码' }}
+            </button>
+          </div>
+        </template>
+
       </div>
     </div>
   </transition>
@@ -148,10 +273,12 @@ const emit = defineEmits<{
   (e: "req-register", data: any): void;
 }>();
 
-const mode = ref<"login" | "register">("login");
+const mode = ref<"login" | "register" | "forgot">("login");
 
 const identifier = ref("");
 const password = ref("");
+const resetPassword = ref("");
+const showPassword = ref(false);
 const rememberMe = ref(false);
 const username = ref("");
 const nickname = ref("");
@@ -187,6 +314,11 @@ const verifyCodeBtnText = computed(() => {
   if (verifyStatus.value === "success") return "✔ 已通过";
   return "确认验证码";
 });
+const modalTitle = computed(() => {
+  if (mode.value === "login") return "账号登录";
+  if (mode.value === "register") return "点我注册";
+  return "重置密码";
+});
 
 watch(
   () => props.show,
@@ -207,6 +339,8 @@ const resetVerificationState = () => {
 const resetForm = () => {
   identifier.value = "";
   password.value = "";
+  resetPassword.value = "";
+  showPassword.value = false;
   rememberMe.value = false;
   username.value = "";
   nickname.value = "";
@@ -231,13 +365,20 @@ const handleEmailInput = () => {
   }
 };
 
-const switchMode = (m: "login" | "register") => {
+const switchMode = (m: "login" | "register" | "forgot") => {
   mode.value = m;
   isError.value = false;
-  if (m === "login") {
-    resetVerificationState();
-  }
+  showPassword.value = false;
+  password.value = "";
+  resetPassword.value = "";
+  resetVerificationState();
 };
+
+const isRequestTimeout = (error: unknown) =>
+  typeof error === "object" &&
+  error !== null &&
+  "code" in error &&
+  (error as { code?: string }).code === "ECONNABORTED";
 
 const onClose = () => {
   emit("update:show", false);
@@ -259,11 +400,22 @@ const sendEmailCode = async () => {
   try {
     clearError();
     verifyStatus.value = "sending";
-    await authApi.sendEmailCode(email);
+    if (mode.value === "forgot") {
+      await authApi.sendPasswordResetCode(email);
+    } else {
+      await authApi.sendEmailCode(email);
+    }
     verificationEmail.value = email;
     emailCode.value = "";
     verifyStatus.value = "code-sent";
   } catch (error: any) {
+    if (isRequestTimeout(error)) {
+      verificationEmail.value = email;
+      emailCode.value = "";
+      verifyStatus.value = "code-sent";
+      showExternalError("验证码请求等待超时，但邮件可能已经发出，请先查看邮箱。");
+      return;
+    }
     verifyStatus.value = "error";
     showExternalError(error.response?.data?.detail || "验证码发送失败，请稍后重试");
     verifyStatus.value = "idle";
@@ -300,8 +452,9 @@ const handleLoginClick = () => {
     showExternalError("请填满所有字段");
     return;
   }
+  const normalizedIdentifier = identifier.value.trim().replace(/^([1-9][0-9]{4,10})@qq\.com$/i, "$1");
   emit("req-login", {
-    identifier: identifier.value.trim(),
+    identifier: normalizedIdentifier,
     password: password.value.trim(),
     remember_me: rememberMe.value,
   });
@@ -327,6 +480,47 @@ const handleRegisterComplete = () => {
     password: password.value.trim(),
     nickname: nickname.value.trim(),
   });
+};
+
+const handleResetPassword = async () => {
+  const email = verificationEmail.value || emailAddress.value.trim().toLowerCase();
+  const code = emailCode.value.trim();
+  const nextPassword = resetPassword.value.trim();
+
+  if (!email) {
+    showExternalError("请先输入并验证邮箱");
+    return;
+  }
+  if (!/^\d{6}$/.test(code)) {
+    showExternalError("请输入 6 位数字验证码");
+    return;
+  }
+  if (nextPassword.length < 6 || nextPassword.length > 32) {
+    showExternalError("新密码长度必须在6至32位之间");
+    return;
+  }
+
+  try {
+    clearError();
+    verifyStatus.value = "verifying";
+    await authApi.resetPassword({
+      email,
+      code,
+      new_password: nextPassword,
+    });
+    showExternalError("密码已重设，请返回登录");
+    verifyStatus.value = "idle";
+    resetPassword.value = "";
+    emailCode.value = "";
+    password.value = "";
+    setTimeout(() => {
+      switchMode("login");
+      identifier.value = email.replace(/^([1-9][0-9]{4,10})@qq\.com$/i, "$1");
+    }, 800);
+  } catch (error: any) {
+    verifyStatus.value = "code-sent";
+    showExternalError(error.response?.data?.detail || "密码重设失败，请重试");
+  }
 };
 
 const showExternalError = (msg: string) => {
@@ -414,6 +608,54 @@ defineExpose({
   margin-top: 16px;
 }
 
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-field.mt-3 {
+  margin-top: 16px;
+}
+
+.password-input {
+  padding-right: 48px;
+}
+
+.password-eye-btn {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.password-eye-btn:hover {
+  background: rgba(255, 140, 0, 0.1);
+  color: #ff8c00;
+}
+
+.password-eye-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .modal-input:focus {
   background: #fff;
   border-color: #ff8c00;
@@ -429,11 +671,36 @@ defineExpose({
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 16px;
-  margin-left: 2px;
   color: #666;
   font-size: 0.92rem;
   user-select: none;
+}
+
+.login-options-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  margin-left: 2px;
+}
+
+.forgot-password-btn {
+  border: 0;
+  background: transparent;
+  color: #ff8c00;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.forgot-password-btn:hover {
+  color: #ff9d2e;
+  transform: translateY(-1px);
 }
 
 .remember-checkbox {
@@ -595,5 +862,15 @@ defineExpose({
 .register-link:hover {
   color: #40a9ff;
   text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .qq-verify-group {
+    flex-direction: column;
+  }
+
+  .verify-btn {
+    min-height: 42px;
+  }
 }
 </style>

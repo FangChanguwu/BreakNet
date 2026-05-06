@@ -6,6 +6,7 @@ import CreditView from "@/views/CreditView.vue";
 import PrivacyView from "@/views/PrivacyView.vue";
 import ContactView from "@/views/ContactView.vue";
 import AdminDashboardView from "@/views/admin/AdminDashboardView.vue";
+import AdminLogsView from "@/views/admin/AdminLogsView.vue";
 import AdminUsersView from "@/views/admin/AdminUsersView.vue";
 import Swal from "sweetalert2";
 import { useAuthStore } from "@/stores/auth";
@@ -25,7 +26,12 @@ import ProfileView from "@/views/ProfileView.vue";
 import MaimaiAccountView from "@/views/maimai/MaimaiAccountView.vue";
 import MaimaiCollectionsView from "@/views/maimai/MaimaiCollectionsView.vue";
 import MaimaiDeliveryView from "@/views/maimai/MaimaiDeliveryView.vue";
+import MaimaiTestView from "@/views/maimai/MaimaiTestView.vue";
 import MaimaiRandomView from "@/views/maimai/MaimaiRandomView.vue";
+import MaimaiRegionView from "@/views/maimai/MaimaiRegionView.vue";
+import MaimaiScoresView from "@/views/maimai/MaimaiScoresView.vue";
+import MaimaiTicketView from "@/views/maimai/MaimaiTicketView.vue";
+import MaimaiUnlockView from "@/views/maimai/MaimaiUnlockView.vue";
 import ShopView from "@/views/ShopView.vue";
 import SpyGameView from "@/views/SpyGameView.vue";
 import SongListView from "@/views/maimai/SongListView.vue";
@@ -40,6 +46,17 @@ const rolePriority: Record<string, number> = {
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior(to, _from, savedPosition) {
+    if (savedPosition) return savedPosition;
+    if (to.hash) {
+      return {
+        el: to.hash,
+        top: 0,
+        behavior: "smooth",
+      };
+    }
+    return { top: 0, left: 0 };
+  },
   routes: [
     {
       path: "/403",
@@ -93,15 +110,45 @@ const router = createRouter({
           component: AdminRolesView,
         },
         {
+          path: "admin/logs",
+          name: "admin-logs",
+          component: AdminLogsView,
+          meta: { minRole: "superadmin" },
+        },
+        {
           path: "maimai/account",
           name: "maimai-account",
           component: MaimaiAccountView,
           meta: { minRole: "premium" },
         },
         {
+          path: "maimai/scores",
+          name: "maimai-scores",
+          component: MaimaiScoresView,
+          meta: { minRole: "premium" },
+        },
+        {
+          path: "maimai/ticket",
+          name: "maimai-ticket",
+          component: MaimaiTicketView,
+          meta: { minRole: "premium" },
+        },
+        {
+          path: "maimai/unlock",
+          name: "maimai-unlock",
+          component: MaimaiUnlockView,
+          meta: { minRole: "premium" },
+        },
+        {
           path: "maimai/delivery",
           name: "maimai-delivery",
           component: MaimaiDeliveryView,
+          meta: { minRole: "tech_premium" },
+        },
+        {
+          path: "maimai/test",
+          name: "maimai-test",
+          component: MaimaiTestView,
           meta: { minRole: "tech_premium" },
         },
         {
@@ -113,6 +160,12 @@ const router = createRouter({
           path: "maimai/random",
           name: "maimai-random",
           component: MaimaiRandomView,
+        },
+        {
+          path: "maimai/region",
+          name: "maimai-region",
+          component: MaimaiRegionView,
+          meta: { minRole: "premium" },
         },
         {
           path: "maimai/collections",
@@ -159,10 +212,6 @@ router.beforeEach((to, _from, next) => {
     if (!authStore.hasRoleAtLeast("admin")) {
       return next("/403");
     }
-  }
-
-  if (to.path.startsWith("/shop")) {
-    return next("/403");
   }
 
   const minRole = typeof to.meta.minRole === "string" ? to.meta.minRole : null;

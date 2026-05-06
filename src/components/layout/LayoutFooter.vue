@@ -26,9 +26,8 @@ const currentYear = new Date().getFullYear();
 
 <style scoped>
 .site-footer {
-  background: var(--surface-color);
-
-  padding: 3rem 0;
+  background: transparent;
+  padding: 2rem 0 2.5rem;
   border-top: 1px solid var(--border-color);
   margin-top: auto;
 }
@@ -36,7 +35,7 @@ const currentYear = new Date().getFullYear();
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 var(--page-padding-x);
   display: flex;
 
   flex-direction: column;
@@ -48,10 +47,10 @@ const currentYear = new Date().getFullYear();
 }
 
 .footer-logo {
-  height: 100px;
+  height: 56px;
   width: auto;
-  margin-bottom: 8px;
-
+  margin-bottom: 4px;
+  opacity: 0.86;
   transition: transform 0.3s ease;
 }
 
@@ -75,7 +74,7 @@ const currentYear = new Date().getFullYear();
 }
 
 .footer-links a {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   text-decoration: none;
   transition:
     color 0.3s,

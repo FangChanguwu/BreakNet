@@ -22,6 +22,8 @@ export const authApi = {
   sendEmailCode(email: string) {
     return http.post("/auth/email/send-code", {
       email: email.trim().toLowerCase(),
+    }, {
+      timeout: 30000,
     });
   },
 
@@ -29,6 +31,22 @@ export const authApi = {
     return http.post("/auth/email/verify", {
       email: email.trim().toLowerCase(),
       code: code.trim(),
+    });
+  },
+
+  sendPasswordResetCode(email: string) {
+    return http.post("/auth/password-reset/send-code", {
+      email: email.trim().toLowerCase(),
+    }, {
+      timeout: 30000,
+    });
+  },
+
+  resetPassword(data: { email: string; code: string; new_password: string }) {
+    return http.post("/auth/password-reset/confirm", {
+      email: data.email.trim().toLowerCase(),
+      code: data.code.trim(),
+      new_password: data.new_password,
     });
   },
 

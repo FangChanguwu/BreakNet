@@ -27,7 +27,7 @@
       <router-link to="/credit" class="nav-item" active-class="is-active" @click="handleNavigate">
         积分
       </router-link>
-      <router-link v-if="false" to="/shop" class="nav-item" active-class="is-active" @click="handleNavigate">
+      <router-link to="/shop" class="nav-item" active-class="is-active" @click="handleNavigate">
         商店
       </router-link>
       <router-link to="/profile" class="nav-item" active-class="is-active" @click="handleNavigate">
@@ -68,6 +68,16 @@
             </router-link>
 
             <router-link
+              v-if="authStore.isPremium"
+              to="/maimai/region"
+              class="sub-item"
+              active-class="sub-active"
+              @click="handleNavigate"
+            >
+              全国行脚
+            </router-link>
+
+            <router-link
               to="/maimai/collections"
               class="sub-item"
               active-class="sub-active"
@@ -88,6 +98,36 @@
               账号管理
             </router-link>
 
+            <router-link
+              v-if="authStore.isPremium"
+              to="/maimai/scores"
+              class="sub-item"
+              active-class="sub-active"
+              @click="handleNavigate"
+            >
+              成绩管理
+            </router-link>
+
+            <router-link
+              v-if="authStore.isPremium"
+              to="/maimai/ticket"
+              class="sub-item"
+              active-class="sub-active"
+              @click="handleNavigate"
+            >
+              跑图券
+            </router-link>
+
+            <router-link
+              v-if="authStore.isPremium"
+              to="/maimai/unlock"
+              class="sub-item"
+              active-class="sub-active"
+              @click="handleNavigate"
+            >
+              物品解锁
+            </router-link>
+
             <div v-if="authStore.isTechPremium" class="sub-menu-divider"></div>
 
             <router-link
@@ -98,6 +138,16 @@
               @click="handleNavigate"
             >
               Delivery
+            </router-link>
+
+            <router-link
+              v-if="authStore.isTechPremium"
+              to="/maimai/test"
+              class="sub-item"
+              active-class="sub-active"
+              @click="handleNavigate"
+            >
+              测试
             </router-link>
           </div>
         </transition>
@@ -138,6 +188,15 @@
               @click="handleNavigate"
             >
               用户权限
+            </router-link>
+            <router-link
+              v-if="authStore.role === 'superadmin'"
+              to="/admin/logs"
+              class="sub-item"
+              active-class="sub-active"
+              @click="handleNavigate"
+            >
+              用户日志
             </router-link>
           </div>
         </transition>
@@ -205,13 +264,13 @@ watch(
 <style scoped>
 .sidebar {
   position: fixed;
-  top: 20px;
-  left: 20px;
-  bottom: 20px;
-  width: 260px;
-  background-color: var(--surface-color);
-  border-radius: 20px;
-  box-shadow: 0 8px 30px var(--shadow-color);
+  top: 16px;
+  left: 16px;
+  bottom: 16px;
+  width: 268px;
+  background: var(--surface-elevated);
+  border-radius: 22px;
+  box-shadow: var(--shadow-panel);
   border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
@@ -221,10 +280,11 @@ watch(
 }
 
 .sidebar-header {
-  padding: 30px 24px;
+  padding: 24px 20px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .brand-link {
@@ -234,26 +294,26 @@ watch(
 
 .brand-title {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.65rem;
   font-weight: 900;
-  font-style: italic;
-  font-family: "Arial Black", Impact, sans-serif;
-  background: linear-gradient(135deg, var(--primary-color), #ff4d4f);
+  font-style: normal;
+  font-family: inherit;
+  background: linear-gradient(135deg, var(--primary-color), #ef4444);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: -1px;
+  letter-spacing: 0;
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .brand-link:hover .brand-title {
-  transform: scale(1.02);
-  filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.4));
+  transform: translateY(-1px);
+  filter: drop-shadow(0 6px 14px rgba(255, 140, 0, 0.18));
 }
 
 .sidebar-nav {
-  padding: 0 16px;
+  padding: 14px 12px 18px;
   flex: 1;
   overflow-y: auto;
 }
@@ -262,11 +322,12 @@ watch(
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 20px;
-  margin-bottom: 8px;
+  min-height: 42px;
+  padding: 10px 14px;
+  margin-bottom: 4px;
   color: var(--text-main);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
   border-radius: 12px;
   transition: all 0.2s;
   cursor: pointer;
@@ -274,17 +335,18 @@ watch(
 
 .nav-item:hover,
 .nav-item.is-active {
-  background-color: rgba(255, 140, 0, 0.1);
+  background-color: var(--primary-soft);
   color: var(--primary-color);
 }
 
 .sub-menu {
   display: flex;
   flex-direction: column;
-  background: var(--bg-color);
+  background: var(--surface-soft);
   border-radius: 12px;
-  margin: 0 8px 12px 8px;
-  padding: 10px 0;
+  margin: 4px 4px 12px;
+  padding: 8px 0;
+  border: 1px solid var(--border-color);
 }
 
 .sub-menu-divider {
@@ -294,7 +356,7 @@ watch(
 }
 
 .sub-item {
-  padding: 10px 20px 10px 40px;
+  padding: 9px 14px 9px 28px;
   color: var(--text-muted);
   text-decoration: none;
   font-size: 0.95rem;
@@ -302,8 +364,8 @@ watch(
     color 0.2s,
     background-color 0.2s;
   cursor: pointer;
-  border-radius: 8px;
-  margin: 0 8px;
+  border-radius: 10px;
+  margin: 0 6px;
   border: 0;
   background: transparent;
   text-align: left;
@@ -314,7 +376,7 @@ watch(
 }
 
 .sub-active {
-  background-color: rgba(255, 140, 0, 0.05);
+  background-color: var(--primary-soft);
   color: var(--primary-color);
   font-weight: 700;
 }
@@ -330,16 +392,16 @@ watch(
 
 .mobile-toggle-btn {
   position: fixed;
-  top: 15px;
-  left: 15px;
+  top: 14px;
+  left: 14px;
   z-index: 90;
   background: var(--surface-color);
   color: var(--text-main);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 10px var(--shadow-color);
+  box-shadow: var(--shadow-soft);
 }
 
 .close-btn {
@@ -376,7 +438,7 @@ watch(
 .expand-enter-active,
 .expand-leave-active {
   transition: all 0.3s ease;
-  max-height: 280px;
+  max-height: 520px;
   overflow: hidden;
 }
 
