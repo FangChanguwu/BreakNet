@@ -31,6 +31,9 @@
         <button class="refresh-btn" type="button" :disabled="refreshing || selectedAccountIndex === null" @click="openScoreQrModal">
           {{ refreshing ? "更新中" : "更新成绩" }}
         </button>
+        <button class="refresh-btn sync-prober-btn" type="button" :disabled="syncingProber || selectedAccountIndex === null" @click="syncProber">
+          {{ syncingProber ? "导入中" : "同步查分器" }}
+        </button>
       </div>
     </section>
 
@@ -251,6 +254,37 @@ type ApiEnvelope = {
   data?: unknown;
 };
 
+type ProberSyncResult = {
+  scoreCount?: number;
+  df?: string;
+  lxns?: string;
+  cachedScoreCount?: number;
+  dfRemoteCount?: number;
+  addedCount?: number;
+  changedCount?: number;
+  unchangedCount?: number;
+  added?: ProberDiffEntry[];
+  changed?: ProberDiffEntry[];
+  dfCompareSkipped?: boolean;
+  compareMessage?: string;
+  compareSeconds?: number;
+  uploadSeconds?: number;
+};
+
+type ProberDiffEntry = {
+  musicId?: number | string;
+  songId?: number | string;
+  title?: string;
+  levelIndex?: number;
+  levelLabel?: string;
+  achievement?: number | string;
+  oldAchievement?: number | string;
+  newAchievement?: number | string;
+  dxScore?: number;
+  oldDxScore?: number;
+  newDxScore?: number;
+};
+
 type ScoreCard = {
   uid: number;
   musicId: string;
@@ -289,6 +323,7 @@ const accountMenuOpen = ref(false);
 const loading = ref(false);
 const loadingAccounts = ref(false);
 const refreshing = ref(false);
+const syncingProber = ref(false);
 const loadError = ref("");
 const allScores = ref<ScoreCard[]>([]);
 const showQrModal = ref(false);
@@ -648,6 +683,107 @@ const getApiMessage = (payload: unknown) => {
   return data.message || data.detail || "后端更新接口暂不可用";
 };
 
+const escapeHtml = (value: unknown) =>
+  String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+const formatDiffAchievement = (value: number | string | undefined) => {
+  if (value === undefined || value === null || value === "") return "--";
+  const numeric = Number(value);
+  if (Number.isNaN(numeric)) return String(value);
+  return `${numeric.toFixed(4)}%`;
+};
+
+const getDiffMusicId = (entry: ProberDiffEntry) => entry.musicId ?? entry.songId ?? "--";
+
+const renderDiffRows = (entries: ProberDiffEntry[] = [], mode: "added" | "changed") => {
+  if (!entries.length) return `<p class="sync-empty">无</p>`;
+  return entries
+    .slice(0, 12)
+    .map((entry) => {
+      const id = escapeHtml(getDiffMusicId(entry));
+      const title = escapeHtml(entry.title || `乐曲 ${getDiffMusicId(entry)}`);
+      const level = escapeHtml(entry.levelLabel || (entry.levelIndex ?? "--"));
+      const achievement =
+        mode === "added"
+          ? formatDiffAchievement(entry.achievement ?? entry.newAchievement)
+          : `${formatDiffAchievement(entry.oldAchievement)} → ${formatDiffAchievement(entry.newAchievement ?? entry.achievement)}`;
+      const dx =
+        mode === "added"
+          ? entry.dxScore ?? entry.newDxScore
+          : `${entry.oldDxScore ?? "--"} → ${entry.newDxScore ?? entry.dxScore ?? "--"}`;
+      return `<li><span>#${id}</span><b>${title}</b><em>${level}</em><strong>${escapeHtml(achievement)}</strong><small>DX ${escapeHtml(dx)}</small></li>`;
+    })
+    .join("");
+};
+
+const showSyncLoading = () => {
+  Swal.fire({
+    title: "正在同步查分器",
+    html: '<div class="sync-loading"><span></span><span></span><span></span></div><p class="sync-loading-text">正在读取缓存成绩、拉取水鱼成绩。</p>',
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    showConfirmButton: false,
+    background: "var(--surface-color)",
+    color: "var(--text-main)",
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+};
+
+const showSyncResult = async (result: ProberSyncResult) => {
+  const rows = [
+    ["缓存成绩", result.cachedScoreCount ?? result.scoreCount ?? "--"],
+    ["水鱼已有", result.dfRemoteCount ?? "--"],
+    ["新增成绩", result.addedCount ?? result.added?.length ?? 0],
+    ["变动成绩", result.changedCount ?? result.changed?.length ?? 0],
+    ["未变化", result.unchangedCount ?? "--"],
+    ["比对状态", result.dfCompareSkipped ? result.compareMessage || "已跳过" : result.compareMessage || "已完成"],
+    ["水鱼查分器", result.df || "未绑定"],
+    ["LXNS", result.lxns || "未绑定"],
+    ["比对耗时", result.compareSeconds !== undefined ? `${result.compareSeconds}s` : "--"],
+    ["上传耗时", result.uploadSeconds !== undefined ? `${result.uploadSeconds}s` : "--"],
+  ];
+
+  await Swal.fire({
+    title: "同步完成",
+    html: `<div class="swal-result-list">${rows
+      .map(([label, value]) => `<p><span>${label}</span><b>${escapeHtml(value)}</b></p>`)
+      .join("")}</div>
+      <div class="sync-diff-grid">
+        <section>
+          <h4>新增成绩</h4>
+          <ul>${renderDiffRows(result.added, "added")}</ul>
+        </section>
+        <section>
+          <h4>变动成绩</h4>
+          <ul>${renderDiffRows(result.changed, "changed")}</ul>
+        </section>
+      </div>`,
+    icon: "success",
+    confirmButtonText: "知道了",
+    background: "var(--surface-color)",
+    color: "var(--text-main)",
+    width: 760,
+  });
+};
+
+const hasProberBinding = async () => {
+  if (selectedAccountIndex.value === null) return false;
+  try {
+    const response = await maimaiApi.getProberBindings(selectedAccountIndex.value);
+    const bindings = (response.data?.data?.bindings || []) as Array<{ bound?: boolean }>;
+    return bindings.some((binding) => binding.bound);
+  } catch {
+    return false;
+  }
+};
+
 const openScoreQrModal = () => {
   if (selectedAccountIndex.value === null) return;
   qrHint.value = "支持截图识别，也可以直接粘贴二维码原文。";
@@ -669,9 +805,13 @@ const refreshScores = async (qrcode: string) => {
     await fetchScores();
     showQrModal.value = false;
     qrText.value = "";
+    if (await hasProberBinding()) {
+      await syncProber();
+      return;
+    }
     await Swal.fire({
       title: "更新完成",
-      text: "成绩已拉取、格式化并更新到数据库缓存。",
+      text: "成绩已更新到数据库缓存。",
       icon: "success",
       timer: 1600,
       showConfirmButton: false,
@@ -688,6 +828,33 @@ const refreshScores = async (qrcode: string) => {
     });
   } finally {
     refreshing.value = false;
+  }
+};
+
+const syncProber = async () => {
+  if (selectedAccountIndex.value === null) return;
+
+  syncingProber.value = true;
+  showSyncLoading();
+  try {
+    const response = await maimaiApi.syncProber(selectedAccountIndex.value);
+    const body = response.data as ApiEnvelope;
+    if (typeof body.returnCode === "number" && body.returnCode !== 0) {
+      throw new Error(getApiMessage(body));
+    }
+
+    const result = (body.data || {}) as ProberSyncResult;
+    await showSyncResult(result);
+  } catch (error: any) {
+    await Swal.fire({
+      title: "同步失败",
+      text: error.response?.data?.message || error.response?.data?.detail || error.message || "后端同步接口暂不可用",
+      icon: "error",
+      background: "var(--surface-color)",
+      color: "var(--text-main)",
+    });
+  } finally {
+    syncingProber.value = false;
   }
 };
 
@@ -1062,6 +1229,138 @@ onMounted(async () => {
 .page-btn {
   background: var(--primary-color);
   color: #fff;
+}
+
+.sync-prober-btn {
+  background: #0f172a;
+}
+
+:global(.swal-result-list) {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  text-align: left;
+}
+
+:global(.swal-result-list p) {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(148, 163, 184, 0.1);
+}
+
+:global(.swal-result-list span) {
+  color: var(--text-muted);
+}
+
+:global(.sync-loading) {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+:global(.sync-loading span) {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--primary-color);
+  animation: sync-bounce 0.72s ease-in-out infinite alternate;
+}
+
+:global(.sync-loading span:nth-child(2)) {
+  animation-delay: 0.12s;
+}
+
+:global(.sync-loading span:nth-child(3)) {
+  animation-delay: 0.24s;
+}
+
+:global(.sync-loading-text) {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+:global(.sync-diff-grid) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+  text-align: left;
+}
+
+:global(.sync-diff-grid section) {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(148, 163, 184, 0.1);
+}
+
+:global(.sync-diff-grid h4) {
+  margin: 0 0 10px;
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+
+:global(.sync-diff-grid ul) {
+  display: grid;
+  gap: 7px;
+  max-height: 260px;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+}
+
+:global(.sync-diff-grid li) {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  gap: 5px 8px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 10px;
+  background: var(--surface-color);
+}
+
+:global(.sync-diff-grid li span),
+:global(.sync-diff-grid li em),
+:global(.sync-diff-grid li small) {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-style: normal;
+}
+
+:global(.sync-diff-grid li b) {
+  overflow: hidden;
+  color: var(--text-main);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:global(.sync-diff-grid li strong) {
+  grid-column: 2 / 4;
+  color: var(--primary-color);
+  font-size: 0.82rem;
+}
+
+:global(.sync-empty) {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+@keyframes sync-bounce {
+  from {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  to {
+    transform: translateY(-7px);
+    opacity: 1;
+  }
 }
 
 .reset-btn,
@@ -1641,6 +1940,10 @@ button:disabled {
   .bonus-slot img {
     width: 34px;
     height: 34px;
+  }
+
+  :global(.sync-diff-grid) {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>

@@ -132,6 +132,7 @@ const avatarUrl = computed(() => `https://q1.qlogo.cn/g?b=qq&nk=${profile.value.
 const roleMap: Record<string, string> = {
   normal: "普通用户",
   premium: "✨ 网站会员",
+  tech_premium: "⚙️ 技术会员",
   admin: "🛠️ 管理员",
   superadmin: "👑 最高权限",
 };
@@ -290,6 +291,10 @@ onMounted(fetchProfile);
 .role-badge.premium {
   background: rgba(234, 179, 8, 0.15);
   color: #eab308;
+}
+.role-badge.tech_premium {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.16), rgba(168, 85, 247, 0.16));
+  color: #0ea5e9;
 }
 .role-badge.admin {
   background: rgba(59, 130, 246, 0.15);

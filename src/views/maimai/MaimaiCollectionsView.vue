@@ -28,12 +28,12 @@
       <div class="filters">
         <label class="search-field">
           <span>搜索</span>
-          <input v-model.trim="query" type="search" placeholder="ID / 名称 / 获取方式" />
+          <input v-model.trim="query" type="search" :placeholder="searchPlaceholder" />
         </label>
         <label class="filter-field">
-          <span>版本</span>
+          <span>{{ selectedCategory === "title" ? "稀有度" : "版本" }}</span>
           <select v-model="selectedVersion">
-            <option value="">全部版本</option>
+            <option value="">{{ selectedCategory === "title" ? "全部稀有度" : "全部版本" }}</option>
             <option v-for="version in versionOptions" :key="version" :value="version">
               {{ version }}
             </option>
@@ -57,7 +57,15 @@
 
     <section v-else class="collection-grid" :class="selectedCategory">
       <article v-for="item in visibleItems" :key="`${item.category}-${item.id}`" class="collection-card">
-        <div class="image-box">
+        <div v-if="item.category === 'title'" class="image-box title-image-box">
+          <div
+            class="title-preview"
+            :style="{ backgroundImage: `url(${getTitleBackgroundUrl(item)})` }"
+          >
+            <span>{{ item.name || "未命名称号" }}</span>
+          </div>
+        </div>
+        <div v-else class="image-box">
           <img :src="getImageUrl(item)" :alt="item.name" loading="lazy" @error="markImageError" />
         </div>
         <div class="item-body">
@@ -86,7 +94,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 
-type MaimaiCollectionCategory = "icon" | "plate" | "frame";
+type MaimaiCollectionCategory = "icon" | "plate" | "frame" | "title";
 
 type MaimaiCollectionItem = {
   category: MaimaiCollectionCategory;
@@ -97,6 +105,7 @@ type MaimaiCollectionItem = {
   genreId: string;
   genre: string;
   version: string;
+  rareType?: string;
 };
 
 type CategoryOption = {
@@ -112,6 +121,7 @@ const categories: CategoryOption[] = [
   { key: "icon", label: "头像 Icon", assetPath: "icon", assetPrefix: "UI_Icon" },
   { key: "plate", label: "牌子 Plate", assetPath: "plate", assetPrefix: "UI_Plate" },
   { key: "frame", label: "背景 Frame", assetPath: "frame", assetPrefix: "UI_Frame" },
+  { key: "title", label: "称号 Title", assetPath: "title", assetPrefix: "UI_Title" },
 ];
 
 const selectedCategory = ref<MaimaiCollectionCategory>("icon");
@@ -128,6 +138,7 @@ const categoryCounts = computed<Record<MaimaiCollectionCategory, number>>(() => 
   icon: maimaiCollectionItems.value.filter((item) => item.category === "icon").length,
   plate: maimaiCollectionItems.value.filter((item) => item.category === "plate").length,
   frame: maimaiCollectionItems.value.filter((item) => item.category === "frame").length,
+  title: maimaiCollectionItems.value.filter((item) => item.category === "title").length,
 }));
 
 const currentCategoryItems = computed(() =>
@@ -135,9 +146,23 @@ const currentCategoryItems = computed(() =>
 );
 
 const currentCategoryTotal = computed(() => currentCategoryItems.value.length);
+const titleRareOrder = ["Normal", "Bronze", "Sliver", "Silver", "Gold", "Rainbow"];
 
 const versionOptions = computed(() =>
-  Array.from(new Set(currentCategoryItems.value.map((item) => item.version).filter(Boolean))).sort(),
+  Array.from(
+    new Set(
+      currentCategoryItems.value
+        .map((item) => selectedCategory.value === "title" ? item.rareType || "" : item.version)
+        .filter(Boolean),
+    ),
+  ).sort((left, right) => {
+    if (selectedCategory.value !== "title") return left.localeCompare(right);
+    const leftIndex = titleRareOrder.indexOf(left);
+    const rightIndex = titleRareOrder.indexOf(right);
+    const safeLeftIndex = leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex;
+    const safeRightIndex = rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex;
+    return safeLeftIndex - safeRightIndex || left.localeCompare(right);
+  }),
 );
 
 const genreOptions = computed(() =>
@@ -145,14 +170,20 @@ const genreOptions = computed(() =>
 );
 
 const normalizedQuery = computed(() => query.value.trim().toLowerCase());
+const searchPlaceholder = computed(() =>
+  selectedCategory.value === "title" ? "搜索称号 ID / 名称 / 稀有度 / 获取方式" : "ID / 名称 / 获取方式",
+);
 
 const filteredItems = computed(() => {
   const keyword = normalizedQuery.value;
   return currentCategoryItems.value.filter((item) => {
-    if (selectedVersion.value && item.version !== selectedVersion.value) return false;
+    if (selectedVersion.value) {
+      const versionValue = selectedCategory.value === "title" ? item.rareType || "" : item.version;
+      if (versionValue !== selectedVersion.value) return false;
+    }
     if (selectedGenre.value && item.genre !== selectedGenre.value) return false;
     if (!keyword) return true;
-    return [item.id, item.paddedId, item.name, item.normText, item.genre, item.version]
+    return [item.id, item.paddedId, item.name, item.normText, item.genre, item.version, item.rareType || ""]
       .some((value) => value.toLowerCase().includes(keyword));
   });
 });
@@ -162,6 +193,13 @@ const visibleItems = computed(() => filteredItems.value.slice(0, visibleLimit.va
 const getImageUrl = (item: MaimaiCollectionItem) => {
   const meta = categoryMetaMap.get(item.category) || categories[0];
   return `https://assets.breakdx.net/maimai/${meta.assetPath}/${meta.assetPrefix}_${item.paddedId}.png`;
+};
+
+const getTitleBackgroundUrl = (item: MaimaiCollectionItem) => {
+  const rareType = item.rareType || "Normal";
+  const allowedTypes = new Set(["Normal", "Bronze", "Silver", "Gold", "Rainbow"]);
+  const normalized = allowedTypes.has(rareType) ? rareType : "Normal";
+  return `/maimai/static/Shougou_${normalized}.png`;
 };
 
 const markImageError = (event: Event) => {
@@ -269,7 +307,7 @@ onMounted(() => {
 }
 
 .category-tabs {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .category-tab {
@@ -333,8 +371,13 @@ onMounted(() => {
 }
 
 .collection-grid.plate,
-.collection-grid.frame {
+.collection-grid.frame,
+.collection-grid.title {
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.collection-grid.title {
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
 }
 
 .collection-card {
@@ -363,13 +406,51 @@ onMounted(() => {
 }
 
 .collection-grid.plate .image-box,
-.collection-grid.frame .image-box {
+.collection-grid.frame .image-box,
+.collection-grid.title .image-box {
   min-height: 120px;
 }
 
 .collection-grid.plate .image-box img,
 .collection-grid.frame .image-box img {
   width: min(248px, 92%);
+}
+
+.title-image-box {
+  padding: 18px 14px;
+  overflow: hidden;
+  justify-items: center;
+}
+
+.title-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 276px;
+  height: 36px;
+  max-width: 100%;
+  padding: 0 28px;
+  box-sizing: border-box;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 276px 36px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(15, 23, 42, 0.55);
+  flex-shrink: 0;
+  transform: translateX(-4px) scale(0.78);
+  transform-origin: center;
+}
+
+.title-preview span {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .image-box img {
@@ -485,13 +566,18 @@ onMounted(() => {
     justify-content: center;
   }
 
+  .collection-grid.title {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .collection-grid.icon .collection-card {
     min-width: 0;
   }
 
   .image-box,
   .collection-grid.plate .image-box,
-  .collection-grid.frame .image-box {
+  .collection-grid.frame .image-box,
+  .collection-grid.title .image-box {
     min-height: 108px;
   }
 
@@ -502,6 +588,11 @@ onMounted(() => {
   .collection-grid.plate .image-box img,
   .collection-grid.frame .image-box img {
     width: min(280px, 88%);
+  }
+
+  .title-preview {
+    transform: scale(0.88);
+    transform-origin: center;
   }
 
   .item-body {

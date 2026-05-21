@@ -120,6 +120,43 @@
             </article>
           </section>
 
+          <section v-if="authStore.hasRoleAtLeast('superadmin')" class="music-increment-panel">
+            <div class="panel-head">
+              <div>
+                <div class="panel-title">曲库增量包</div>
+                <div class="panel-subtitle">上传结构类似 songList.json 的增量 JSON，同 ID 替换，新 ID 追加。</div>
+              </div>
+              <span class="panel-tag">SUPERADMIN</span>
+            </div>
+
+            <div class="increment-upload-row">
+              <label class="increment-file-picker">
+                <input type="file" accept="application/json,.json" @change="handleIncrementFileChange" />
+                <span>{{ incrementFile?.name || "选择增量包 JSON" }}</span>
+              </label>
+              <button
+                class="refresh-btn"
+                type="button"
+                :disabled="!incrementFile || isUploadingIncrement"
+                @click="uploadMusicIncrement"
+              >
+                {{ isUploadingIncrement ? "合并中..." : "上传并合并" }}
+              </button>
+            </div>
+
+            <p class="increment-help">
+              合并后会更新 songList 与 aliasList，并同步复制到 MaiDrawApi 的 src 目录。
+            </p>
+
+            <div v-if="incrementResult" class="increment-result">
+              <span>原曲库 {{ incrementResult.beforeCount ?? "--" }}</span>
+              <span>增量 {{ incrementResult.patchCount ?? "--" }}</span>
+              <span>替换 {{ incrementResult.replacedCount ?? "--" }}</span>
+              <span>新增 {{ incrementResult.addedCount ?? "--" }}</span>
+              <span>总数 {{ incrementResult.afterCount ?? "--" }}</span>
+            </div>
+          </section>
+
           <p v-if="lastError" class="error-banner">
             最近一次刷新失败：{{ lastError }}
           </p>
@@ -133,6 +170,7 @@ import { useDocumentVisibility } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import type { ApexOptions } from "apexcharts";
 import http from "@/utils/http";
+import { useAuthStore } from "@/stores/auth";
 
 type DashboardResponse = {
   server: {
@@ -155,17 +193,29 @@ type DashboardResponse = {
   cache_ttl_seconds?: number;
 };
 
+type MusicIncrementResult = {
+  beforeCount?: number;
+  patchCount?: number;
+  replacedCount?: number;
+  addedCount?: number;
+  afterCount?: number;
+};
+
 const router = useRouter();
 const visibility = useDocumentVisibility();
+const authStore = useAuthStore();
 
 const isInitialLoading = ref(true);
 const isRefreshing = ref(false);
+const isUploadingIncrement = ref(false);
 const dashboardData = ref<DashboardResponse | null>(null);
 const lastError = ref("");
 const lastUpdatedAt = ref<string>("");
 const pollingTimer = ref<number | null>(null);
 const isDarkTheme = ref(false);
 const isViewActive = ref(false);
+const incrementFile = ref<File | null>(null);
+const incrementResult = ref<MusicIncrementResult | null>(null);
 let themeObserver: MutationObserver | null = null;
 
 const MAX_POINTS = 24;
@@ -386,6 +436,51 @@ const refreshNow = async () => {
   await fetchDashboard(true);
 };
 
+const handleIncrementFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  incrementResult.value = null;
+  const file = input.files?.[0] || null;
+  if (!file) {
+    incrementFile.value = null;
+    return;
+  }
+
+  if (!file.name.toLowerCase().endsWith(".json")) {
+    alert("请选择 JSON 文件");
+    input.value = "";
+    incrementFile.value = null;
+    return;
+  }
+
+  incrementFile.value = file;
+};
+
+const uploadMusicIncrement = async () => {
+  if (!incrementFile.value) return;
+
+  const formData = new FormData();
+  formData.append("file", incrementFile.value);
+  isUploadingIncrement.value = true;
+  incrementResult.value = null;
+
+  try {
+    const res = await http.post("/admin/maimai/music/increment", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      timeout: 120000,
+    });
+    if (res.data?.returnCode === 0 || res.data?.ok) {
+      incrementResult.value = res.data.data || {};
+      alert(res.data?.message || "曲库增量合并完成");
+      return;
+    }
+    alert(res.data?.message || "曲库增量合并失败");
+  } catch (error: any) {
+    alert(error.response?.data?.detail || error.response?.data?.message || error.message || "曲库增量合并失败");
+  } finally {
+    isUploadingIncrement.value = false;
+  }
+};
+
 const handleVisibilityChange = () => {
   if (!isViewActive.value) return;
   if (visibility.value === "visible") {
@@ -452,14 +547,24 @@ onUnmounted(() => {
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 28px;
+  border-radius: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.1), transparent 22%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.92));
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.07);
+  box-sizing: border-box;
 }
 
 .page-header h2 {
   margin: 0 0 8px;
-  font-size: 2rem;
-  letter-spacing: -0.02em;
+  color: var(--text-main);
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  letter-spacing: 0;
+  line-height: 1.2;
 }
 
 .subtitle {
@@ -473,7 +578,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
   justify-content: flex-end;
 }
 
@@ -512,6 +618,8 @@ onUnmounted(() => {
   border: none;
   border-radius: 12px;
   padding: 10px 16px;
+  min-height: 42px;
+  white-space: nowrap;
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #fff;
   font-weight: 700;
@@ -664,7 +772,8 @@ onUnmounted(() => {
 }
 
 .panel-card,
-.detail-card {
+.detail-card,
+.music-increment-panel {
   padding: 20px;
 }
 
@@ -703,6 +812,73 @@ onUnmounted(() => {
   gap: 14px;
 }
 
+.music-increment-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(249, 115, 22, 0.24);
+  border-radius: 24px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+.increment-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.increment-file-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: min(420px, 100%);
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px dashed rgba(249, 115, 22, 0.5);
+  background: rgba(255, 247, 237, 0.7);
+  color: #9a3412;
+  font-weight: 800;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.increment-file-picker input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.increment-file-picker span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.increment-help {
+  margin: 12px 0 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.increment-result {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.increment-result span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(249, 115, 22, 0.12);
+  color: #c2410c;
+  font-weight: 800;
+}
+
 .detail-row {
   display: flex;
   align-items: center;
@@ -733,12 +909,20 @@ onUnmounted(() => {
 }
 
 [data-theme="dark"] .hero-card,
+[data-theme="dark"] .page-header,
 [data-theme="dark"] .metric-card,
 [data-theme="dark"] .panel-card,
-[data-theme="dark"] .detail-card {
+[data-theme="dark"] .detail-card,
+[data-theme="dark"] .music-increment-panel {
   background: linear-gradient(180deg, rgba(20, 28, 43, 0.98), rgba(15, 23, 42, 0.96));
   border-color: rgba(71, 85, 105, 0.34);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+}
+
+[data-theme="dark"] .page-header {
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.16), transparent 22%),
+    linear-gradient(135deg, rgba(20, 28, 43, 0.98), rgba(15, 23, 42, 0.96));
 }
 
 [data-theme="dark"] .hero-card {
@@ -774,6 +958,17 @@ onUnmounted(() => {
 [data-theme="dark"] .hero-meta span,
 [data-theme="dark"] .panel-tag {
   background: rgba(30, 41, 59, 0.92);
+}
+
+[data-theme="dark"] .increment-file-picker {
+  background: rgba(120, 53, 15, 0.24);
+  border-color: rgba(251, 146, 60, 0.36);
+  color: #fdba74;
+}
+
+[data-theme="dark"] .increment-result span {
+  background: rgba(249, 115, 22, 0.18);
+  color: #fdba74;
 }
 
 [data-theme="dark"] .status-pill.healthy {
@@ -831,10 +1026,12 @@ onUnmounted(() => {
   .page-header {
     flex-direction: column;
     align-items: stretch;
+    padding: 22px;
   }
 
   .header-actions {
-    justify-content: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
 
   .overview-grid {
@@ -844,7 +1041,8 @@ onUnmounted(() => {
   .hero-card,
   .metric-card,
   .panel-card,
-  .detail-card {
+  .detail-card,
+  .music-increment-panel {
     border-radius: 20px;
   }
 }

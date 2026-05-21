@@ -143,6 +143,84 @@
       </div>
     </section>
 
+    <section class="panel-card prober-panel">
+      <div class="panel-head">
+        <div>
+          <h3>查分器绑定</h3>
+          <p>用于把当前舞萌账号成绩同步到水鱼查分器和 LXNS。</p>
+        </div>
+        <button class="ghost-btn compact" type="button" :disabled="proberLoading || !currentAccount" @click="fetchProberBindings">
+          {{ proberLoading ? "读取中..." : "刷新绑定" }}
+        </button>
+      </div>
+
+      <div class="prober-current-account">
+        <span>当前绑定目标</span>
+        <strong>{{ currentAccount ? `${currentAccount.displayName} / UID ${currentAccount.uid}` : "请先绑定舞萌账号" }}</strong>
+      </div>
+
+      <div class="prober-grid">
+        <article class="prober-card">
+          <div class="prober-card-head">
+            <div>
+              <strong>水鱼查分器</strong>
+              <span>成绩导入 Token</span>
+            </div>
+            <b :class="{ active: proberBindings.df.bound }">
+              {{ proberBindings.df.bound ? "已绑定" : "未绑定" }}
+            </b>
+          </div>
+          <p class="masked-value">{{ proberBindings.df.maskedValue || "尚未保存 token" }}</p>
+          <div class="token-input-row">
+            <input
+              v-model.trim="proberForm.df"
+              type="password"
+              autocomplete="off"
+              placeholder="粘贴水鱼成绩导入 token"
+              @keyup.enter="saveProberBinding('df')"
+            />
+            <button class="primary-btn" type="button" :disabled="proberSaving === 'df' || !currentAccount" @click="saveProberBinding('df')">
+              {{ proberSaving === "df" ? "保存中..." : "保存" }}
+            </button>
+          </div>
+          <div class="prober-links">
+            <a href="https://www.diving-fish.com/maimaidx/prober/" target="_blank" rel="noreferrer">打开水鱼查分器</a>
+            <button v-if="proberBindings.df.bound" type="button" @click="removeProberBinding('df')">解除绑定</button>
+          </div>
+        </article>
+
+        <article class="prober-card">
+          <div class="prober-card-head">
+            <div>
+              <strong>LXNS</strong>
+              <span>好友码</span>
+            </div>
+            <b :class="{ active: proberBindings.lxns.bound }">
+              {{ proberBindings.lxns.bound ? "已绑定" : "未绑定" }}
+            </b>
+          </div>
+          <p class="masked-value">{{ proberBindings.lxns.maskedValue || "尚未保存好友码" }}</p>
+          <div class="token-input-row">
+            <input
+              v-model.trim="proberForm.lxns"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="输入 LXNS 好友码"
+              @keyup.enter="saveProberBinding('lxns')"
+            />
+            <button class="primary-btn" type="button" :disabled="proberSaving === 'lxns' || !currentAccount" @click="saveProberBinding('lxns')">
+              {{ proberSaving === "lxns" ? "保存中..." : "保存" }}
+            </button>
+          </div>
+          <div class="prober-links">
+            <a href="https://maimai.lxns.net/" target="_blank" rel="noreferrer">打开 LXNS</a>
+            <button v-if="proberBindings.lxns.bound" type="button" @click="removeProberBinding('lxns')">解除绑定</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <section class="tool-grid">
       <article class="panel-card tool-card">
         <div class="panel-head">
@@ -216,7 +294,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import Swal from "sweetalert2";
-import { maimaiApi } from "@/api/maimai";
+import { maimaiApi, type MaimaiProberBinding, type MaimaiProberType } from "@/api/maimai";
 import MaimaiRatingBadge from "@/components/maimai/MaimaiRatingBadge.vue";
 import { useAuthStore } from "@/stores/auth";
 
@@ -277,6 +355,8 @@ const binding = ref(false);
 const activating = ref(false);
 const switchingUid = ref<number | null>(null);
 const removingUid = ref<number | null>(null);
+const proberLoading = ref(false);
+const proberSaving = ref<MaimaiProberType | null>(null);
 const error = ref("");
 
 const bindQrText = ref("");
@@ -286,6 +366,14 @@ const activateHint = ref("激活后会刷新缓存，并把该 UID 设为当前�
 
 const bindFileInput = ref<HTMLInputElement | null>(null);
 const activateFileInput = ref<HTMLInputElement | null>(null);
+const proberForm = ref<Record<MaimaiProberType, string>>({
+  df: "",
+  lxns: "",
+});
+const proberBindings = ref<Record<MaimaiProberType, MaimaiProberBinding>>({
+  df: { type: "df", bound: false },
+  lxns: { type: "lxns", bound: false },
+});
 
 const accountsPayload = ref<AccountsPayload>({
   qq: 0,
@@ -315,6 +403,35 @@ const hydrateAccounts = (payload?: AccountsPayload) => {
     switchIndex: 0,
     accounts: [],
   };
+};
+
+const hydrateProberBindings = (payload?: { bindings?: MaimaiProberBinding[] }) => {
+  const next: Record<MaimaiProberType, MaimaiProberBinding> = {
+    df: { type: "df", bound: false },
+    lxns: { type: "lxns", bound: false },
+  };
+  (payload?.bindings || []).forEach((binding) => {
+    if (binding.type === "df" || binding.type === "lxns") {
+      next[binding.type] = {
+        type: binding.type,
+        bound: Boolean(binding.bound),
+        maskedValue: binding.maskedValue,
+        updatedAt: binding.updatedAt,
+      };
+    }
+  });
+  proberBindings.value = next;
+};
+
+const resetProberBindings = () => {
+  hydrateProberBindings();
+  proberForm.value.df = "";
+  proberForm.value.lxns = "";
+};
+
+const getCurrentAccountIndex = () => {
+  const index = currentAccount.value?.index;
+  return typeof index === "number" ? index : null;
 };
 
 const getBarcodeDetectorCtor = (): BarcodeDetectorCtor | null => {
@@ -386,6 +503,7 @@ const fetchAccounts = async () => {
     const res = await maimaiApi.getAccounts();
     if (res.data?.returnCode === 0) {
       hydrateAccounts(res.data.data as AccountsPayload);
+      await fetchProberBindings();
       return;
     }
     error.value = res.data?.message || "读取绑定账号失败";
@@ -393,6 +511,103 @@ const fetchAccounts = async () => {
     error.value = requestError.response?.data?.detail || "读取绑定账号失败";
   } finally {
     loading.value = false;
+  }
+};
+
+const fetchProberBindings = async () => {
+  const index = getCurrentAccountIndex();
+  if (index === null) {
+    resetProberBindings();
+    return;
+  }
+
+  proberLoading.value = true;
+  try {
+    const res = await maimaiApi.getProberBindings(index);
+    if (res.data?.returnCode === 0) {
+      hydrateProberBindings(res.data.data as { bindings?: MaimaiProberBinding[] });
+      return;
+    }
+    Toast.fire({ icon: "error", title: res.data?.message || "读取查分器绑定失败" });
+  } catch (requestError: any) {
+    Toast.fire({
+      icon: "error",
+      title: requestError.response?.data?.detail || "读取查分器绑定失败",
+    });
+  } finally {
+    proberLoading.value = false;
+  }
+};
+
+const saveProberBinding = async (type: MaimaiProberType) => {
+  const index = getCurrentAccountIndex();
+  if (index === null) {
+    Toast.fire({ icon: "warning", title: "请先绑定舞萌账号" });
+    return;
+  }
+
+  const value = proberForm.value[type].trim();
+  if (!value) {
+    Toast.fire({ icon: "warning", title: type === "df" ? "请先输入水鱼 token" : "请先输入 LXNS 好友码" });
+    return;
+  }
+
+  proberSaving.value = type;
+  try {
+    const res = await maimaiApi.saveProberBinding(index, type, value);
+    if (res.data?.returnCode === 0) {
+      hydrateProberBindings(res.data.data as { bindings?: MaimaiProberBinding[] });
+      proberForm.value[type] = "";
+      Toast.fire({ icon: "success", title: res.data?.message || "绑定已保存" });
+      return;
+    }
+    Toast.fire({ icon: "error", title: res.data?.message || "保存绑定失败" });
+  } catch (requestError: any) {
+    Toast.fire({
+      icon: "error",
+      title: requestError.response?.data?.detail || "保存绑定失败",
+    });
+  } finally {
+    proberSaving.value = null;
+  }
+};
+
+const removeProberBinding = async (type: MaimaiProberType) => {
+  const index = getCurrentAccountIndex();
+  if (index === null) {
+    Toast.fire({ icon: "warning", title: "请先绑定舞萌账号" });
+    return;
+  }
+
+  const name = type === "df" ? "水鱼查分器" : "LXNS";
+  const result = await Swal.fire({
+    title: `解除${name}绑定？`,
+    text: "解除后不会影响舞萌账号绑定，只是不再同步到该查分器。",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "解除绑定",
+    cancelButtonText: "取消",
+    background: "var(--surface-color)",
+    color: "var(--text-main)",
+  });
+  if (!result.isConfirmed) return;
+
+  proberSaving.value = type;
+  try {
+    const res = await maimaiApi.deleteProberBinding(index, type);
+    if (res.data?.returnCode === 0) {
+      hydrateProberBindings(res.data.data as { bindings?: MaimaiProberBinding[] });
+      Toast.fire({ icon: "success", title: res.data?.message || "已解除绑定" });
+      return;
+    }
+    Toast.fire({ icon: "error", title: res.data?.message || "解除绑定失败" });
+  } catch (requestError: any) {
+    Toast.fire({
+      icon: "error",
+      title: requestError.response?.data?.detail || "解除绑定失败",
+    });
+  } finally {
+    proberSaving.value = null;
   }
 };
 
@@ -407,6 +622,7 @@ const bindAccount = async () => {
     const res = await maimaiApi.bindAccount(bindQrText.value.trim());
     if (res.data?.returnCode === 0) {
       hydrateAccounts(res.data.data?.accounts as AccountsPayload);
+      await fetchProberBindings();
       bindQrText.value = "";
       bindHint.value = res.data?.message || "绑定成功";
       Toast.fire({ icon: "success", title: res.data?.message || "绑定成功" });
@@ -434,6 +650,7 @@ const activateAccount = async () => {
     const res = await maimaiApi.activateAccount(activateQrText.value.trim());
     if (res.data?.returnCode === 0) {
       hydrateAccounts(res.data.data?.accounts as AccountsPayload);
+      await fetchProberBindings();
       activateQrText.value = "";
       activateHint.value = res.data?.message || "激活成功";
       Toast.fire({ icon: "success", title: res.data?.message || "激活成功" });
@@ -459,6 +676,7 @@ const switchCurrent = async (index: number) => {
     const res = await maimaiApi.switchAccount(index);
     if (res.data?.returnCode === 0) {
       hydrateAccounts(res.data.data as AccountsPayload);
+      await fetchProberBindings();
       Toast.fire({ icon: "success", title: res.data?.message || "切换成功" });
       return;
     }
@@ -492,6 +710,7 @@ const unbindAccount = async (account: AccountEntry) => {
     const res = await maimaiApi.unbindAccount(account.index);
     if (res.data?.returnCode === 0) {
       hydrateAccounts(res.data.data as AccountsPayload);
+      await fetchProberBindings();
       Toast.fire({ icon: "success", title: res.data?.message || "解绑成功" });
       return;
     }
@@ -695,6 +914,116 @@ onMounted(() => {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
   margin-top: 18px;
+}
+
+.prober-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.prober-current-account {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(249, 115, 22, 0.1);
+  color: #9a3412;
+}
+
+.prober-current-account span {
+  color: #c2410c;
+  font-weight: 800;
+}
+
+.prober-current-account strong {
+  min-width: 0;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prober-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(249, 115, 22, 0.16);
+  background:
+    radial-gradient(circle at top right, rgba(251, 146, 60, 0.12), transparent 28%),
+    #f8fbff;
+}
+
+.prober-card-head,
+.prober-links,
+.token-input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.prober-card-head strong {
+  display: block;
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+.prober-card-head span,
+.masked-value {
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+.prober-card-head b {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.12);
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.prober-card-head b.active {
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+}
+
+.masked-value {
+  margin: 0;
+  min-height: 20px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+.token-input-row input {
+  min-width: 0;
+  flex: 1;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: #fff;
+  color: #0f172a;
+  outline: none;
+}
+
+.prober-links a,
+.prober-links button {
+  border: 0;
+  background: transparent;
+  color: #f97316;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.ghost-btn.compact {
+  padding: 10px 14px;
 }
 
 .account-card {
@@ -909,8 +1238,10 @@ onMounted(() => {
 [data-theme="dark"] .panel-card,
 [data-theme="dark"] .summary-card,
 [data-theme="dark"] .account-card,
+[data-theme="dark"] .prober-card,
 [data-theme="dark"] .meta-item,
 [data-theme="dark"] .qr-textarea,
+[data-theme="dark"] .token-input-row input,
 [data-theme="dark"] .ghost-btn,
 [data-theme="dark"] .error-banner,
 [data-theme="dark"] .state-box {
@@ -929,9 +1260,12 @@ onMounted(() => {
 [data-theme="dark"] .page-header h2,
 [data-theme="dark"] .panel-head h3,
 [data-theme="dark"] .account-title-line h4,
+[data-theme="dark"] .prober-card-head strong,
+[data-theme="dark"] .prober-current-account strong,
 [data-theme="dark"] .summary-card strong,
 [data-theme="dark"] .meta-item strong,
-[data-theme="dark"] .qr-textarea {
+[data-theme="dark"] .qr-textarea,
+[data-theme="dark"] .token-input-row input {
   color: #e2e8f0;
 }
 
@@ -942,12 +1276,20 @@ onMounted(() => {
 [data-theme="dark"] .uid-text,
 [data-theme="dark"] .cache-note,
 [data-theme="dark"] .tool-tip,
+[data-theme="dark"] .prober-card-head span,
+[data-theme="dark"] .prober-current-account span,
+[data-theme="dark"] .masked-value,
 [data-theme="dark"] .meta-item span {
   color: #94a3b8;
 }
 
 [data-theme="dark"] .summary-card.highlight {
   background: linear-gradient(135deg, rgba(120, 53, 15, 0.28), rgba(30, 41, 59, 0.96));
+}
+
+[data-theme="dark"] .prober-current-account {
+  background: rgba(249, 115, 22, 0.16);
+  color: #fdba74;
 }
 
 [data-theme="dark"] .rating-fallback {
@@ -982,7 +1324,8 @@ onMounted(() => {
   }
 
   .account-grid,
-  .tool-grid {
+  .tool-grid,
+  .prober-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -1007,7 +1350,10 @@ onMounted(() => {
 
   .account-top,
   .tool-actions,
-  .action-row {
+  .action-row,
+  .prober-current-account,
+  .token-input-row,
+  .prober-links {
     flex-direction: column;
     align-items: stretch;
   }

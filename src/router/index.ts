@@ -31,6 +31,7 @@ import MaimaiRandomView from "@/views/maimai/MaimaiRandomView.vue";
 import MaimaiRegionView from "@/views/maimai/MaimaiRegionView.vue";
 import MaimaiScoresView from "@/views/maimai/MaimaiScoresView.vue";
 import MaimaiTicketView from "@/views/maimai/MaimaiTicketView.vue";
+import MaimaiToolsView from "@/views/maimai/MaimaiToolsView.vue";
 import MaimaiUnlockView from "@/views/maimai/MaimaiUnlockView.vue";
 import ShopView from "@/views/ShopView.vue";
 import SpyGameView from "@/views/SpyGameView.vue";
@@ -138,6 +139,12 @@ const router = createRouter({
           name: "maimai-unlock",
           component: MaimaiUnlockView,
           meta: { minRole: "premium" },
+        },
+        {
+          path: "maimai/tools",
+          name: "maimai-tools",
+          component: MaimaiToolsView,
+          meta: { minRole: "admin" },
         },
         {
           path: "maimai/delivery",

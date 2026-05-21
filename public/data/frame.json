@@ -1,0 +1,3320 @@
+{
+  "1": {
+    "id": 1,
+    "name": "デフォルト",
+    "genre": "デフォルト",
+    "normText": "はじめから所持"
+  },
+  "2": {
+    "id": 2,
+    "name": "全体からランダム",
+    "genre": "ランダム",
+    "normText": "1プレイごとに全てのコレクションからランダムで選ぶよ！"
+  },
+  "3": {
+    "id": 3,
+    "name": "お気に入りからランダム",
+    "genre": "ランダム",
+    "normText": "1プレイごとにお気に入りコレクションからランダムで選ぶよ！"
+  },
+  "100101": {
+    "id": 100101,
+    "name": "しゅわしゅわちほー",
+    "genre": "オリジナルちほー",
+    "normText": "しゅわしゅわちほー complete"
+  },
+  "100301": {
+    "id": 100301,
+    "name": "メトロポリスちほー3",
+    "genre": "オリジナルちほー",
+    "normText": "メトロポリスちほー3 complete"
+  },
+  "100401": {
+    "id": 100401,
+    "name": "スカイストリートちほー",
+    "genre": "オリジナルちほー",
+    "normText": "スカイストリートちほー complete"
+  },
+  "100501": {
+    "id": 100501,
+    "name": "天界ちほー3",
+    "genre": "オリジナルちほー",
+    "normText": "天界ちほー3 complete"
+  },
+  "100601": {
+    "id": 100601,
+    "name": "BLACK ROSEちほー3",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー3 complete"
+  },
+  "100701": {
+    "id": 100701,
+    "name": "竜宮城のなつやすみ",
+    "genre": "オリジナルちほー",
+    "normText": "しゅわーランドちほーで獲得"
+  },
+  "100702": {
+    "id": 100702,
+    "name": "本日のCAFE MiLKはおやすみです。",
+    "genre": "オリジナルちほー",
+    "normText": "しゅわーランドちほーで獲得"
+  },
+  "100703": {
+    "id": 100703,
+    "name": "クリームソーダ、ひとくちほしいにゃ～！",
+    "genre": "オリジナルちほー",
+    "normText": "しゅわーランドちほーで獲得"
+  },
+  "105101": {
+    "id": 105101,
+    "name": "まちカドまぞくちほー",
+    "genre": "イベントちほー",
+    "normText": "まちカドまぞくちほー complete"
+  },
+  "105201": {
+    "id": 105201,
+    "name": "ご注文はうさぎですか？？ちほー",
+    "genre": "イベントちほー",
+    "normText": "ご注文はうさぎですか？？ちほー complete"
+  },
+  "105301": {
+    "id": 105301,
+    "name": "ナユタン星人ちほー",
+    "genre": "イベントちほー",
+    "normText": "ナユタン星人ちほー complete"
+  },
+  "105401": {
+    "id": 105401,
+    "name": "GYARIちほー2",
+    "genre": "イベントちほー",
+    "normText": "GYARIちほー2 complete"
+  },
+  "105501": {
+    "id": 105501,
+    "name": "東方Projectリバイバルちほー",
+    "genre": "イベントちほー",
+    "normText": "東方Projectリバイバルちほー complete"
+  },
+  "105601": {
+    "id": 105601,
+    "name": "Arcaeaちほー",
+    "genre": "イベントちほー",
+    "normText": "Arcaeaちほー complete"
+  },
+  "105701": {
+    "id": 105701,
+    "name": "かいりきベアちほー",
+    "genre": "イベントちほー",
+    "normText": "かいりきベアちほー complete"
+  },
+  "105801": {
+    "id": 105801,
+    "name": "プロジェクトセカイちほー",
+    "genre": "イベントちほー",
+    "normText": "プロジェクトセカイちほー complete"
+  },
+  "105901": {
+    "id": 105901,
+    "name": "にじさんじちほー",
+    "genre": "イベントちほー",
+    "normText": "にじさんじちほー complete"
+  },
+  "106001": {
+    "id": 106001,
+    "name": "いらすとやちほー",
+    "genre": "イベントちほー",
+    "normText": "いらすとやちほー complete"
+  },
+  "106101": {
+    "id": 106101,
+    "name": "オンゲキちほー2",
+    "genre": "イベントちほー",
+    "normText": "オンゲキちほー2 complete"
+  },
+  "106201": {
+    "id": 106201,
+    "name": "そらみこちほー",
+    "genre": "イベントちほー",
+    "normText": "そらみこちほー complete"
+  },
+  "109101": {
+    "id": 109101,
+    "name": "PERFECT Jewel [Diamond]",
+    "genre": "実績",
+    "normText": "maimai でらっくす～maimai でらっくす PLUS 全曲/BASIC～MASTER/ALL PERFECT"
+  },
+  "109102": {
+    "id": 109102,
+    "name": "SYNC Jewel [Diamond]",
+    "genre": "実績",
+    "normText": "maimai でらっくす～maimai でらっくす PLUS 全曲/BASIC～MASTER/FULL SYNC DX"
+  },
+  "109501": {
+    "id": 109501,
+    "name": "maimai ALL PERFECT COLLECTiON",
+    "genre": "その他",
+    "normText": "maimai ALL PERFECT COLLECTiON 特典"
+  },
+  "150051": {
+    "id": 150051,
+    "name": "タケモトピアノ",
+    "genre": "実績",
+    "normText": "タケモトピアノCMソング/プレイ"
+  },
+  "150101": {
+    "id": 150101,
+    "name": "しゅわしゅわちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "しゅわしゅわちほー2 complete"
+  },
+  "150201": {
+    "id": 150201,
+    "name": "BLACK ROSEちほー4",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー4 complete"
+  },
+  "150301": {
+    "id": 150301,
+    "name": "スカイストリートちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "スカイストリートちほー2 complete"
+  },
+  "150401": {
+    "id": 150401,
+    "name": "kawaiiちほー",
+    "genre": "オリジナルちほー",
+    "normText": "kawaiiちほー complete"
+  },
+  "150501": {
+    "id": 150501,
+    "name": "高天原ちほー",
+    "genre": "オリジナルちほー",
+    "normText": "高天原ちほー complete"
+  },
+  "150601": {
+    "id": 150601,
+    "name": "らいむっくま＆れもんっくま",
+    "genre": "オリジナルちほー",
+    "normText": "しゅわーランドちほー2で獲得"
+  },
+  "150602": {
+    "id": 150602,
+    "name": "すりりんぐでしゅわりんぐ、じゃ！",
+    "genre": "オリジナルちほー",
+    "normText": "しゅわーランドちほー2で獲得"
+  },
+  "150603": {
+    "id": 150603,
+    "name": "光吉カーニバル",
+    "genre": "オリジナルちほー",
+    "normText": "しゅわーランドちほー2で獲得"
+  },
+  "155101": {
+    "id": 155101,
+    "name": "炎炎ノ消防隊ちほー",
+    "genre": "イベントちほー",
+    "normText": "炎炎ノ消防隊ちほー complete"
+  },
+  "155201": {
+    "id": 155201,
+    "name": "すみっコぐらしちほー",
+    "genre": "イベントちほー",
+    "normText": "すみっコぐらしちほー complete"
+  },
+  "155301": {
+    "id": 155301,
+    "name": "HaNaMiNaちほー",
+    "genre": "イベントちほー",
+    "normText": "HaNaMiNaちほー complete"
+  },
+  "155401": {
+    "id": 155401,
+    "name": "HARDCORE TANO*Cちほー",
+    "genre": "イベントちほー",
+    "normText": "HARDCORE TANO*Cちほー complete"
+  },
+  "155501": {
+    "id": 155501,
+    "name": "東方Projectリバイバルちほー2",
+    "genre": "イベントちほー",
+    "normText": "東方Projectリバイバルちほー2 complete"
+  },
+  "155601": {
+    "id": 155601,
+    "name": "乙女ゲームの破滅フラグしかない悪役令嬢に転生してしまった…ちほー",
+    "genre": "イベントちほー",
+    "normText": "乙女ゲームの破滅フラグしかない悪役令嬢に転生してしまった…ちほー complete"
+  },
+  "155701": {
+    "id": 155701,
+    "name": "ビックカメラちほー",
+    "genre": "イベントちほー",
+    "normText": "ビックカメラちほー complete"
+  },
+  "155901": {
+    "id": 155901,
+    "name": "はるまきごはんちほー",
+    "genre": "イベントちほー",
+    "normText": "はるまきごはんちほー complete"
+  },
+  "156001": {
+    "id": 156001,
+    "name": "オンゲキちほー3",
+    "genre": "イベントちほー",
+    "normText": "オンゲキちほー3 complete"
+  },
+  "159501": {
+    "id": 159501,
+    "name": "黒姫",
+    "genre": "その他",
+    "normText": "SEGAからのプレゼントです"
+  },
+  "159502": {
+    "id": 159502,
+    "name": "百合咲ミカ",
+    "genre": "その他",
+    "normText": "SEGAからのプレゼントです"
+  },
+  "200101": {
+    "id": 200101,
+    "name": "宇宙すてーしょんちほー",
+    "genre": "オリジナルちほー",
+    "normText": "宇宙すてーしょんちほー complete"
+  },
+  "200102": {
+    "id": 200102,
+    "name": "宇宙すてーしょんちほー おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "宇宙すてーしょんちほー全楽曲/MASTER/FULL COMBO"
+  },
+  "200201": {
+    "id": 200201,
+    "name": "天界ちほー4",
+    "genre": "オリジナルちほー",
+    "normText": "天界ちほー4 complete"
+  },
+  "200202": {
+    "id": 200202,
+    "name": "天界ちほー4 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "天界ちほー4全楽曲/MASTER/FULL COMBO"
+  },
+  "200301": {
+    "id": 200301,
+    "name": "メトロポリスちほー4",
+    "genre": "オリジナルちほー",
+    "normText": "メトロポリスちほー4 complete"
+  },
+  "200302": {
+    "id": 200302,
+    "name": "メトロポリスちほー4 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "メトロポリスちほー4全楽曲/MASTER/FULL COMBO"
+  },
+  "200401": {
+    "id": 200401,
+    "name": "7sRefちほー",
+    "genre": "オリジナルちほー",
+    "normText": "7sRefちほー complete"
+  },
+  "200402": {
+    "id": 200402,
+    "name": "7sRefちほー おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "7sRefちほー全楽曲/MASTER/FULL COMBO"
+  },
+  "200501": {
+    "id": 200501,
+    "name": "ユニバースちほー",
+    "genre": "オリジナルちほー",
+    "normText": "ユニバースちほーで獲得"
+  },
+  "200502": {
+    "id": 200502,
+    "name": "でらっくmaimai♪てんてこまい!",
+    "genre": "オリジナルちほー",
+    "normText": "ユニバースちほーで獲得"
+  },
+  "200503": {
+    "id": 200503,
+    "name": "絡めトリック利己ライザー",
+    "genre": "オリジナルちほー",
+    "normText": "ユニバースちほーで獲得"
+  },
+  "200601": {
+    "id": 200601,
+    "name": "BLACK ROSEちほー5",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー5 complete"
+  },
+  "200602": {
+    "id": 200602,
+    "name": "BLACK ROSEちほー5 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー5全楽曲/MASTER/FULL COMBO"
+  },
+  "205101": {
+    "id": 205101,
+    "name": "アイドルマスター ミリオンライブ！ちほー",
+    "genre": "イベントちほー",
+    "normText": "アイドルマスター ミリオンライブ！ちほー complete"
+  },
+  "205201": {
+    "id": 205201,
+    "name": "アイドルマスター SideMちほー",
+    "genre": "イベントちほー",
+    "normText": "アイドルマスター SideMちほー complete"
+  },
+  "205301": {
+    "id": 205301,
+    "name": "cosMo@暴走Pちほー",
+    "genre": "イベントちほー",
+    "normText": "cosMo@暴走Pちほー complete"
+  },
+  "205401": {
+    "id": 205401,
+    "name": "オーイシ×加藤のピザラジオちほー",
+    "genre": "イベントちほー",
+    "normText": "オーイシ×加藤のピザラジオちほー complete"
+  },
+  "205501": {
+    "id": 205501,
+    "name": "東方ダンマクカグラちほー",
+    "genre": "イベントちほー",
+    "normText": "東方ダンマクカグラちほー complete"
+  },
+  "205601": {
+    "id": 205601,
+    "name": "キノシタちほー",
+    "genre": "イベントちほー",
+    "normText": "キノシタちほー complete"
+  },
+  "205701": {
+    "id": 205701,
+    "name": "ゆるキャン△ SEASON2ちほー",
+    "genre": "イベントちほー",
+    "normText": "ゆるキャン△ SEASON2ちほー complete"
+  },
+  "205801": {
+    "id": 205801,
+    "name": "宇崎ちゃんは遊びたい！ちほー",
+    "genre": "イベントちほー",
+    "normText": "宇崎ちゃんは遊びたい！ちほー complete"
+  },
+  "205901": {
+    "id": 205901,
+    "name": "Rain Dropsちほー",
+    "genre": "イベントちほー",
+    "normText": "Rain Dropsちほー complete"
+  },
+  "206001": {
+    "id": 206001,
+    "name": "プロジェクトセカイちほー2",
+    "genre": "イベントちほー",
+    "normText": "プロジェクトセカイちほー2 complete"
+  },
+  "206101": {
+    "id": 206101,
+    "name": "Project DIVAちほー3",
+    "genre": "イベントちほー",
+    "normText": "Project DIVAちほー3 complete"
+  },
+  "206201": {
+    "id": 206201,
+    "name": "オンゲキちほー4",
+    "genre": "イベントちほー",
+    "normText": "オンゲキちほー4 complete"
+  },
+  "206301": {
+    "id": 206301,
+    "name": "舞ヶ原シンセ研究会ちほー",
+    "genre": "イベントちほー",
+    "normText": "舞ヶ原シンセ研究会ちほー complete"
+  },
+  "209101": {
+    "id": 209101,
+    "name": "Thank you for playing -Splash-",
+    "genre": "実績",
+    "normText": "maimai でらっくす Splash～maimai でらっくす Splash PLUS 全曲/BASIC～MASTER/CLEAR"
+  },
+  "209102": {
+    "id": 209102,
+    "name": "SYNC Jewel [Emerald]",
+    "genre": "実績",
+    "normText": "maimai でらっくす Splash～maimai でらっくす Splash PLUS 全曲/BASIC～MASTER/FULL SYNC DX"
+  },
+  "209103": {
+    "id": 209103,
+    "name": "PERFECT Jewel [Emerald]",
+    "genre": "実績",
+    "normText": "maimai でらっくす Splash～maimai でらっくす Splash PLUS 全曲/BASIC～MASTER/ALL PERFECT"
+  },
+  "209501": {
+    "id": 209501,
+    "name": "「シーズン1」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン1　上位入賞"
+  },
+  "209502": {
+    "id": 209502,
+    "name": "「シーズン2」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン2　上位入賞"
+  },
+  "209503": {
+    "id": 209503,
+    "name": "「シーズン3」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン3　上位入賞"
+  },
+  "209504": {
+    "id": 209504,
+    "name": "ここからはじまるプロローグ。",
+    "genre": "実績",
+    "normText": "フレーム[ここからはじまるプロローグ。]のスタンプを10個集める"
+  },
+  "209505": {
+    "id": 209505,
+    "name": "maimai でらっくす ベストアルバムちほー",
+    "genre": "その他",
+    "normText": "maimai でらっくす ベストアルバムちほー 特典"
+  },
+  "209506": {
+    "id": 209506,
+    "name": "モ゜ルモ゜ル",
+    "genre": "実績",
+    "normText": "フレーム[モ゜ルモ゜ル]のスタンプを10個集める"
+  },
+  "209507": {
+    "id": 209507,
+    "name": "PERFECT CHALLENGE DiSC PLUS -UNiVERSE-",
+    "genre": "その他",
+    "normText": "PERFECT CHALLENGE DiSC PLUS -UNiVERSE- 特典"
+  },
+  "250051": {
+    "id": 250051,
+    "name": "SEGA本社【虹】",
+    "genre": "実績",
+    "normText": "アイコン「SEGA本社」をセットして若い力[でらっくす]/MASTER/RANK S"
+  },
+  "250053": {
+    "id": 250053,
+    "name": "若い力",
+    "genre": "実績",
+    "normText": "アイコン「SEGA本社」をセットして若い力[でらっくす]/MASTER/ALL PERFECT"
+  },
+  "250054": {
+    "id": 250054,
+    "name": "BLUE ZONE",
+    "genre": "実績",
+    "normText": "BLUE ZONE[でらっくす]/MASTER/FULL SYNC"
+  },
+  "250101": {
+    "id": 250101,
+    "name": "宇宙すてーしょんちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "宇宙すてーしょんちほー2 complete"
+  },
+  "250102": {
+    "id": 250102,
+    "name": "宇宙すてーしょんちほー2 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "宇宙すてーしょんちほー2全楽曲/MASTER/FULL COMBO"
+  },
+  "250201": {
+    "id": 250201,
+    "name": "メトロポリスちほー5",
+    "genre": "オリジナルちほー",
+    "normText": "メトロポリスちほー5 complete"
+  },
+  "250202": {
+    "id": 250202,
+    "name": "メトロポリスちほー5 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "メトロポリスちほー5全楽曲/MASTER/FULL COMBO"
+  },
+  "250301": {
+    "id": 250301,
+    "name": "天界ちほー5",
+    "genre": "オリジナルちほー",
+    "normText": "天界ちほー5 complete"
+  },
+  "250302": {
+    "id": 250302,
+    "name": "天界ちほー5 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "天界ちほー5全楽曲/MASTER/FULL COMBO"
+  },
+  "250401": {
+    "id": 250401,
+    "name": "7sRefちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "7sRefちほー2 complete"
+  },
+  "250402": {
+    "id": 250402,
+    "name": "7sRefちほー2 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "7sRefちほー2全楽曲/MASTER/FULL COMBO"
+  },
+  "250501": {
+    "id": 250501,
+    "name": "ユニバースちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "ユニバースちほー2で獲得"
+  },
+  "250601": {
+    "id": 250601,
+    "name": "BLACK ROSEちほー6",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー6 complete"
+  },
+  "250602": {
+    "id": 250602,
+    "name": "BLACK ROSEちほー6 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー6全楽曲/MASTER/FULL COMBO"
+  },
+  "250701": {
+    "id": 250701,
+    "name": "ホワイトボード(はっぴー)",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250702": {
+    "id": 250702,
+    "name": "maistagram",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250703": {
+    "id": 250703,
+    "name": "maimai CAFE MiLK",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250704": {
+    "id": 250704,
+    "name": "竜宮城",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250705": {
+    "id": 250705,
+    "name": "maimai PiNK",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250706": {
+    "id": 250706,
+    "name": "maimai ORANGE",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250707": {
+    "id": 250707,
+    "name": "maimai GreeN B",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250708": {
+    "id": 250708,
+    "name": "maimai Dots Black",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250709": {
+    "id": 250709,
+    "name": "QZKago Requiem しゃま1",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250710": {
+    "id": 250710,
+    "name": "QZKago Requiem みるく1",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250711": {
+    "id": 250711,
+    "name": "Schwarzschild 1",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250712": {
+    "id": 250712,
+    "name": "Alea jacta est! 1",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250713": {
+    "id": 250713,
+    "name": "FFT 1",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250714": {
+    "id": 250714,
+    "name": "雷切-RAIKIRI- 2",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250715": {
+    "id": 250715,
+    "name": "the EmpErroR 2",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250716": {
+    "id": 250716,
+    "name": "Believe the Rainbow 2",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250717": {
+    "id": 250717,
+    "name": "PANDORA PARADOXXX 1",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250718": {
+    "id": 250718,
+    "name": "花と、雪と、ドラムンベース。　1",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250719": {
+    "id": 250719,
+    "name": "花と、雪と、ドラムンベース。　2",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250720": {
+    "id": 250720,
+    "name": "みるくの大人専用お子様ランチコースにゃフレーム",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250721": {
+    "id": 250721,
+    "name": "Magical Flavor 1",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250722": {
+    "id": 250722,
+    "name": "Excalibur ～Revived resolution～",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250723": {
+    "id": 250723,
+    "name": "夢花火",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250724": {
+    "id": 250724,
+    "name": "ユビキリ",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250725": {
+    "id": 250725,
+    "name": "宴じゃ!乙姫の大盤振る舞舞フレーム",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250726": {
+    "id": 250726,
+    "name": "いっしそう電☆舞舞神拳！",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250727": {
+    "id": 250727,
+    "name": "Our Wrenally",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250728": {
+    "id": 250728,
+    "name": "Hyper Active",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250729": {
+    "id": 250729,
+    "name": "AMAZING MIGHTYYYY!!!!",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250730": {
+    "id": 250730,
+    "name": "てってれ～♪　ラズのビビットコースフレーム",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250731": {
+    "id": 250731,
+    "name": "7thSense",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250732": {
+    "id": 250732,
+    "name": "Glorious Crown",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250733": {
+    "id": 250733,
+    "name": "Aiolos",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250734": {
+    "id": 250734,
+    "name": "Oshama Scramble!",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250735": {
+    "id": 250735,
+    "name": "おしゃま牛乳社長のしゃまでございますコースフレーム",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250736": {
+    "id": 250736,
+    "name": "oboro",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250737": {
+    "id": 250737,
+    "name": "Caliburne",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250738": {
+    "id": 250738,
+    "name": "ニャイン",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250739": {
+    "id": 250739,
+    "name": "mai-Star",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250740": {
+    "id": 250740,
+    "name": "シフォンのヨリドリ♪ミドリ♪コースですわ!フレーム",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250741": {
+    "id": 250741,
+    "name": "System “Z”",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250742": {
+    "id": 250742,
+    "name": "Garakuta Doll Play",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250743": {
+    "id": 250743,
+    "name": "Starlight Disco",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250744": {
+    "id": 250744,
+    "name": "Fragrance",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250745": {
+    "id": 250745,
+    "name": "ソルトの新感覚コースなのですフレーム",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250746": {
+    "id": 250746,
+    "name": "SONIC THE HEDGEHOG(SUPER SONIC)",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250747": {
+    "id": 250747,
+    "name": "ジングルベル",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250749": {
+    "id": 250749,
+    "name": "龍宮茶館　店内",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250750": {
+    "id": 250750,
+    "name": "CafeMiLK　店内",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250751": {
+    "id": 250751,
+    "name": "LOPIT Halloween",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250752": {
+    "id": 250752,
+    "name": "LOPIT Snowfield",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "250753": {
+    "id": 250753,
+    "name": "はっぴー（10周年）",
+    "genre": "maimaiシリーズ",
+    "normText": "10周年記念ちほーで獲得"
+  },
+  "255101": {
+    "id": 255101,
+    "name": "小林さんちのメイドラゴンSちほー",
+    "genre": "イベントちほー",
+    "normText": "小林さんちのメイドラゴンSちほー complete"
+  },
+  "255201": {
+    "id": 255201,
+    "name": "ツユちほー",
+    "genre": "イベントちほー",
+    "normText": "ツユちほー complete"
+  },
+  "255301": {
+    "id": 255301,
+    "name": "D4DJ Groovy Mixちほー",
+    "genre": "イベントちほー",
+    "normText": "D4DJ Groovy Mixちほー complete"
+  },
+  "255302": {
+    "id": 255302,
+    "name": "Photon Maiden",
+    "genre": "イベントちほー",
+    "normText": "D4DJ Groovy Mixちほーで獲得"
+  },
+  "255303": {
+    "id": 255303,
+    "name": "Lyrical Lily",
+    "genre": "イベントちほー",
+    "normText": "D4DJ Groovy Mixちほーで獲得"
+  },
+  "255401": {
+    "id": 255401,
+    "name": "Diverse Systemちほー",
+    "genre": "イベントちほー",
+    "normText": "Diverse Systemちほー complete"
+  },
+  "255501": {
+    "id": 255501,
+    "name": "Rain Dropsちほー2",
+    "genre": "イベントちほー",
+    "normText": "Rain Dropsちほー2 complete"
+  },
+  "255601": {
+    "id": 255601,
+    "name": "ゲームセンターCXちほー",
+    "genre": "イベントちほー",
+    "normText": "ゲームセンターCXちほー complete"
+  },
+  "255701": {
+    "id": 255701,
+    "name": "東方Project 博麗神社～春祭りちほー",
+    "genre": "イベントちほー",
+    "normText": "東方Project 博麗神社～春祭りちほー complete"
+  },
+  "255801": {
+    "id": 255801,
+    "name": "CHUNITHMちほー",
+    "genre": "イベントちほー",
+    "normText": "CHUNITHMちほー complete"
+  },
+  "255802": {
+    "id": 255802,
+    "name": "コスモポップファンクラブ",
+    "genre": "イベントちほー",
+    "normText": "CHUNITHMちほーで獲得"
+  },
+  "255901": {
+    "id": 255901,
+    "name": "すりぃちほー",
+    "genre": "イベントちほー",
+    "normText": "すりぃちほー complete"
+  },
+  "256001": {
+    "id": 256001,
+    "name": "オンゲキちほー5",
+    "genre": "イベントちほー",
+    "normText": "オンゲキちほー5 complete"
+  },
+  "259101": {
+    "id": 259101,
+    "name": "Thank you for playing -でらっくす-",
+    "genre": "実績",
+    "normText": "maimai でらっくす～maimai でらっくす PLUS 全曲/BASIC～MASTER/CLEAR"
+  },
+  "259501": {
+    "id": 259501,
+    "name": "「シーズン4」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン4　上位入賞"
+  },
+  "259502": {
+    "id": 259502,
+    "name": "「シーズン5」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン5　上位入賞"
+  },
+  "259503": {
+    "id": 259503,
+    "name": "「シーズン6」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン6　上位入賞"
+  },
+  "259504": {
+    "id": 259504,
+    "name": "ONGEKI Sound Collection 07",
+    "genre": "その他",
+    "normText": "ONGEKI Sound Collection 07 特典"
+  },
+  "259505": {
+    "id": 259505,
+    "name": "ふたりでばかんすにゃ♪",
+    "genre": "実績",
+    "normText": "フレーム[ふたりでばかんすにゃ♪]のスタンプを10個集める"
+  },
+  "259506": {
+    "id": 259506,
+    "name": "Rain Drops風でらっくま",
+    "genre": "その他",
+    "normText": "maimai でらっくす×Rain Drops キャンペーン特典"
+  },
+  "300101": {
+    "id": 300101,
+    "name": "ハピフェスちほー",
+    "genre": "オリジナルちほー",
+    "normText": "ハピフェスちほーで獲得"
+  },
+  "300102": {
+    "id": 300102,
+    "name": "ハピフェスちほー おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "ハピフェスちほー全楽曲/MASTER/FULL COMBO"
+  },
+  "300201": {
+    "id": 300201,
+    "name": "メトロポリスちほー6",
+    "genre": "オリジナルちほー",
+    "normText": "メトロポリスちほー6で獲得"
+  },
+  "300202": {
+    "id": 300202,
+    "name": "メトロポリスちほー6 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "メトロポリスちほー6全楽曲/MASTER/FULL COMBO"
+  },
+  "300301": {
+    "id": 300301,
+    "name": "スカイストリートちほー3",
+    "genre": "オリジナルちほー",
+    "normText": "スカイストリートちほー3で獲得"
+  },
+  "300302": {
+    "id": 300302,
+    "name": "スカイストリートちほー3 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "スカイストリートちほー3全楽曲/MASTER/FULL COMBO"
+  },
+  "300401": {
+    "id": 300401,
+    "name": "天界ちほー6",
+    "genre": "オリジナルちほー",
+    "normText": "天界ちほー6で獲得"
+  },
+  "300402": {
+    "id": 300402,
+    "name": "天界ちほー6 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "天界ちほー6全楽曲/MASTER/FULL COMBO"
+  },
+  "300501": {
+    "id": 300501,
+    "name": "フェスティバルちほー",
+    "genre": "オリジナルちほー",
+    "normText": "フェスティバルちほーで獲得"
+  },
+  "300601": {
+    "id": 300601,
+    "name": "BLACK ROSEちほー7",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー7で獲得"
+  },
+  "300602": {
+    "id": 300602,
+    "name": "BLACK ROSEちほー7 おまけ",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー7全楽曲/MASTER/FULL COMBO"
+  },
+  "305101": {
+    "id": 305101,
+    "name": "先輩がうざい後輩の話ちほー",
+    "genre": "イベントちほー",
+    "normText": "先輩がうざい後輩の話ちほーで獲得"
+  },
+  "305102": {
+    "id": 305102,
+    "name": "先輩がうざい後輩の話 エンドカード その1",
+    "genre": "イベントちほー",
+    "normText": "先輩がうざい後輩の話ちほーで獲得"
+  },
+  "305103": {
+    "id": 305103,
+    "name": "先輩がうざい後輩の話 エンドカード その2",
+    "genre": "イベントちほー",
+    "normText": "先輩がうざい後輩の話ちほーで獲得"
+  },
+  "305104": {
+    "id": 305104,
+    "name": "先輩がうざい後輩の話 エンドカード その3",
+    "genre": "イベントちほー",
+    "normText": "先輩がうざい後輩の話ちほーで獲得"
+  },
+  "305201": {
+    "id": 305201,
+    "name": "DECO*27ちほー",
+    "genre": "イベントちほー",
+    "normText": "DECO*27ちほーで獲得"
+  },
+  "305202": {
+    "id": 305202,
+    "name": "アニマル",
+    "genre": "イベントちほー",
+    "normText": "DECO*27ちほーで獲得"
+  },
+  "305203": {
+    "id": 305203,
+    "name": "ヴァンパイア",
+    "genre": "イベントちほー",
+    "normText": "DECO*27ちほーで獲得"
+  },
+  "305301": {
+    "id": 305301,
+    "name": "プロジェクトセカイちほー3",
+    "genre": "イベントちほー",
+    "normText": "プロジェクトセカイちほー3で獲得"
+  },
+  "305401": {
+    "id": 305401,
+    "name": "東方Project×オンゲキちほー",
+    "genre": "イベントちほー",
+    "normText": "東方Project×オンゲキちほーで獲得"
+  },
+  "305501": {
+    "id": 305501,
+    "name": "さなちゃんねるちほー",
+    "genre": "イベントちほー",
+    "normText": "さなちゃんねるちほーで獲得"
+  },
+  "305502": {
+    "id": 305502,
+    "name": "ば～ちゃるな～す名取さな",
+    "genre": "イベントちほー",
+    "normText": "さなちゃんねるちほーで獲得"
+  },
+  "305601": {
+    "id": 305601,
+    "name": "ZONeちほー",
+    "genre": "イベントちほー",
+    "normText": "ZONeちほーで獲得"
+  },
+  "305602": {
+    "id": 305602,
+    "name": "ZONe UPDATE!",
+    "genre": "イベントちほー",
+    "normText": "ZONeちほーで獲得"
+  },
+  "305603": {
+    "id": 305603,
+    "name": "ZONe",
+    "genre": "イベントちほー",
+    "normText": "ZONeちほーで獲得"
+  },
+  "305701": {
+    "id": 305701,
+    "name": "AIM",
+    "genre": "イベントちほー",
+    "normText": "樋口楓ちほーで獲得"
+  },
+  "305702": {
+    "id": 305702,
+    "name": "樋口楓ちほー",
+    "genre": "イベントちほー",
+    "normText": "樋口楓ちほーで獲得"
+  },
+  "305801": {
+    "id": 305801,
+    "name": "外神田文芸高校",
+    "genre": "イベントちほー",
+    "normText": "電音部ちほーで獲得"
+  },
+  "305802": {
+    "id": 305802,
+    "name": "帝音国際学院",
+    "genre": "イベントちほー",
+    "normText": "電音部ちほーで獲得"
+  },
+  "305901": {
+    "id": 305901,
+    "name": "CHUNITHMちほー2",
+    "genre": "イベントちほー",
+    "normText": "CHUNITHMちほー2で獲得"
+  },
+  "306001": {
+    "id": 306001,
+    "name": "syudouちほー",
+    "genre": "イベントちほー",
+    "normText": "syudouちほーで獲得"
+  },
+  "306101": {
+    "id": 306101,
+    "name": "光／Fracture",
+    "genre": "イベントちほー",
+    "normText": "Arcaeaちほー2で獲得"
+  },
+  "306102": {
+    "id": 306102,
+    "name": "対立／Tempest",
+    "genre": "イベントちほー",
+    "normText": "Arcaeaちほー2で獲得"
+  },
+  "306103": {
+    "id": 306103,
+    "name": "アリス",
+    "genre": "イベントちほー",
+    "normText": "Arcaeaちほー2で獲得"
+  },
+  "306104": {
+    "id": 306104,
+    "name": "ラグランジュ",
+    "genre": "イベントちほー",
+    "normText": "Arcaeaちほー2で獲得"
+  },
+  "309101": {
+    "id": 309101,
+    "name": "Thank you for playing -UNiVERSE-",
+    "genre": "実績",
+    "normText": "maimai でらっくす UNiVERSE～maimai でらっくす UNiVERSE PLUS 全曲/BASIC～MASTER/CLEAR"
+  },
+  "309102": {
+    "id": 309102,
+    "name": "SYNC Jewel [Sapphire]",
+    "genre": "実績",
+    "normText": "maimai でらっくす UNiVERSE～maimai でらっくす UNiVERSE PLUS 全曲/BASIC～MASTER/FULL SYNC DX"
+  },
+  "309103": {
+    "id": 309103,
+    "name": "PERFECT Jewel [Sapphire]",
+    "genre": "実績",
+    "normText": "maimai でらっくす UNiVERSE～maimai でらっくす UNiVERSE PLUS 全曲/BASIC～MASTER/ALL PERFECT"
+  },
+  "309201": {
+    "id": 309201,
+    "name": "[Make UP Future！]星咲 あかり",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】星咲 あかり[Make UP Future！]」のカードを獲得"
+  },
+  "309202": {
+    "id": 309202,
+    "name": "[Make UP Future！]藤沢 柚子",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】藤沢 柚子[Make UP Future！]」のカードを獲得"
+  },
+  "309203": {
+    "id": 309203,
+    "name": "[Make UP Future！]三角 葵",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】三角 葵[Make UP Future！]」のカードを獲得"
+  },
+  "309204": {
+    "id": 309204,
+    "name": "[Make UP Future！]高瀬 梨緒",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】高瀬 梨緒[Make UP Future！]」のカードを獲得"
+  },
+  "309205": {
+    "id": 309205,
+    "name": "[Make UP Future！]結城 莉玖",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】結城 莉玖[Make UP Future！]」のカードを獲得"
+  },
+  "309206": {
+    "id": 309206,
+    "name": "[Make UP Future！]藍原 椿",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】藍原 椿[Make UP Future！]」のカードを獲得"
+  },
+  "309207": {
+    "id": 309207,
+    "name": "[Make UP Future！]早乙女 彩華",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】早乙女 彩華[Make UP Future！]」のカードを獲得"
+  },
+  "309208": {
+    "id": 309208,
+    "name": "[Make UP Future！]桜井 春菜",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】桜井 春菜[Make UP Future！]」のカードを獲得"
+  },
+  "309209": {
+    "id": 309209,
+    "name": "[Make UP Future！]九條 楓",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】九條 楓[Make UP Future！]」のカードを獲得"
+  },
+  "309210": {
+    "id": 309210,
+    "name": "[Make UP Future！]柏木 咲姫",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】柏木 咲姫[Make UP Future！]」のカードを獲得"
+  },
+  "309211": {
+    "id": 309211,
+    "name": "[Make UP Future！]井之原 小星",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】井之原 小星[Make UP Future！]」のカードを獲得"
+  },
+  "309212": {
+    "id": 309212,
+    "name": "[Make UP Future！]逢坂 茜",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】逢坂 茜[Make UP Future！]」のカードを獲得"
+  },
+  "309213": {
+    "id": 309213,
+    "name": "[Make UP Future！]珠洲島 有栖",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】珠洲島 有栖[Make UP Future！]」のカードを獲得"
+  },
+  "309214": {
+    "id": 309214,
+    "name": "[Make UP Future！]柏木 美亜",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】柏木 美亜[Make UP Future！]」のカードを獲得"
+  },
+  "309215": {
+    "id": 309215,
+    "name": "[Make UP Future！]日向 千夏",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】日向 千夏[Make UP Future！]」のカードを獲得"
+  },
+  "309216": {
+    "id": 309216,
+    "name": "[Make UP Future！]東雲 つむぎ",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】東雲 つむぎ[Make UP Future！]」のカードを獲得"
+  },
+  "309217": {
+    "id": 309217,
+    "name": "[Make UP Future！]皇城 セツナ",
+    "genre": "その他",
+    "normText": "オンゲキで「【SSR】皇城 セツナ[Make UP Future！]」のカードを獲得"
+  },
+  "309501": {
+    "id": 309501,
+    "name": "「シーズン7」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン7　上位入賞"
+  },
+  "309502": {
+    "id": 309502,
+    "name": "「シーズン8」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン8　上位入賞"
+  },
+  "309503": {
+    "id": 309503,
+    "name": "「シーズン9」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン9　上位入賞"
+  },
+  "309504": {
+    "id": 309504,
+    "name": "Heavenly Blast",
+    "genre": "実績",
+    "normText": "フレーム[Heavenly Blast]のスタンプを10個集める"
+  },
+  "309505": {
+    "id": 309505,
+    "name": "sølips",
+    "genre": "実績",
+    "normText": "フレーム[sølips]のスタンプを10個集める"
+  },
+  "309506": {
+    "id": 309506,
+    "name": "maimai 10th ANNiVERSARY!!",
+    "genre": "その他",
+    "normText": "maimai 10th ANNiVERSARY!! めもりあるディスク 特典"
+  },
+  "309507": {
+    "id": 309507,
+    "name": "Rainbow Rush Story",
+    "genre": "実績",
+    "normText": "フレーム[Rainbow Rush Story]のスタンプを10個集める"
+  },
+  "309508": {
+    "id": 309508,
+    "name": "maimai でらっくす グッズキャンペーンDiSC -FESTiVAL-",
+    "genre": "その他",
+    "normText": "maimai でらっくす グッズキャンペーンDiSC -FESTiVAL- 特典"
+  },
+  "350051": {
+    "id": 350051,
+    "name": "ぱちんこ maimai でらっくす",
+    "genre": "実績",
+    "normText": "魂のルフラン[でらっくす]/Shooting Shower～DANCE TIME(シンディ)～[でらっくす]/一回のクレジットでプレイ"
+  },
+  "350101": {
+    "id": 350101,
+    "name": "ハピフェスちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "ハピフェスちほー2で獲得"
+  },
+  "350301": {
+    "id": 350301,
+    "name": "スカイストリートちほー4",
+    "genre": "オリジナルちほー",
+    "normText": "スカイストリートちほー4で獲得"
+  },
+  "350401": {
+    "id": 350401,
+    "name": "ドラゴンちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "ドラゴンちほー2で獲得"
+  },
+  "350501": {
+    "id": 350501,
+    "name": "フェスティバルちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "フェスティバルちほー2で獲得"
+  },
+  "350601": {
+    "id": 350601,
+    "name": "BLACK ROSEちほー8",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー8で獲得"
+  },
+  "350701": {
+    "id": 350701,
+    "name": "10周年記念ちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "10周年記念ちほー2で獲得"
+  },
+  "355101": {
+    "id": 355101,
+    "name": "ヒメヒナちほー その1",
+    "genre": "イベントちほー",
+    "normText": "ヒメヒナちほーで獲得"
+  },
+  "355102": {
+    "id": 355102,
+    "name": "ヒメヒナちほー その2",
+    "genre": "イベントちほー",
+    "normText": "ヒメヒナちほーで獲得"
+  },
+  "355201": {
+    "id": 355201,
+    "name": "ピノキオピーちほー その1",
+    "genre": "イベントちほー",
+    "normText": "ピノキオピーちほーで獲得"
+  },
+  "355202": {
+    "id": 355202,
+    "name": "ピノキオピーちほー その2",
+    "genre": "イベントちほー",
+    "normText": "ピノキオピーちほーで獲得"
+  },
+  "355203": {
+    "id": 355203,
+    "name": "ピノキオピーちほー その3",
+    "genre": "イベントちほー",
+    "normText": "ピノキオピーちほーで獲得"
+  },
+  "355204": {
+    "id": 355204,
+    "name": "ピノキオピーちほー その4",
+    "genre": "イベントちほー",
+    "normText": "ピノキオピーちほーで獲得"
+  },
+  "355301": {
+    "id": 355301,
+    "name": "Muse Dashちほー その1",
+    "genre": "イベントちほー",
+    "normText": "Muse Dashちほーで獲得"
+  },
+  "355302": {
+    "id": 355302,
+    "name": "Muse Dashちほー その2",
+    "genre": "イベントちほー",
+    "normText": "Muse Dashちほーで獲得"
+  },
+  "355303": {
+    "id": 355303,
+    "name": "Muse Dashちほー その3",
+    "genre": "イベントちほー",
+    "normText": "Muse Dashちほーで獲得"
+  },
+  "355304": {
+    "id": 355304,
+    "name": "Muse Dashちほー その4",
+    "genre": "イベントちほー",
+    "normText": "Muse Dashちほーで獲得"
+  },
+  "355305": {
+    "id": 355305,
+    "name": "Muse Dashちほー その5",
+    "genre": "イベントちほー",
+    "normText": "Muse Dashちほーで獲得"
+  },
+  "355401": {
+    "id": 355401,
+    "name": "東方Project×イロドリミドリちほー",
+    "genre": "イベントちほー",
+    "normText": "東方Project×イロドリミドリちほーで獲得"
+  },
+  "355501": {
+    "id": 355501,
+    "name": "MEGAREXちほー その1",
+    "genre": "イベントちほー",
+    "normText": "MEGAREXちほーで獲得"
+  },
+  "355502": {
+    "id": 355502,
+    "name": "MEGAREXちほー その2",
+    "genre": "イベントちほー",
+    "normText": "MEGAREXちほーで獲得"
+  },
+  "355601": {
+    "id": 355601,
+    "name": "からめるちほー2 その1",
+    "genre": "イベントちほー",
+    "normText": "からめるちほー2で獲得"
+  },
+  "355602": {
+    "id": 355602,
+    "name": "からめるちほー2 その2",
+    "genre": "イベントちほー",
+    "normText": "からめるちほー2で獲得"
+  },
+  "355603": {
+    "id": 355603,
+    "name": "からめるちほー2 その3",
+    "genre": "イベントちほー",
+    "normText": "からめるちほー2で獲得"
+  },
+  "355604": {
+    "id": 355604,
+    "name": "からめるちほー2 その4",
+    "genre": "イベントちほー",
+    "normText": "からめるちほー2で獲得"
+  },
+  "355701": {
+    "id": 355701,
+    "name": "音楽的同位体　可不ちほー",
+    "genre": "イベントちほー",
+    "normText": "音楽的同位体　可不ちほーで獲得"
+  },
+  "355801": {
+    "id": 355801,
+    "name": "オンゲキちほー6",
+    "genre": "イベントちほー",
+    "normText": "オンゲキちほー6で獲得"
+  },
+  "359501": {
+    "id": 359501,
+    "name": "「シーズン10」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン10　上位入賞"
+  },
+  "359502": {
+    "id": 359502,
+    "name": "「シーズン11」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン11　上位入賞"
+  },
+  "359503": {
+    "id": 359503,
+    "name": "「シーズン12」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン12　上位入賞"
+  },
+  "359504": {
+    "id": 359504,
+    "name": "Tricolor⁂circuS",
+    "genre": "実績",
+    "normText": "フレーム[Tricolor⁂circuS]のスタンプを10個集める"
+  },
+  "359505": {
+    "id": 359505,
+    "name": "【仮】maimaiビジュアルブック",
+    "genre": "その他",
+    "normText": "【仮】maimaiビジュアルブック 特典"
+  },
+  "400101": {
+    "id": 400101,
+    "name": "パーリィちほー",
+    "genre": "オリジナルちほー",
+    "normText": "パーリィちほーで獲得"
+  },
+  "400201": {
+    "id": 400201,
+    "name": "メトロポリスちほー7",
+    "genre": "オリジナルちほー",
+    "normText": "メトロポリスちほー7で獲得"
+  },
+  "400301": {
+    "id": 400301,
+    "name": "スカイストリートちほー5",
+    "genre": "オリジナルちほー",
+    "normText": "スカイストリートちほー5で獲得"
+  },
+  "400401": {
+    "id": 400401,
+    "name": "7sRefちほー3",
+    "genre": "オリジナルちほー",
+    "normText": "7sRefちほー3で獲得"
+  },
+  "400501": {
+    "id": 400501,
+    "name": "バディーズちほー",
+    "genre": "オリジナルちほー",
+    "normText": "バディーズちほーで獲得"
+  },
+  "400601": {
+    "id": 400601,
+    "name": "BLACK ROSEちほー9",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー9で獲得"
+  },
+  "405101": {
+    "id": 405101,
+    "name": "いよわちほー その1",
+    "genre": "イベントちほー",
+    "normText": "いよわちほーで獲得"
+  },
+  "405102": {
+    "id": 405102,
+    "name": "いよわちほー その2",
+    "genre": "イベントちほー",
+    "normText": "いよわちほーで獲得"
+  },
+  "405103": {
+    "id": 405103,
+    "name": "いよわちほー その3",
+    "genre": "イベントちほー",
+    "normText": "いよわちほーで獲得"
+  },
+  "405201": {
+    "id": 405201,
+    "name": "グルーヴコースターちほー その1",
+    "genre": "イベントちほー",
+    "normText": "グルーヴコースターちほーで獲得"
+  },
+  "405202": {
+    "id": 405202,
+    "name": "グルーヴコースターちほー その2",
+    "genre": "イベントちほー",
+    "normText": "グルーヴコースターちほーで獲得"
+  },
+  "405301": {
+    "id": 405301,
+    "name": "ヘブンバーンズレッドちほー",
+    "genre": "イベントちほー",
+    "normText": "ヘブンバーンズレッドちほーで獲得"
+  },
+  "405401": {
+    "id": 405401,
+    "name": "WACCAちほー その1",
+    "genre": "イベントちほー",
+    "normText": "WACCAちほーで獲得"
+  },
+  "405402": {
+    "id": 405402,
+    "name": "WACCAちほー その2",
+    "genre": "イベントちほー",
+    "normText": "WACCAちほーで獲得"
+  },
+  "405403": {
+    "id": 405403,
+    "name": "WACCAちほー その3",
+    "genre": "イベントちほー",
+    "normText": "WACCAちほーで獲得"
+  },
+  "405501": {
+    "id": 405501,
+    "name": "異世界おじさんちほー その1",
+    "genre": "イベントちほー",
+    "normText": "異世界おじさんちほーで獲得"
+  },
+  "405502": {
+    "id": 405502,
+    "name": "異世界おじさんちほー その2",
+    "genre": "イベントちほー",
+    "normText": "異世界おじさんちほーで獲得"
+  },
+  "405601": {
+    "id": 405601,
+    "name": "sasakure.UKちほー その1",
+    "genre": "イベントちほー",
+    "normText": "sasakure.UKちほーで獲得"
+  },
+  "405602": {
+    "id": 405602,
+    "name": "sasakure.UKちほー その2",
+    "genre": "イベントちほー",
+    "normText": "sasakure.UKちほーで獲得"
+  },
+  "405701": {
+    "id": 405701,
+    "name": "TJ.hangneilちほー",
+    "genre": "イベントちほー",
+    "normText": "TJ.hangneilちほーで獲得"
+  },
+  "405801": {
+    "id": 405801,
+    "name": "月面ちほー",
+    "genre": "イベントちほー",
+    "normText": "月面ちほーで獲得"
+  },
+  "405901": {
+    "id": 405901,
+    "name": "裏 月面ちほー その1",
+    "genre": "イベントちほー",
+    "normText": "裏 月面ちほーで獲得"
+  },
+  "405902": {
+    "id": 405902,
+    "name": "裏 月面ちほー その2",
+    "genre": "イベントちほー",
+    "normText": "裏 月面ちほーで獲得"
+  },
+  "406101": {
+    "id": 406101,
+    "name": "東北ずん子ちほー その1",
+    "genre": "イベントちほー",
+    "normText": "東北ずん子ちほーで獲得"
+  },
+  "406102": {
+    "id": 406102,
+    "name": "東北ずん子ちほー その2",
+    "genre": "イベントちほー",
+    "normText": "東北ずん子ちほーで獲得"
+  },
+  "406201": {
+    "id": 406201,
+    "name": "CHUNITHMちほー3",
+    "genre": "イベントちほー",
+    "normText": "CHUNITHMちほー3で獲得"
+  },
+  "406301": {
+    "id": 406301,
+    "name": "Leo/need",
+    "genre": "イベントちほー",
+    "normText": "プロジェクトセカイちほー4で獲得"
+  },
+  "406302": {
+    "id": 406302,
+    "name": "MORE MORE JUMP！",
+    "genre": "イベントちほー",
+    "normText": "プロジェクトセカイちほー4で獲得"
+  },
+  "406303": {
+    "id": 406303,
+    "name": "Vivid BAD SQUAD",
+    "genre": "イベントちほー",
+    "normText": "プロジェクトセカイちほー4で獲得"
+  },
+  "406304": {
+    "id": 406304,
+    "name": "ワンダーランズ×ショウタイム",
+    "genre": "イベントちほー",
+    "normText": "プロジェクトセカイちほー4で獲得"
+  },
+  "406305": {
+    "id": 406305,
+    "name": "25時、ナイトコードで。",
+    "genre": "イベントちほー",
+    "normText": "プロジェクトセカイちほー4で獲得"
+  },
+  "409101": {
+    "id": 409101,
+    "name": "Thank you for playing -FESTiVAL-",
+    "genre": "実績",
+    "normText": "maimai でらっくす FESTiVAL～maimai でらっくす FESTiVAL PLUS 全曲/BASIC～MASTER/CLEAR"
+  },
+  "409102": {
+    "id": 409102,
+    "name": "SYNC Jewel [Amethyst]",
+    "genre": "実績",
+    "normText": "maimai でらっくす FESTiVAL～maimai でらっくす FESTiVAL PLUS 全曲/BASIC～MASTER/FULL SYNC DX"
+  },
+  "409103": {
+    "id": 409103,
+    "name": "PERFECT Jewel [Amethyst]",
+    "genre": "実績",
+    "normText": "maimai でらっくす FESTiVAL～maimai でらっくす FESTiVAL PLUS 全曲/BASIC～MASTER/ALL PERFECT"
+  },
+  "409501": {
+    "id": 409501,
+    "name": "「シーズン13」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン13　上位入賞"
+  },
+  "409502": {
+    "id": 409502,
+    "name": "「シーズン14」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン14　上位入賞"
+  },
+  "409503": {
+    "id": 409503,
+    "name": "「シーズン15」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン15　上位入賞"
+  },
+  "409504": {
+    "id": 409504,
+    "name": "mystique as iris",
+    "genre": "実績",
+    "normText": "フレーム[mystique as iris]のスタンプを10個集める"
+  },
+  "409505": {
+    "id": 409505,
+    "name": "VeRForTe αRtE:VEiN",
+    "genre": "実績",
+    "normText": "フレーム[VeRForTe αRtE:VEiN]のスタンプを10個集める"
+  },
+  "409506": {
+    "id": 409506,
+    "name": "maimai でらっくす ベストアルバムちほー2",
+    "genre": "その他",
+    "normText": "maimai でらっくす ベストアルバムちほー2 特典"
+  },
+  "409507": {
+    "id": 409507,
+    "name": "ねこドアップ",
+    "genre": "実績",
+    "normText": "ねこをつあーメンバーにセット/あつすぎの歌[でらっくす]をプレイ"
+  },
+  "409508": {
+    "id": 409508,
+    "name": "みんないるよ",
+    "genre": "実績",
+    "normText": "あつすぎの歌[でらっくす]/4人でプレイ"
+  },
+  "409509": {
+    "id": 409509,
+    "name": "ウーパールーパー",
+    "genre": "実績",
+    "normText": "ウーパールーパーをつあーメンバーにセット/あつすぎの歌[でらっくす]をプレイ"
+  },
+  "409510": {
+    "id": 409510,
+    "name": "ペンギン島流し",
+    "genre": "実績",
+    "normText": "ペンギンをつあーメンバーにセット/あつすぎの歌[でらっくす]をプレイ"
+  },
+  "409511": {
+    "id": 409511,
+    "name": "ぐるん地獄行き",
+    "genre": "実績",
+    "normText": "ぐるんをつあーメンバーにセット/あつすぎの歌[でらっくす]をプレイ"
+  },
+  "409512": {
+    "id": 409512,
+    "name": "ねこ無限増殖",
+    "genre": "実績",
+    "normText": "あつすぎの歌[でらっくす]/全難易度プレイ"
+  },
+  "409513": {
+    "id": 409513,
+    "name": "らくがき",
+    "genre": "実績",
+    "normText": "あつすぎの歌[でらっくす]/ULTRA SYNERGY MATRIX[でらっくす]/全難易度プレイ"
+  },
+  "409514": {
+    "id": 409514,
+    "name": "ネオンポップ",
+    "genre": "実績",
+    "normText": "ULTRA SYNERGY MATRIX[でらっくす]/全難易度プレイ"
+  },
+  "409515": {
+    "id": 409515,
+    "name": "純粋な爆発",
+    "genre": "実績",
+    "normText": "あつすぎの歌[でらっくす]/ULTRA SYNERGY MATRIX[でらっくす]/一回のクレジットでプレイ"
+  },
+  "409516": {
+    "id": 409516,
+    "name": "maimai でらっくす グッズキャンペーンDiSC -BUDDiES-",
+    "genre": "その他",
+    "normText": "maimai でらっくす グッズキャンペーンDiSC -BUDDiES- 特典"
+  },
+  "409517": {
+    "id": 409517,
+    "name": "#夜駆十億",
+    "genre": "実績",
+    "normText": "フレーム[#夜駆十億]のスタンプを3個集める"
+  },
+  "450101": {
+    "id": 450101,
+    "name": "パーリィちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "パーリィちほー2で獲得"
+  },
+  "450201": {
+    "id": 450201,
+    "name": "メトロポリスちほー8",
+    "genre": "オリジナルちほー",
+    "normText": "メトロポリスちほー8で獲得"
+  },
+  "450301": {
+    "id": 450301,
+    "name": "ドラゴンちほー3",
+    "genre": "オリジナルちほー",
+    "normText": "ドラゴンちほー3で獲得"
+  },
+  "450401": {
+    "id": 450401,
+    "name": "天界ちほー7",
+    "genre": "オリジナルちほー",
+    "normText": "天界ちほー7で獲得"
+  },
+  "450501": {
+    "id": 450501,
+    "name": "バディーズちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "バディーズちほー2で獲得"
+  },
+  "455101": {
+    "id": 455101,
+    "name": "NEEDY GIRL OVERDOSEちほー その1",
+    "genre": "イベントちほー",
+    "normText": "NEEDY GIRL OVERDOSEちほーで獲得"
+  },
+  "455102": {
+    "id": 455102,
+    "name": "NEEDY GIRL OVERDOSEちほー その2",
+    "genre": "イベントちほー",
+    "normText": "NEEDY GIRL OVERDOSEちほーで獲得"
+  },
+  "455103": {
+    "id": 455103,
+    "name": "NEEDY GIRL OVERDOSEちほー その3",
+    "genre": "イベントちほー",
+    "normText": "NEEDY GIRL OVERDOSEちほーで獲得"
+  },
+  "455104": {
+    "id": 455104,
+    "name": "NEEDY GIRL OVERDOSEちほー その4",
+    "genre": "イベントちほー",
+    "normText": "NEEDY GIRL OVERDOSEちほーで獲得"
+  },
+  "455201": {
+    "id": 455201,
+    "name": "花譜ちほー その1",
+    "genre": "イベントちほー",
+    "normText": "花譜ちほーで獲得"
+  },
+  "455202": {
+    "id": 455202,
+    "name": "花譜ちほー その2",
+    "genre": "イベントちほー",
+    "normText": "花譜ちほーで獲得"
+  },
+  "455203": {
+    "id": 455203,
+    "name": "花譜ちほー その3",
+    "genre": "イベントちほー",
+    "normText": "花譜ちほーで獲得"
+  },
+  "455301": {
+    "id": 455301,
+    "name": "ゆこぴちほー その1",
+    "genre": "イベントちほー",
+    "normText": "ゆこぴちほーで獲得"
+  },
+  "455302": {
+    "id": 455302,
+    "name": "ゆこぴちほー その2",
+    "genre": "イベントちほー",
+    "normText": "ゆこぴちほーで獲得"
+  },
+  "455401": {
+    "id": 455401,
+    "name": "グルーヴコースターちほー2",
+    "genre": "イベントちほー",
+    "normText": "グルーヴコースターちほー2で獲得"
+  },
+  "455501": {
+    "id": 455501,
+    "name": "まいまいまいごえんちほー その1",
+    "genre": "イベントちほー",
+    "normText": "まいまいまいごえんちほーで獲得"
+  },
+  "455502": {
+    "id": 455502,
+    "name": "まいまいまいごえんちほー その2",
+    "genre": "イベントちほー",
+    "normText": "まいまいまいごえんちほーで獲得"
+  },
+  "455503": {
+    "id": 455503,
+    "name": "まいまいまいごえんちほー その3",
+    "genre": "イベントちほー",
+    "normText": "まいまいまいごえんちほーで獲得"
+  },
+  "455601": {
+    "id": 455601,
+    "name": "にじさんじのB級バラエティ（仮）ちほー その1",
+    "genre": "イベントちほー",
+    "normText": "にじさんじのB級バラエティ（仮）ちほーで獲得"
+  },
+  "455602": {
+    "id": 455602,
+    "name": "にじさんじのB級バラエティ（仮）ちほー その2",
+    "genre": "イベントちほー",
+    "normText": "にじさんじのB級バラエティ（仮）ちほーで獲得"
+  },
+  "455701": {
+    "id": 455701,
+    "name": "東方ダンマクカグラ ファンタジア・ロストちほー",
+    "genre": "イベントちほー",
+    "normText": "東方ダンマクカグラ ファンタジア・ロストちほーで獲得"
+  },
+  "455801": {
+    "id": 455801,
+    "name": "HARDCORE TANO*Cちほー2",
+    "genre": "イベントちほー",
+    "normText": "HARDCORE TANO*Cちほー2で獲得"
+  },
+  "455901": {
+    "id": 455901,
+    "name": "＃コンパスちほー2 その1",
+    "genre": "イベントちほー",
+    "normText": "＃コンパスちほー2で獲得"
+  },
+  "455902": {
+    "id": 455902,
+    "name": "＃コンパスちほー2 その2",
+    "genre": "イベントちほー",
+    "normText": "＃コンパスちほー2で獲得"
+  },
+  "456001": {
+    "id": 456001,
+    "name": "周防パトラちほー その1",
+    "genre": "イベントちほー",
+    "normText": "周防パトラちほーで獲得"
+  },
+  "456002": {
+    "id": 456002,
+    "name": "周防パトラちほー その2",
+    "genre": "イベントちほー",
+    "normText": "周防パトラちほーで獲得"
+  },
+  "456003": {
+    "id": 456003,
+    "name": "周防パトラちほー その3",
+    "genre": "イベントちほー",
+    "normText": "周防パトラちほーで獲得"
+  },
+  "456004": {
+    "id": 456004,
+    "name": "周防パトラちほー その4",
+    "genre": "イベントちほー",
+    "normText": "周防パトラちほーで獲得"
+  },
+  "456101": {
+    "id": 456101,
+    "name": "オンゲキちほー7",
+    "genre": "イベントちほー",
+    "normText": "オンゲキちほー7で獲得"
+  },
+  "459501": {
+    "id": 459501,
+    "name": "「シーズン16」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン16　上位入賞"
+  },
+  "459502": {
+    "id": 459502,
+    "name": "「シーズン17」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン17　上位入賞"
+  },
+  "459503": {
+    "id": 459503,
+    "name": "「シーズン18」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン18　上位入賞"
+  },
+  "459504": {
+    "id": 459504,
+    "name": "Latent Kingdom",
+    "genre": "実績",
+    "normText": "フレーム[Latent Kingdom]のスタンプを10個集める"
+  },
+  "459505": {
+    "id": 459505,
+    "name": "MMT type DX",
+    "genre": "実績",
+    "normText": "DUAL ROZES[でらっくす]/MUSIC PЯAYER[でらっくす]/一回のクレジットでプレイ"
+  },
+  "500101": {
+    "id": 500101,
+    "name": "スカイストリートちほー6",
+    "genre": "オリジナルちほー",
+    "normText": "スカイストリートちほー6で獲得"
+  },
+  "500102": {
+    "id": 500102,
+    "name": "KALEIDXSCOPE -青春エリア-",
+    "genre": "オリジナルちほー",
+    "normText": "果ての空、僕らが見た光。[でらっくす]/全難易度/プレイ"
+  },
+  "500201": {
+    "id": 500201,
+    "name": "天界ちほー8",
+    "genre": "オリジナルちほー",
+    "normText": "天界ちほー8で獲得"
+  },
+  "500202": {
+    "id": 500202,
+    "name": "KALEIDXSCOPE -神様エリア-",
+    "genre": "オリジナルちほー",
+    "normText": "氷滅の135小節[でらっくす]/全難易度/プレイ"
+  },
+  "500301": {
+    "id": 500301,
+    "name": "BLACK ROSEちほー10",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー10で獲得"
+  },
+  "500302": {
+    "id": 500302,
+    "name": "KALEIDXSCOPE -黒薔薇エリア-",
+    "genre": "オリジナルちほー",
+    "normText": "有明/Ariake[でらっくす]/全難易度/プレイ"
+  },
+  "500401": {
+    "id": 500401,
+    "name": "メトロポリスちほー9",
+    "genre": "オリジナルちほー",
+    "normText": "メトロポリスちほー9で獲得"
+  },
+  "500402": {
+    "id": 500402,
+    "name": "KALEIDXSCOPE -終末エリア-",
+    "genre": "オリジナルちほー",
+    "normText": "宙天[でらっくす]/全難易度/プレイ"
+  },
+  "500501": {
+    "id": 500501,
+    "name": "プリズムちほー",
+    "genre": "オリジナルちほー",
+    "normText": "プリズムちほーで獲得"
+  },
+  "505101": {
+    "id": 505101,
+    "name": "葬送のフリーレンちほー その1",
+    "genre": "イベントちほー",
+    "normText": "葬送のフリーレンちほーで獲得"
+  },
+  "505102": {
+    "id": 505102,
+    "name": "葬送のフリーレンちほー その2",
+    "genre": "イベントちほー",
+    "normText": "葬送のフリーレンちほーで獲得"
+  },
+  "505103": {
+    "id": 505103,
+    "name": "葬送のフリーレンちほー その3",
+    "genre": "イベントちほー",
+    "normText": "葬送のフリーレンちほーで獲得"
+  },
+  "505201": {
+    "id": 505201,
+    "name": "かいりきベアちほー2 その1",
+    "genre": "イベントちほー",
+    "normText": "かいりきベアちほー2で獲得"
+  },
+  "505202": {
+    "id": 505202,
+    "name": "かいりきベアちほー2 その2",
+    "genre": "イベントちほー",
+    "normText": "かいりきベアちほー2で獲得"
+  },
+  "505301": {
+    "id": 505301,
+    "name": "MonsterZ MATEちほー その1",
+    "genre": "イベントちほー",
+    "normText": "MonsterZ MATEちほーで獲得"
+  },
+  "505302": {
+    "id": 505302,
+    "name": "MonsterZ MATEちほー その2",
+    "genre": "イベントちほー",
+    "normText": "MonsterZ MATEちほーで獲得"
+  },
+  "505401": {
+    "id": 505401,
+    "name": "おめがシスターズちほー",
+    "genre": "イベントちほー",
+    "normText": "おめがシスターズちほーで獲得"
+  },
+  "505501": {
+    "id": 505501,
+    "name": "ワールドダイスター 夢のステラリウムちほー その1",
+    "genre": "イベントちほー",
+    "normText": "ワールドダイスター 夢のステラリウムちほーで獲得"
+  },
+  "505502": {
+    "id": 505502,
+    "name": "ワールドダイスター 夢のステラリウムちほー その2",
+    "genre": "イベントちほー",
+    "normText": "ワールドダイスター 夢のステラリウムちほーで獲得"
+  },
+  "505601": {
+    "id": 505601,
+    "name": "夢限大みゅーたいぷ 仲町あられ",
+    "genre": "イベントちほー",
+    "normText": "夢限大みゅーたいぷちほーで獲得"
+  },
+  "505602": {
+    "id": 505602,
+    "name": "夢限大みゅーたいぷ 宮永ののか",
+    "genre": "イベントちほー",
+    "normText": "夢限大みゅーたいぷちほーで獲得"
+  },
+  "505603": {
+    "id": 505603,
+    "name": "夢限大みゅーたいぷ 峰月律",
+    "genre": "イベントちほー",
+    "normText": "夢限大みゅーたいぷちほーで獲得"
+  },
+  "505604": {
+    "id": 505604,
+    "name": "夢限大みゅーたいぷ 藤都子",
+    "genre": "イベントちほー",
+    "normText": "夢限大みゅーたいぷちほーで獲得"
+  },
+  "505605": {
+    "id": 505605,
+    "name": "夢限大みゅーたいぷ 千石ユノ",
+    "genre": "イベントちほー",
+    "normText": "夢限大みゅーたいぷちほーで獲得"
+  },
+  "505701": {
+    "id": 505701,
+    "name": "Arcaeaちほー3 その1",
+    "genre": "イベントちほー",
+    "normText": "Arcaeaちほー3で獲得"
+  },
+  "505702": {
+    "id": 505702,
+    "name": "Arcaeaちほー3 その2",
+    "genre": "イベントちほー",
+    "normText": "Arcaeaちほー3で獲得"
+  },
+  "505703": {
+    "id": 505703,
+    "name": "Arcaeaちほー3 その3",
+    "genre": "イベントちほー",
+    "normText": "Arcaeaちほー3で獲得"
+  },
+  "505801": {
+    "id": 505801,
+    "name": "重音テトちほー その1",
+    "genre": "イベントちほー",
+    "normText": "重音テトちほーで獲得"
+  },
+  "505802": {
+    "id": 505802,
+    "name": "重音テトちほー その2",
+    "genre": "イベントちほー",
+    "normText": "重音テトちほーで獲得"
+  },
+  "505803": {
+    "id": 505803,
+    "name": "重音テトちほー その3",
+    "genre": "イベントちほー",
+    "normText": "重音テトちほーで獲得"
+  },
+  "505804": {
+    "id": 505804,
+    "name": "重音テトちほー その4",
+    "genre": "イベントちほー",
+    "normText": "重音テトちほーで獲得"
+  },
+  "505901": {
+    "id": 505901,
+    "name": "ななひらちほー その1",
+    "genre": "イベントちほー",
+    "normText": "ななひらちほーで獲得"
+  },
+  "505902": {
+    "id": 505902,
+    "name": "ななひらちほー その2",
+    "genre": "イベントちほー",
+    "normText": "ななひらちほーで獲得"
+  },
+  "506001": {
+    "id": 506001,
+    "name": "オンゲキちほー8",
+    "genre": "イベントちほー",
+    "normText": "オンゲキちほー8で獲得"
+  },
+  "509101": {
+    "id": 509101,
+    "name": "Thank you for playing -BUDDiES-",
+    "genre": "実績",
+    "normText": "maimai でらっくす BUDDiES～maimai でらっくす BUDDiES PLUS 全曲/BASIC～MASTER/CLEAR"
+  },
+  "509102": {
+    "id": 509102,
+    "name": "SYNC Jewel [Topaz]",
+    "genre": "実績",
+    "normText": "maimai でらっくす BUDDiES～maimai でらっくす BUDDiES PLUS 全曲/BASIC～MASTER/FULL SYNC DX"
+  },
+  "509103": {
+    "id": 509103,
+    "name": "PERFECT Jewel [Topaz]",
+    "genre": "実績",
+    "normText": "maimai でらっくす BUDDiES～maimai でらっくす BUDDiES PLUS 全曲/BASIC～MASTER/ALL PERFECT"
+  },
+  "509501": {
+    "id": 509501,
+    "name": "「シーズン19」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン19　上位入賞"
+  },
+  "509502": {
+    "id": 509502,
+    "name": "「シーズン20」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン20　上位入賞"
+  },
+  "509503": {
+    "id": 509503,
+    "name": "「シーズン21」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン21　上位入賞"
+  },
+  "509504": {
+    "id": 509504,
+    "name": "Valsqotch",
+    "genre": "実績",
+    "normText": "フレーム[Valsqotch]のスタンプを10個集める"
+  },
+  "509505": {
+    "id": 509505,
+    "name": "maimai でらっくす グッズキャンペーンDiSC -PRiSM-",
+    "genre": "その他",
+    "normText": "maimai でらっくす グッズキャンペーンDiSC -PRiSM- 特典"
+  },
+  "550101": {
+    "id": 550101,
+    "name": "なないろちほー",
+    "genre": "オリジナルちほー",
+    "normText": "なないろちほーで獲得"
+  },
+  "550102": {
+    "id": 550102,
+    "name": "KALEIDXSCOPE -はじまりエリア-",
+    "genre": "オリジナルちほー",
+    "normText": "Åntinomiε[でらっくす]/全難易度/プレイ"
+  },
+  "550201": {
+    "id": 550201,
+    "name": "ドラゴンちほー4",
+    "genre": "オリジナルちほー",
+    "normText": "ドラゴンちほー4で獲得"
+  },
+  "550202": {
+    "id": 550202,
+    "name": "KALEIDXSCOPE -世界樹エリア-",
+    "genre": "オリジナルちほー",
+    "normText": "FLΛME/FRΦST[でらっくす]/全難易度/プレイ"
+  },
+  "550301": {
+    "id": 550301,
+    "name": "7sRefちほー4",
+    "genre": "オリジナルちほー",
+    "normText": "7sRefちほー4で獲得"
+  },
+  "550302": {
+    "id": 550302,
+    "name": "KALEIDXSCOPE -プリズムエリア-",
+    "genre": "オリジナルちほー",
+    "normText": "World's end BLACKBOX[でらっくす]/全難易度/プレイ"
+  },
+  "550303": {
+    "id": 550303,
+    "name": "KALEIDXSCOPE -旧き世界-",
+    "genre": "オリジナルちほー",
+    "normText": "AFTER PANDORA[スタンダード]/全難易度/プレイ"
+  },
+  "550304": {
+    "id": 550304,
+    "name": "KALEIDXSCOPE -アシッド-",
+    "genre": "オリジナルちほー",
+    "normText": "Xaleid◆scopiX[でらっくす]/全難易度/プレイ"
+  },
+  "550305": {
+    "id": 550305,
+    "name": "KALEIDXSCOPE -プリズム-",
+    "genre": "オリジナルちほー",
+    "normText": "Xaleid◆scopiX[でらっくす]/全難易度/プレイ"
+  },
+  "550306": {
+    "id": 550306,
+    "name": "KALEIDXSCOPE -PRiSM-",
+    "genre": "オリジナルちほー",
+    "normText": "KALEIDXSCOPE 全曲/全難易度/プレイ"
+  },
+  "550307": {
+    "id": 550307,
+    "name": "KALEIDXSCOPE -Ref:rain-",
+    "genre": "オリジナルちほー",
+    "normText": "Ref:rain (for 7th Heaven)[でらっくす]/全難易度/プレイ"
+  },
+  "550401": {
+    "id": 550401,
+    "name": "プリズムちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "プリズムちほー2で獲得"
+  },
+  "555101": {
+    "id": 555101,
+    "name": "NEEDY GIRL OVERDOSEちほー2 その1",
+    "genre": "イベントちほー",
+    "normText": "NEEDY GIRL OVERDOSEちほー2で獲得"
+  },
+  "555102": {
+    "id": 555102,
+    "name": "NEEDY GIRL OVERDOSEちほー2 その2",
+    "genre": "イベントちほー",
+    "normText": "NEEDY GIRL OVERDOSEちほー2で獲得"
+  },
+  "555103": {
+    "id": 555103,
+    "name": "NEEDY GIRL OVERDOSEちほー2 その3",
+    "genre": "イベントちほー",
+    "normText": "NEEDY GIRL OVERDOSEちほー2で獲得"
+  },
+  "555201": {
+    "id": 555201,
+    "name": "神椿市協奏中。ちほー その1",
+    "genre": "イベントちほー",
+    "normText": "神椿市協奏中。ちほーで獲得"
+  },
+  "555202": {
+    "id": 555202,
+    "name": "神椿市協奏中。ちほー その2",
+    "genre": "イベントちほー",
+    "normText": "神椿市協奏中。ちほーで獲得"
+  },
+  "555203": {
+    "id": 555203,
+    "name": "神椿市協奏中。ちほー その3",
+    "genre": "イベントちほー",
+    "normText": "神椿市協奏中。ちほーで獲得"
+  },
+  "555401": {
+    "id": 555401,
+    "name": "那須どうぶつ王国ちほー",
+    "genre": "イベントちほー",
+    "normText": "那須どうぶつ王国ちほーで獲得"
+  },
+  "555501": {
+    "id": 555501,
+    "name": "DECO*27ちほー2 その1",
+    "genre": "イベントちほー",
+    "normText": "DECO*27ちほー2で獲得"
+  },
+  "555502": {
+    "id": 555502,
+    "name": "DECO*27ちほー2 その2",
+    "genre": "イベントちほー",
+    "normText": "DECO*27ちほー2で獲得"
+  },
+  "555503": {
+    "id": 555503,
+    "name": "DECO*27ちほー2 その3",
+    "genre": "イベントちほー",
+    "normText": "DECO*27ちほー2で獲得"
+  },
+  "555601": {
+    "id": 555601,
+    "name": "ビートまりおちほー その1",
+    "genre": "イベントちほー",
+    "normText": "ビートまりおちほーで獲得"
+  },
+  "555602": {
+    "id": 555602,
+    "name": "ビートまりおちほー その2",
+    "genre": "イベントちほー",
+    "normText": "ビートまりおちほーで獲得"
+  },
+  "555701": {
+    "id": 555701,
+    "name": "小春六花",
+    "genre": "イベントちほー",
+    "normText": "小春六花・夏色花梨・花隈千冬ちほーで獲得"
+  },
+  "555702": {
+    "id": 555702,
+    "name": "夏色花梨",
+    "genre": "イベントちほー",
+    "normText": "小春六花・夏色花梨・花隈千冬ちほーで獲得"
+  },
+  "555703": {
+    "id": 555703,
+    "name": "花隈千冬",
+    "genre": "イベントちほー",
+    "normText": "小春六花・夏色花梨・花隈千冬ちほーで獲得"
+  },
+  "555704": {
+    "id": 555704,
+    "name": "小春六花・夏色花梨・花隈千冬ちほー",
+    "genre": "イベントちほー",
+    "normText": "小春六花・夏色花梨・花隈千冬ちほーで獲得"
+  },
+  "555801": {
+    "id": 555801,
+    "name": "CHUNITHMちほー4",
+    "genre": "イベントちほー",
+    "normText": "CHUNITHMちほー4で獲得"
+  },
+  "555901": {
+    "id": 555901,
+    "name": "三枝明那ちほー",
+    "genre": "イベントちほー",
+    "normText": "三枝明那ちほーで獲得"
+  },
+  "556001": {
+    "id": 556001,
+    "name": "Phigrosちほー その1",
+    "genre": "イベントちほー",
+    "normText": "Phigrosちほーで獲得"
+  },
+  "556002": {
+    "id": 556002,
+    "name": "Phigrosちほー その2",
+    "genre": "イベントちほー",
+    "normText": "Phigrosちほーで獲得"
+  },
+  "558001": {
+    "id": 558001,
+    "name": "♡でらっくま♡",
+    "genre": "実績",
+    "normText": "でらっくまの親密度が1000に到達"
+  },
+  "558011": {
+    "id": 558011,
+    "name": "♡乙姫♡",
+    "genre": "実績",
+    "normText": "乙姫の親密度が1000に到達"
+  },
+  "558012": {
+    "id": 558012,
+    "name": "♡ラズ♡",
+    "genre": "実績",
+    "normText": "ラズの親密度が1000に到達"
+  },
+  "558013": {
+    "id": 558013,
+    "name": "♡シフォン♡",
+    "genre": "実績",
+    "normText": "シフォンの親密度が1000に到達"
+  },
+  "558014": {
+    "id": 558014,
+    "name": "♡ソルト♡",
+    "genre": "実績",
+    "normText": "ソルトの親密度が1000に到達"
+  },
+  "558015": {
+    "id": 558015,
+    "name": "♡しゃま♡",
+    "genre": "実績",
+    "normText": "しゃまの親密度が1000に到達"
+  },
+  "558016": {
+    "id": 558016,
+    "name": "♡みるく♡",
+    "genre": "実績",
+    "normText": "みるくの親密度が1000に到達"
+  },
+  "558017": {
+    "id": 558017,
+    "name": "♡らいむっくま＆れもんっくま♡",
+    "genre": "実績",
+    "normText": "らいむっくま＆れもんっくまの親密度が1000に到達"
+  },
+  "558018": {
+    "id": 558018,
+    "name": "♡乙姫（すぷらっしゅ）♡",
+    "genre": "実績",
+    "normText": "乙姫（すぷらっしゅ）の親密度が1000に到達"
+  },
+  "558019": {
+    "id": 558019,
+    "name": "♡しゃま（ゆにばーす）♡",
+    "genre": "実績",
+    "normText": "しゃま（ゆにばーす）の親密度が1000に到達"
+  },
+  "558020": {
+    "id": 558020,
+    "name": "♡みるく（ゆにばーす）♡",
+    "genre": "実績",
+    "normText": "みるく（ゆにばーす）の親密度が1000に到達"
+  },
+  "558021": {
+    "id": 558021,
+    "name": "♡ちびみるく♡",
+    "genre": "実績",
+    "normText": "ちびみるくの親密度が1000に到達"
+  },
+  "558022": {
+    "id": 558022,
+    "name": "♡百合咲 ミカ♡",
+    "genre": "実績",
+    "normText": "百合咲 ミカの親密度が1000に到達"
+  },
+  "558023": {
+    "id": 558023,
+    "name": "♡ラズ（ふぇすてぃばる）♡",
+    "genre": "実績",
+    "normText": "ラズ（ふぇすてぃばる）の親密度が1000に到達"
+  },
+  "558024": {
+    "id": 558024,
+    "name": "♡シフォン（ふぇすてぃばる）♡",
+    "genre": "実績",
+    "normText": "シフォン（ふぇすてぃばる）の親密度が1000に到達"
+  },
+  "558025": {
+    "id": 558025,
+    "name": "♡ソルト（ふぇすてぃばる）♡",
+    "genre": "実績",
+    "normText": "ソルト（ふぇすてぃばる）の親密度が1000に到達"
+  },
+  "558026": {
+    "id": 558026,
+    "name": "♡黒姫♡",
+    "genre": "実績",
+    "normText": "黒姫の親密度が1000に到達"
+  },
+  "558028": {
+    "id": 558028,
+    "name": "♡乙姫（ばでぃーず）♡",
+    "genre": "実績",
+    "normText": "乙姫（ばでぃーず）の親密度が1000に到達"
+  },
+  "558029": {
+    "id": 558029,
+    "name": "♡らいむっくま＆れもんっくま（ばでぃーず）♡",
+    "genre": "実績",
+    "normText": "らいむっくま＆れもんっくま（ばでぃーず）の親密度が1000に到達"
+  },
+  "558030": {
+    "id": 558030,
+    "name": "♡ラズ（ばでぃーず）♡",
+    "genre": "実績",
+    "normText": "ラズ（ばでぃーず）の親密度が1000に到達"
+  },
+  "558031": {
+    "id": 558031,
+    "name": "♡ソルト（ぷりずむ）♡",
+    "genre": "実績",
+    "normText": "ソルト（ぷりずむ）の親密度が1000に到達"
+  },
+  "558032": {
+    "id": 558032,
+    "name": "♡みるく（ぷりずむ）♡",
+    "genre": "実績",
+    "normText": "みるく（ぷりずむ）の親密度が1000に到達"
+  },
+  "558034": {
+    "id": 558034,
+    "name": "♡リズ♡",
+    "genre": "実績",
+    "normText": "リズの親密度が1000に到達"
+  },
+  "559501": {
+    "id": 559501,
+    "name": "「シーズン22」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン22　上位入賞"
+  },
+  "559502": {
+    "id": 559502,
+    "name": "「シーズン23」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン23　上位入賞"
+  },
+  "559503": {
+    "id": 559503,
+    "name": "「シーズン24」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン24　上位入賞"
+  },
+  "559504": {
+    "id": 559504,
+    "name": "Cryptarithm",
+    "genre": "実績",
+    "normText": "フレーム[Cryptarithm]のスタンプを10個集める"
+  },
+  "600101": {
+    "id": 600101,
+    "name": "トリコロちほー",
+    "genre": "オリジナルちほー",
+    "normText": "トリコロちほーで獲得"
+  },
+  "600201": {
+    "id": 600201,
+    "name": "kawaiiちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "kawaiiちほー2で獲得"
+  },
+  "600301": {
+    "id": 600301,
+    "name": "高天原ちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "高天原ちほー2で獲得"
+  },
+  "600401": {
+    "id": 600401,
+    "name": "スカイストリートちほー7",
+    "genre": "オリジナルちほー",
+    "normText": "スカイストリートちほー7で獲得"
+  },
+  "600501": {
+    "id": 600501,
+    "name": "サークルちほー",
+    "genre": "オリジナルちほー",
+    "normText": "サークルちほーで獲得"
+  },
+  "605101": {
+    "id": 605101,
+    "name": "ブルーアーカイブ アル",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほーで獲得"
+  },
+  "605102": {
+    "id": 605102,
+    "name": "ブルーアーカイブ カヨコ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほーで獲得"
+  },
+  "605103": {
+    "id": 605103,
+    "name": "ブルーアーカイブ ムツキ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほーで獲得"
+  },
+  "605104": {
+    "id": 605104,
+    "name": "ブルーアーカイブ ハルカ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほーで獲得"
+  },
+  "605105": {
+    "id": 605105,
+    "name": "ブルーアーカイブ ヨシミ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほーで獲得"
+  },
+  "605106": {
+    "id": 605106,
+    "name": "ブルーアーカイブ アイリ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほーで獲得"
+  },
+  "605107": {
+    "id": 605107,
+    "name": "ブルーアーカイブ カズサ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほーで獲得"
+  },
+  "605108": {
+    "id": 605108,
+    "name": "ブルーアーカイブ ナツ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほーで獲得"
+  },
+  "605201": {
+    "id": 605201,
+    "name": "こっちのけんとちほー その1",
+    "genre": "イベントちほー",
+    "normText": "こっちのけんとちほーで獲得"
+  },
+  "605202": {
+    "id": 605202,
+    "name": "こっちのけんとちほー その2",
+    "genre": "イベントちほー",
+    "normText": "こっちのけんとちほーで獲得"
+  },
+  "605301": {
+    "id": 605301,
+    "name": "五等分の花嫁∽ 中野 一花",
+    "genre": "イベントちほー",
+    "normText": "五等分の花嫁∽ちほーで獲得"
+  },
+  "605302": {
+    "id": 605302,
+    "name": "五等分の花嫁∽ 中野 二乃",
+    "genre": "イベントちほー",
+    "normText": "五等分の花嫁∽ちほーで獲得"
+  },
+  "605303": {
+    "id": 605303,
+    "name": "五等分の花嫁∽ 中野 三玖",
+    "genre": "イベントちほー",
+    "normText": "五等分の花嫁∽ちほーで獲得"
+  },
+  "605304": {
+    "id": 605304,
+    "name": "五等分の花嫁∽ 中野 四葉",
+    "genre": "イベントちほー",
+    "normText": "五等分の花嫁∽ちほーで獲得"
+  },
+  "605305": {
+    "id": 605305,
+    "name": "五等分の花嫁∽ 中野 五月",
+    "genre": "イベントちほー",
+    "normText": "五等分の花嫁∽ちほーで獲得"
+  },
+  "605306": {
+    "id": 605306,
+    "name": "五等分の花嫁∽ちほー",
+    "genre": "イベントちほー",
+    "normText": "五等分の花嫁∽ちほーで獲得"
+  },
+  "605401": {
+    "id": 605401,
+    "name": "FEAT CONTESTちほー その1",
+    "genre": "イベントちほー",
+    "normText": "FEAT CONTESTちほーで獲得"
+  },
+  "605402": {
+    "id": 605402,
+    "name": "FEAT CONTESTちほー その2",
+    "genre": "イベントちほー",
+    "normText": "FEAT CONTESTちほーで獲得"
+  },
+  "605403": {
+    "id": 605403,
+    "name": "FEAT CONTESTちほー その3",
+    "genre": "イベントちほー",
+    "normText": "FEAT CONTESTちほーで獲得"
+  },
+  "605404": {
+    "id": 605404,
+    "name": "FEAT CONTESTちほー その4",
+    "genre": "イベントちほー",
+    "normText": "FEAT CONTESTちほーで獲得"
+  },
+  "605405": {
+    "id": 605405,
+    "name": "FEAT CONTESTちほー その5",
+    "genre": "イベントちほー",
+    "normText": "FEAT CONTESTちほーで獲得"
+  },
+  "605501": {
+    "id": 605501,
+    "name": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほー その1",
+    "genre": "イベントちほー",
+    "normText": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほーで獲得"
+  },
+  "605502": {
+    "id": 605502,
+    "name": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほー その2",
+    "genre": "イベントちほー",
+    "normText": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほーで獲得"
+  },
+  "605503": {
+    "id": 605503,
+    "name": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほー その3",
+    "genre": "イベントちほー",
+    "normText": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほーで獲得"
+  },
+  "605504": {
+    "id": 605504,
+    "name": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほー その4",
+    "genre": "イベントちほー",
+    "normText": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほーで獲得"
+  },
+  "605505": {
+    "id": 605505,
+    "name": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほー その5",
+    "genre": "イベントちほー",
+    "normText": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほーで獲得"
+  },
+  "605506": {
+    "id": 605506,
+    "name": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほー その6",
+    "genre": "イベントちほー",
+    "normText": "劇場版プロジェクトセカイ　壊れたセカイと歌えないミクちほーで獲得"
+  },
+  "605601": {
+    "id": 605601,
+    "name": "Project ONSOKUちほー",
+    "genre": "イベントちほー",
+    "normText": "Project ONSOKUちほーで獲得"
+  },
+  "605701": {
+    "id": 605701,
+    "name": "cosMo@暴走Pちほー2 その1",
+    "genre": "イベントちほー",
+    "normText": "cosMo@暴走Pちほー2で獲得"
+  },
+  "605702": {
+    "id": 605702,
+    "name": "cosMo@暴走Pちほー2 その2",
+    "genre": "イベントちほー",
+    "normText": "cosMo@暴走Pちほー2で獲得"
+  },
+  "605703": {
+    "id": 605703,
+    "name": "cosMo@暴走Pちほー2 その3",
+    "genre": "イベントちほー",
+    "normText": "cosMo@暴走Pちほー2で獲得"
+  },
+  "605801": {
+    "id": 605801,
+    "name": "しぐれういちほー その1",
+    "genre": "イベントちほー",
+    "normText": "しぐれういちほーで獲得"
+  },
+  "605802": {
+    "id": 605802,
+    "name": "しぐれういちほー その2",
+    "genre": "イベントちほー",
+    "normText": "しぐれういちほーで獲得"
+  },
+  "605901": {
+    "id": 605901,
+    "name": "Paradigm: Rebootちほー",
+    "genre": "イベントちほー",
+    "normText": "Paradigm: Rebootちほーで獲得"
+  },
+  "606001": {
+    "id": 606001,
+    "name": "IOSYSちほー その1",
+    "genre": "イベントちほー",
+    "normText": "IOSYSちほーで獲得"
+  },
+  "606002": {
+    "id": 606002,
+    "name": "IOSYSちほー その2",
+    "genre": "イベントちほー",
+    "normText": "IOSYSちほーで獲得"
+  },
+  "606003": {
+    "id": 606003,
+    "name": "IOSYSちほー その3",
+    "genre": "イベントちほー",
+    "normText": "IOSYSちほーで獲得"
+  },
+  "606101": {
+    "id": 606101,
+    "name": "オンゲキちほー9",
+    "genre": "イベントちほー",
+    "normText": "オンゲキちほー9で獲得"
+  },
+  "608035": {
+    "id": 608035,
+    "name": "♡シフォン（さーくる）♡",
+    "genre": "実績",
+    "normText": "シフォン（さーくる）の親密度が1000に到達"
+  },
+  "609101": {
+    "id": 609101,
+    "name": "Thank you for playing -PRiSM-",
+    "genre": "実績",
+    "normText": "maimai でらっくす PRiSM～maimai でらっくす PRiSM PLUS 全曲/BASIC～MASTER/CLEAR"
+  },
+  "609102": {
+    "id": 609102,
+    "name": "SYNC Jewel [Opal]",
+    "genre": "実績",
+    "normText": "maimai でらっくす PRiSM～maimai でらっくす PRiSM PLUS 全曲/BASIC～MASTER/FULL SYNC DX"
+  },
+  "609103": {
+    "id": 609103,
+    "name": "PERFECT Jewel [Opal]",
+    "genre": "実績",
+    "normText": "maimai でらっくす PRiSM～maimai でらっくす PRiSM PLUS 全曲/BASIC～MASTER/ALL PERFECT"
+  },
+  "609501": {
+    "id": 609501,
+    "name": "「シーズン25」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン25　上位入賞"
+  },
+  "609502": {
+    "id": 609502,
+    "name": "「シーズン26」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン26　上位入賞"
+  },
+  "609503": {
+    "id": 609503,
+    "name": "「サークルフェスタ シーズン1」TOP10",
+    "genre": "実績",
+    "normText": "サークルフェスタ シーズン1　上位入賞"
+  },
+  "609504": {
+    "id": 609504,
+    "name": "「サークルフェスタ シーズン2」TOP10",
+    "genre": "実績",
+    "normText": "サークルフェスタ シーズン2　上位入賞"
+  },
+  "609505": {
+    "id": 609505,
+    "name": "ATLAS RUSH",
+    "genre": "実績",
+    "normText": "フレーム[ATLAS RUSH]のスタンプを10個集める"
+  },
+  "609506": {
+    "id": 609506,
+    "name": "maimai でらっくす ベストアルバムちほー3",
+    "genre": "その他",
+    "normText": "maimai でらっくす ベストアルバムちほー3 特典"
+  },
+  "609507": {
+    "id": 609507,
+    "name": "maimai でらっくす グッズキャンペーンDiSC -CiRCLE-",
+    "genre": "その他",
+    "normText": "maimai でらっくす グッズキャンペーンDiSC -CiRCLE- 特典"
+  },
+  "650101": {
+    "id": 650101,
+    "name": "トリコロちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "トリコロちほー2で獲得"
+  },
+  "650201": {
+    "id": 650201,
+    "name": "BLACK ROSEちほー11",
+    "genre": "オリジナルちほー",
+    "normText": "BLACK ROSEちほー11で獲得"
+  },
+  "650301": {
+    "id": 650301,
+    "name": "メトロポリスちほー10",
+    "genre": "オリジナルちほー",
+    "normText": "メトロポリスちほー10で獲得"
+  },
+  "650401": {
+    "id": 650401,
+    "name": "天界ちほー9",
+    "genre": "オリジナルちほー",
+    "normText": "天界ちほー9で獲得"
+  },
+  "650501": {
+    "id": 650501,
+    "name": "サークルちほー2",
+    "genre": "オリジナルちほー",
+    "normText": "サークルちほー2で獲得"
+  },
+  "655101": {
+    "id": 655101,
+    "name": "メダリストちほー その1",
+    "genre": "イベントちほー",
+    "normText": "メダリストちほーで獲得"
+  },
+  "655102": {
+    "id": 655102,
+    "name": "メダリストちほー その2",
+    "genre": "イベントちほー",
+    "normText": "メダリストちほーで獲得"
+  },
+  "655103": {
+    "id": 655103,
+    "name": "メダリストちほー その3",
+    "genre": "イベントちほー",
+    "normText": "メダリストちほーで獲得"
+  },
+  "655104": {
+    "id": 655104,
+    "name": "メダリストちほー その4",
+    "genre": "イベントちほー",
+    "normText": "メダリストちほーで獲得"
+  },
+  "655105": {
+    "id": 655105,
+    "name": "メダリストちほー その5",
+    "genre": "イベントちほー",
+    "normText": "メダリストちほーで獲得"
+  },
+  "655201": {
+    "id": 655201,
+    "name": "涼宮ハルヒちほー その1",
+    "genre": "イベントちほー",
+    "normText": "涼宮ハルヒちほーで獲得"
+  },
+  "655202": {
+    "id": 655202,
+    "name": "涼宮ハルヒちほー その2",
+    "genre": "イベントちほー",
+    "normText": "涼宮ハルヒちほーで獲得"
+  },
+  "655203": {
+    "id": 655203,
+    "name": "涼宮ハルヒちほー その3",
+    "genre": "イベントちほー",
+    "normText": "涼宮ハルヒちほーで獲得"
+  },
+  "655301": {
+    "id": 655301,
+    "name": "都市伝説解体センターちほー その1",
+    "genre": "イベントちほー",
+    "normText": "都市伝説解体センターちほーで獲得"
+  },
+  "655302": {
+    "id": 655302,
+    "name": "都市伝説解体センターちほー その2",
+    "genre": "イベントちほー",
+    "normText": "都市伝説解体センターちほーで獲得"
+  },
+  "655303": {
+    "id": 655303,
+    "name": "都市伝説解体センターちほー その3",
+    "genre": "イベントちほー",
+    "normText": "都市伝説解体センターちほーで獲得"
+  },
+  "655304": {
+    "id": 655304,
+    "name": "都市伝説解体センターちほー その4",
+    "genre": "イベントちほー",
+    "normText": "都市伝説解体センターちほーで獲得"
+  },
+  "655401": {
+    "id": 655401,
+    "name": "DEEMOちほー その1",
+    "genre": "イベントちほー",
+    "normText": "DEEMOちほーで獲得"
+  },
+  "655402": {
+    "id": 655402,
+    "name": "DEEMOちほー その2",
+    "genre": "イベントちほー",
+    "normText": "DEEMOちほーで獲得"
+  },
+  "655501": {
+    "id": 655501,
+    "name": "ブルーアーカイブ ヒフミ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655502": {
+    "id": 655502,
+    "name": "ブルーアーカイブ アズサ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655503": {
+    "id": 655503,
+    "name": "ブルーアーカイブ コハル",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655504": {
+    "id": 655504,
+    "name": "ブルーアーカイブ ハナコ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655505": {
+    "id": 655505,
+    "name": "ブルーアーカイブ ミカ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655506": {
+    "id": 655506,
+    "name": "ブルーアーカイブ ナギサ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655507": {
+    "id": 655507,
+    "name": "ブルーアーカイブ セイア",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655508": {
+    "id": 655508,
+    "name": "ブルーアーカイブ ネル",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655509": {
+    "id": 655509,
+    "name": "ブルーアーカイブ アスナ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655510": {
+    "id": 655510,
+    "name": "ブルーアーカイブ カリン",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655511": {
+    "id": 655511,
+    "name": "ブルーアーカイブ アカネ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655512": {
+    "id": 655512,
+    "name": "ブルーアーカイブ トキ",
+    "genre": "イベントちほー",
+    "normText": "ブルーアーカイブちほー2で獲得"
+  },
+  "655601": {
+    "id": 655601,
+    "name": "ヒメヒナちほー2 その1",
+    "genre": "イベントちほー",
+    "normText": "ヒメヒナちほー2で獲得"
+  },
+  "655602": {
+    "id": 655602,
+    "name": "ヒメヒナちほー2 その2",
+    "genre": "イベントちほー",
+    "normText": "ヒメヒナちほー2で獲得"
+  },
+  "655701": {
+    "id": 655701,
+    "name": "森羅万象ちほー その1",
+    "genre": "イベントちほー",
+    "normText": "森羅万象ちほーで獲得"
+  },
+  "655702": {
+    "id": 655702,
+    "name": "森羅万象ちほー その2",
+    "genre": "イベントちほー",
+    "normText": "森羅万象ちほーで獲得"
+  },
+  "655703": {
+    "id": 655703,
+    "name": "森羅万象ちほー その3",
+    "genre": "イベントちほー",
+    "normText": "森羅万象ちほーで獲得"
+  },
+  "655704": {
+    "id": 655704,
+    "name": "森羅万象ちほー その4",
+    "genre": "イベントちほー",
+    "normText": "森羅万象ちほーで獲得"
+  },
+  "655801": {
+    "id": 655801,
+    "name": "イロドリミドリちほー2 その1",
+    "genre": "イベントちほー",
+    "normText": "イロドリミドリちほー2で獲得"
+  },
+  "655802": {
+    "id": 655802,
+    "name": "イロドリミドリちほー2 その2",
+    "genre": "イベントちほー",
+    "normText": "イロドリミドリちほー2で獲得"
+  },
+  "655901": {
+    "id": 655901,
+    "name": "マサラダちほー その1",
+    "genre": "イベントちほー",
+    "normText": "マサラダちほーで獲得"
+  },
+  "655902": {
+    "id": 655902,
+    "name": "マサラダちほー その2",
+    "genre": "イベントちほー",
+    "normText": "マサラダちほーで獲得"
+  },
+  "655903": {
+    "id": 655903,
+    "name": "マサラダちほー その3",
+    "genre": "イベントちほー",
+    "normText": "マサラダちほーで獲得"
+  },
+  "655904": {
+    "id": 655904,
+    "name": "マサラダちほー その4",
+    "genre": "イベントちほー",
+    "normText": "マサラダちほーで獲得"
+  },
+  "656001": {
+    "id": 656001,
+    "name": "ぼくわたチャンネルちほー",
+    "genre": "イベントちほー",
+    "normText": "ぼくわたチャンネルちほーで獲得"
+  },
+  "656101": {
+    "id": 656101,
+    "name": "Rotaenoちほー",
+    "genre": "イベントちほー",
+    "normText": "Rotaenoちほーで獲得"
+  },
+  "658036": {
+    "id": 658036,
+    "name": "♡しゃま（さーくる）♡",
+    "genre": "実績",
+    "normText": "しゃま（さーくる）の親密度が1000に到達"
+  },
+  "659501": {
+    "id": 659501,
+    "name": "「シーズン27」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン27　上位入賞"
+  },
+  "659502": {
+    "id": 659502,
+    "name": "「シーズン28」トップランカー",
+    "genre": "実績",
+    "normText": "オトモダチ対戦シーズン28　上位入賞"
+  },
+  "659503": {
+    "id": 659503,
+    "name": "「サークルフェスタ シーズン3」TOP10",
+    "genre": "実績",
+    "normText": "サークルフェスタ シーズン3　上位入賞"
+  },
+  "659504": {
+    "id": 659504,
+    "name": "廃墟にいますキャンペーン",
+    "genre": "実績",
+    "normText": "フレーム[廃墟にいますキャンペーン]のスタンプを10個集める"
+  }
+}

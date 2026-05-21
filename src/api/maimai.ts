@@ -56,6 +56,15 @@ export interface MaimaiUnlockPlan {
   minExecuteRole?: MaimaiUnlockRole;
 }
 
+export type MaimaiProberType = "df" | "lxns";
+
+export interface MaimaiProberBinding {
+  type: MaimaiProberType;
+  bound: boolean;
+  maskedValue?: string;
+  updatedAt?: string;
+}
+
 const getSiteBaseUrl = () =>
   String(http.defaults.baseURL || "").replace(/\/break\/?$/, "");
 
@@ -298,6 +307,42 @@ export const maimaiApi = {
       url: "/api/maimai/scores/refresh",
       method: "post",
       data: { index, qrcode },
+      timeout: 300000,
+    });
+  },
+
+  getProberBindings(index: number) {
+    return requestSiteRoot({
+      url: "/api/maimai/prober/bindings",
+      method: "get",
+      params: { index },
+      timeout: 30000,
+    });
+  },
+
+  saveProberBinding(index: number, type: MaimaiProberType, value: string) {
+    return requestSiteRoot({
+      url: "/api/maimai/prober/bindings",
+      method: "put",
+      data: { index, type, value },
+      timeout: 30000,
+    });
+  },
+
+  deleteProberBinding(index: number, type: MaimaiProberType) {
+    return requestSiteRoot({
+      url: `/api/maimai/prober/bindings/${type}`,
+      method: "delete",
+      params: { index },
+      timeout: 30000,
+    });
+  },
+
+  syncProber(index: number) {
+    return requestSiteRoot({
+      url: "/api/maimai/prober/sync",
+      method: "post",
+      data: { index, source: "cache" },
       timeout: 300000,
     });
   },

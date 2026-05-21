@@ -131,6 +131,16 @@
             <div v-if="authStore.isTechPremium" class="sub-menu-divider"></div>
 
             <router-link
+              v-if="authStore.isAdmin"
+              to="/maimai/tools"
+              class="sub-item"
+              active-class="sub-active"
+              @click="handleNavigate"
+            >
+              工具下载
+            </router-link>
+
+            <router-link
               v-if="authStore.isTechPremium"
               to="/maimai/delivery"
               class="sub-item"
@@ -294,21 +304,27 @@ watch(
 
 .brand-title {
   margin: 0;
-  font-size: 1.65rem;
-  font-weight: 900;
-  font-style: normal;
-  font-family: inherit;
+  font-size: 1.85rem;
+  font-weight: 950;
+  font-style: italic;
+  font-family:
+    "Arial Black",
+    "Inter",
+    "Microsoft YaHei UI",
+    sans-serif;
   background: linear-gradient(135deg, var(--primary-color), #ef4444);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 0;
+  transform: skewX(-6deg);
+  text-shadow: 0 8px 20px rgba(255, 140, 0, 0.16);
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .brand-link:hover .brand-title {
-  transform: translateY(-1px);
+  transform: skewX(-6deg) translateY(-1px);
   filter: drop-shadow(0 6px 14px rgba(255, 140, 0, 0.18));
 }
 
