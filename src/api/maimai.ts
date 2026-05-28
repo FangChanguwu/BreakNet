@@ -56,6 +56,58 @@ export interface MaimaiUnlockPlan {
   minExecuteRole?: MaimaiUnlockRole;
 }
 
+export interface MaimaiXiamaiScoreRule {
+  achievementMin: number;
+  achievementMax: number;
+  dxStarMin: number;
+  dxStarMax: number;
+  comboStatuses: number[];
+  syncStatuses: number[];
+  playCount: number;
+}
+
+export interface MaimaiXiamaiPlan {
+  id: string;
+  name: string;
+  uid: number;
+  index: number;
+  musicIds: number[];
+  levels: number[];
+  scoreRule: MaimaiXiamaiScoreRule;
+  records: Array<Record<string, unknown>>;
+  recordCount: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface MaimaiXiamaiRecordOverride {
+  musicId: number;
+  level: 0 | 1;
+  achievement?: number;
+  dxScore?: number;
+  dxStar?: number;
+  comboStatus?: number;
+  syncStatus?: number;
+  playCount?: number;
+}
+
+export interface MaimaiXiamaiTask {
+  taskId: string;
+  planId: string;
+  status: "running" | "success" | "interrupted" | "failed" | string;
+  message: string;
+  error?: string;
+  uid: number;
+  index: number;
+  nextIndex: number;
+  total: number;
+  sentCount: number;
+  failedCount: number;
+  currentBatch: number;
+  totalBatches: number;
+  result?: Record<string, unknown>;
+}
+
 export type MaimaiProberType = "df" | "lxns";
 
 export interface MaimaiProberBinding {
@@ -289,6 +341,87 @@ export const maimaiApi = {
     return requestSiteRoot({
       url: `/api/maimai/unlock/tasks/${taskId}`,
       method: "get",
+      timeout: 30000,
+    });
+  },
+
+  getXiamaiPlans(index: number) {
+    return requestSiteRoot({
+      url: "/api/maimai/xiamai/plans",
+      method: "get",
+      params: { index },
+      timeout: 30000,
+    });
+  },
+
+  createXiamaiPlan(data: {
+    index: number;
+    name: string;
+    musicIds: number[];
+    levels: number[];
+    scoreRule: MaimaiXiamaiScoreRule;
+    recordOverrides?: MaimaiXiamaiRecordOverride[];
+  }) {
+    return requestSiteRoot({
+      url: "/api/maimai/xiamai/plans",
+      method: "post",
+      data,
+      timeout: 30000,
+    });
+  },
+
+  updateXiamaiPlan(
+    planId: string,
+    data: {
+      name: string;
+      musicIds: number[];
+      levels: number[];
+      scoreRule: MaimaiXiamaiScoreRule;
+      recordOverrides?: MaimaiXiamaiRecordOverride[];
+    },
+  ) {
+    return requestSiteRoot({
+      url: `/api/maimai/xiamai/plans/${planId}`,
+      method: "put",
+      data,
+      timeout: 30000,
+    });
+  },
+
+  deleteXiamaiPlan(planId: string) {
+    return requestSiteRoot({
+      url: `/api/maimai/xiamai/plans/${planId}`,
+      method: "delete",
+      timeout: 30000,
+    });
+  },
+
+  startXiamaiTask(index: number, planId: string, qrcode?: string) {
+    return requestSiteRoot({
+      url: "/api/maimai/xiamai/tasks/start",
+      method: "post",
+      data: {
+        index,
+        planId,
+        ...(qrcode ? { qrcode } : {}),
+      },
+      timeout: 30000,
+    });
+  },
+
+  getXiamaiTask(taskId: string) {
+    return requestSiteRoot({
+      url: `/api/maimai/xiamai/tasks/${taskId}`,
+      method: "get",
+      timeout: 30000,
+    });
+  },
+
+  resumeXiamaiTask(taskId: string, qrcode?: string) {
+    return requestSiteRoot({
+      url: `/api/maimai/xiamai/tasks/${taskId}/resume`,
+      method: "post",
+      data: qrcode ? { qrcode } : {},
       timeout: 30000,
     });
   },

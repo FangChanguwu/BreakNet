@@ -128,6 +128,16 @@
               物品解锁
             </router-link>
 
+            <router-link
+              v-if="authStore.isPremium"
+              to="/maimai/xiamai"
+              class="sub-item"
+              active-class="sub-active"
+              @click="handleNavigate"
+            >
+              乐曲下埋
+            </router-link>
+
             <div v-if="authStore.isTechPremium" class="sub-menu-divider"></div>
 
             <router-link
