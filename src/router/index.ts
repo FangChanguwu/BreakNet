@@ -5,6 +5,8 @@ import PanelView from "@/views/PanelView.vue";
 import CreditView from "@/views/CreditView.vue";
 import PrivacyView from "@/views/PrivacyView.vue";
 import ContactView from "@/views/ContactView.vue";
+import NotezIdleView from "@/views/NotezIdleView.vue";
+import WmcStoryScriptView from "@/views/docs/WmcStoryScriptView.vue";
 import AdminDashboardView from "@/views/admin/AdminDashboardView.vue";
 import AdminLogsView from "@/views/admin/AdminLogsView.vue";
 import AdminUsersView from "@/views/admin/AdminUsersView.vue";
@@ -66,6 +68,12 @@ const router = createRouter({
       component: () => import("@/views/error/Error403View.vue"),
     },
     {
+      path: "/docs/WMC_Story_Script",
+      name: "docs-wmc-story-script",
+      component: WmcStoryScriptView,
+      meta: { allowGuest: true },
+    },
+    {
       path: "/:pathMatch(.*)*",
       name: "not-found",
       component: () => import("@/views/error/Error404View.vue"),
@@ -87,6 +95,16 @@ const router = createRouter({
       component: SpyGameView,
       meta: { allowGuest: true },
     },
+    ...(import.meta.env.DEV
+      ? [
+          {
+            path: "/game/notez",
+            name: "notez-idle",
+            component: NotezIdleView,
+            meta: { allowGuest: true },
+          },
+        ]
+      : []),
     {
       path: "/",
       component: AppShell,
@@ -213,7 +231,7 @@ router.beforeEach((to, _from, next) => {
 
   // 白名单
   const publicPaths = ["/", "/privacy", "/contact", "/403", "/404"];
-  const allowGuest = to.meta.allowGuest === true;
+  const allowGuest = to.meta.allowGuest === true || to.path.startsWith("/docs/");
   if (!publicPaths.includes(to.path) && !authStore.isLoggedIn && !allowGuest) {
     Toast.fire({
       icon: "warning",

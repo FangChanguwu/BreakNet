@@ -129,7 +129,7 @@
             </router-link>
 
             <router-link
-              v-if="authStore.isPremium"
+              v-if="false"
               to="/maimai/xiamai"
               class="sub-item"
               active-class="sub-active"
