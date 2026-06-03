@@ -95,16 +95,12 @@ const router = createRouter({
       component: SpyGameView,
       meta: { allowGuest: true },
     },
-    ...(import.meta.env.DEV
-      ? [
-          {
-            path: "/game/notez",
-            name: "notez-idle",
-            component: NotezIdleView,
-            meta: { allowGuest: true },
-          },
-        ]
-      : []),
+    {
+      path: "/game/notez",
+      name: "notez-idle",
+      component: NotezIdleView,
+      meta: { allowGuest: true },
+    },
     {
       path: "/",
       component: AppShell,

@@ -37,6 +37,9 @@
       <router-link v-if="authStore.isPremium" to="/game/spy" class="nav-item" active-class="is-active" @click="handleNavigate">
         谁是卧底？！
       </router-link>
+      <router-link to="/game/notez" class="nav-item" active-class="is-active" @click="handleNavigate">
+        Notez
+      </router-link>
 
       <div class="nav-group">
         <div
